@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Trenord">
+    <meta name="theme-color" content="#006B32">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <title>Trenord</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ====== SCREEN 1: CONFIGURAZIONE ====== -->
+    <div id="config-screen" class="screen active">
+        <div class="config-header">
+            <div class="config-header-title">Configura Biglietto</div>
+        </div>
+        <div class="config-body">
+            <div class="form-section-label">VALIDITÀ</div>
+            <div class="form-card">
+                <div class="form-row">
+                    <label for="start-date">Inizio</label>
+                    <input type="datetime-local" id="start-date">
+                </div>
+                <div class="form-divider"></div>
+                <div class="form-row">
+                    <label for="end-date">Fine</label>
+                    <input type="datetime-local" id="end-date">
+                </div>
+            </div>
+
+            <div class="form-section-label">DETTAGLI VIAGGIO</div>
+            <div class="form-card">
+                <div class="form-row">
+                    <label for="viaggio-select">Viaggio</label>
+                    <select id="viaggio-select">
+                        <option value="Mi1 | Mi1">Mi1 | Mi1</option>
+                        <option value="Mi1 | Mi3" selected>Mi1 | Mi3</option>
+                        <option value="Mi1 | Mi4">Mi1 | Mi4</option>
+                        <option value="Mi1 | Mi5">Mi1 | Mi5</option>
+                        <option value="Mi1 | Mi6">Mi1 | Mi6</option>
+                        <option value="Mi1 | Mi7">Mi1 | Mi7</option>
+                        <option value="Mi1 | Mi8">Mi1 | Mi8</option>
+                        <option value="Mi1 | Mi9">Mi1 | Mi9</option>
+                    </select>
+                </div>
+                <div class="form-divider"></div>
+                <div class="form-row">
+                    <label for="prezzo-input">Prezzo</label>
+                    <div class="price-input-wrap">
+                        <input type="number" id="prezzo-input" step="0.01" min="0" value="2.20">
+                        <span class="price-currency">€</span>
+                    </div>
+                </div>
+                <div class="form-divider"></div>
+                <div class="form-row">
+                    <label>Classe</label>
+                    <span class="form-value-fixed">Unica</span>
+                </div>
+            </div>
+
+            <button id="btn-genera" class="btn-green-full">Genera Biglietto</button>
+        </div>
+    </div>
+
+    <!-- ====== SCREEN 2: WALLET ====== -->
+    <div id="wallet-screen" class="screen">
+        <div class="wallet-header">
+            <div class="wallet-header-top">
+                <button id="btn-back-config" class="header-icon-btn" aria-label="Indietro">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <span class="wallet-title">Wallet</span>
+                <div class="wallet-header-right">
+                    <button id="btn-activation-info" class="header-icon-btn" aria-label="Info">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></svg>
+                    </button>
+                    <button class="header-icon-btn" aria-label="Aggiorna">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="wallet-tabs">
+                <div class="tab-bar">
+                    <button class="tab active">Biglietti / MXP</button>
+                    <button class="tab">Carnet</button>
+                    <button class="tab">Abbonamenti</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="wallet-body">
+            <!-- Ticket Card -->
+            <div class="ticket-card">
+                <div class="ticket-card-header">
+                    <span class="ticket-type-label">Ordinario</span>
+                    <button id="btn-ticket-info" class="info-icon-gray" aria-label="Informazioni biglietto">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></svg>
+                    </button>
+                </div>
+                <div class="ticket-field">
+                    <span class="ticket-label">VALIDITÀ</span>
+                    <div class="ticket-validita">
+                        <span id="wallet-validita-start"></span>
+                        <span class="validita-sep">|</span>
+                        <span id="wallet-validita-end"></span>
+                    </div>
+                </div>
+                <div class="ticket-row-2col">
+                    <div class="ticket-field">
+                        <span class="ticket-label">PNR</span>
+                        <span class="ticket-value" id="wallet-pnr"></span>
+                    </div>
+                    <div class="ticket-field">
+                        <span class="ticket-label">CLASSE</span>
+                        <span class="ticket-value" id="wallet-classe">Unica</span>
+                    </div>
+                </div>
+                <div class="ticket-field">
+                    <span class="ticket-label">VIAGGIO</span>
+                    <span class="ticket-value ticket-value-bold" id="wallet-viaggio"></span>
+                </div>
+                <div class="stibm-badge">STIBM</div>
+                <button id="btn-mostra-qr" class="btn-green-full btn-qr">
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    Mostra QR Code
+                </button>
+            </div>
+
+            <!-- Ricaricami Card -->
+            <div class="ricaricami-card">
+                <div class="ricaricami-header">
+                    <span class="ricaricami-title">Ricaricami</span>
+                    <span class="info-icon-gray">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></svg>
+                    </span>
+                </div>
+                <p class="ricaricami-text">Trasforma il tuo Ricaricami in un biglietto DIGITALE e utilizzalo dal tuo smartphone con l'app o Trenord Mobile</p>
+                <button class="btn-outline-green">Digitalizza titoli di viaggio</button>
+            </div>
+        </div>
+
+        <!-- Bottom Tab Bar -->
+        <div class="bottom-tabbar">
+            <div class="tabbar-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5l9-7 9 7V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <span>Home</span>
+            </div>
+            <div class="tabbar-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                <span>Acquista</span>
+            </div>
+            <div class="tabbar-item active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="15" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                <span>Wallet</span>
+            </div>
+            <div class="tabbar-item has-badge" data-badge="5">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <span>Gite in Treno</span>
+            </div>
+            <div class="tabbar-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>Profilo</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== SCREEN 3: DETTAGLI BIGLIETTO (Modal) ====== -->
+    <div id="detail-screen" class="screen-modal">
+        <div class="detail-backdrop"></div>
+        <div class="detail-panel">
+            <div class="detail-header">
+                <span class="detail-header-title">Dettagli biglietto</span>
+                <button id="btn-detail-close" class="detail-header-btn">Fine</button>
+            </div>
+            <div class="detail-body">
+                <div class="detail-pnr-section">
+                    <span class="detail-pnr-label">PNR</span>
+                    <span class="detail-pnr-value" id="detail-pnr"></span>
+                </div>
+                <div id="qrcode-container" class="qrcode-wrap"></div>
+                <div class="detail-ticket-type">
+                    <span class="detail-type-text">Ordinario - STIBM</span>
+                    <span class="detail-zone-text" id="detail-zone"></span>
+                </div>
+
+                <!-- Animated Loader/Checkmark -->
+                <div class="animated-check-container">
+                    <svg class="animated-check" viewBox="0 0 52 52">
+                        <circle class="check-bg" cx="26" cy="26" r="20"/>
+                        <circle class="check-circle" cx="26" cy="26" r="20" fill="none"/>
+                        <path class="check-mark" fill="none" d="M15 27 L22 33 L37 17"/>
+                    </svg>
+                </div>
+
+                <div class="detail-info-section">
+                    <div class="detail-info-row">
+                        <span class="detail-info-label">Validità:</span>
+                        <span class="detail-info-value" id="detail-validita"></span>
+                    </div>
+                    <div class="detail-info-row">
+                        <span class="detail-info-label">Prezzo:</span>
+                        <span class="detail-info-value" id="detail-prezzo"></span>
+                    </div>
+                    <div class="detail-info-row">
+                        <span class="detail-info-label">Classe:</span>
+                        <span class="detail-info-value" id="detail-classe">Unica</span>
+                    </div>
+                    <div class="detail-info-row">
+                        <span class="detail-info-label">Viaggio:</span>
+                        <span class="detail-info-value" id="detail-viaggio"></span>
+                    </div>
+                </div>
+
+                <div class="detail-norme-link" id="btn-norme">
+                    <span>Vedi norme utilizzo biglietto</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#C7C7CC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== MODAL: Informazioni Biglietto ====== -->
+    <div id="info-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-title">Informazioni</div>
+            <div class="modal-body">
+                <p>BIGLIETTO INTEGRATO STIBM<br>
+                Vale per corse illimitate, sui treni e su tutti i mezzi di trasporto pubblico del bacino Milano e Monza Brianza, nel corso del periodo di validità che dipende dal numero di zone acquistate. Non ha una data di utilizzo prestabilita, ma deve essere attivato in modalità Tap&Go all'inizio del primo viaggio.</p>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn" onclick="closeModal('info-modal')">Ok</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== MODAL: Attivazione Titoli di Viaggio ====== -->
+    <div id="activation-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-title">Attivazione dei titoli di viaggio</div>
+            <div class="modal-body">
+                <p><strong>Biglietti</strong><br>
+                Se acquistati per una data specifica si attivano automaticamente all'orario di partenza prescelto.<br>
+                Se a data aperta devono essere attivati tramite la funzionalità Tap&Go.</p>
+                <p><strong>Abbonamenti</strong><br>
+                Se caricati su tessera lo Viaggio devono essere attivati presso le convalidatrici dal giorno successivo a quello di acquisto ed entro il numero di giorni indicato sulla mail ricevuta dopo l'acquisto.<br>
+                Su PhonePass non è necessaria attivazione.</p>
+                <p><strong>Carnet</strong><br>
+                Prima di salire a bordo è necessario attivare ogni viaggio, scegliendo la direzione della corsa, tramite la funzionalità Tap&Go.</p>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn" onclick="closeModal('activation-modal')">Ok</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
