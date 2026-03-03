@@ -98,7 +98,7 @@ html, body {
     flex: 1;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding: 0 16px 40px;
+    padding: 0 16px calc(80px + var(--safe-bottom) + 40px);
 }
 
 .form-section-label {
@@ -512,7 +512,7 @@ html, body {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     padding: 16px;
-    padding-bottom: calc(80px + var(--safe-bottom) + 16px);
+    padding-bottom: calc(80px + var(--safe-bottom) + 24px);
 }
 
 /* ============================================
@@ -856,7 +856,7 @@ html, body {
     bottom: 0;
     left: 0;
     right: 0;
-    max-height: 92vh;
+    max-height: calc(100vh - var(--safe-top) - 44px);
     background: var(--gray-bg);
     border-radius: 16px 16px 0 0;
     display: flex;
@@ -877,18 +877,21 @@ html, body {
     align-items: center;
     justify-content: space-between;
     padding: 16px 20px;
-    border-bottom: 0.5px solid var(--gray-sep);
+    background: var(--green-dark);
+    border-bottom: none;
+    border-radius: 16px 16px 0 0;
     flex-shrink: 0;
 }
 .detail-header-title {
     font-size: 17px;
     font-weight: 600;
+    color: #fff;
 }
 .detail-header-btn {
     font-family: var(--font);
     font-size: 17px;
     font-weight: 600;
-    color: #007AFF;
+    color: #fff;
     background: none;
     border: none;
     cursor: pointer;
@@ -916,8 +919,8 @@ html, body {
     display: block;
     font-size: 28px;
     font-weight: 700;
-    letter-spacing: 2px;
-    color: var(--text-primary);
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
 }
 
 .qrcode-wrap {
@@ -927,7 +930,7 @@ html, body {
 }
 .qrcode-wrap canvas,
 .qrcode-wrap img {
-    border-radius: 8px;
+    border-radius: 0;
 }
 
 .detail-ticket-type {
@@ -938,7 +941,7 @@ html, body {
     display: block;
     font-size: 15px;
     font-weight: 600;
-    color: var(--text-secondary);
+    color: var(--green-dark);
 }
 .detail-zone-text {
     display: block;
@@ -959,7 +962,7 @@ html, body {
 }
 .check-bg {
     fill: var(--green-dark);
-    opacity: 0.1;
+    opacity: 1;
 }
 .check-circle {
     stroke: var(--green-dark);
@@ -969,7 +972,7 @@ html, body {
     animation: drawCircle 1.2s ease-out infinite;
 }
 .check-mark {
-    stroke: var(--green-dark);
+    stroke: #fff;
     stroke-width: 3;
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -1007,7 +1010,7 @@ html, body {
     display: block;
     font-size: 17px;
     font-weight: 700;
-    color: var(--text-primary);
+    color: var(--text-secondary);
 }
 
 /* Norme Link */
@@ -1148,6 +1151,83 @@ html, body {
 }
 .modal-btn:active {
     background: rgba(0,0,0,0.06);
+}
+
+/* ============================================
+   HOME SCREEN
+   ============================================ */
+
+.home-body {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 24px 16px calc(80px + var(--safe-bottom) + 40px);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.home-welcome-card {
+    background: #fff;
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
+    padding: 32px 24px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+.home-welcome-icon {
+    margin-bottom: 16px;
+}
+.home-welcome-icon svg {
+    width: 48px;
+    height: 48px;
+}
+
+.home-welcome-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+}
+
+.home-welcome-text {
+    font-size: 15px;
+    color: var(--gray-label);
+    line-height: 1.5;
+}
+.home-welcome-text strong {
+    color: var(--green-dark);
+    font-weight: 600;
+}
+
+/* ============================================
+   PLACEHOLDER SCREENS (Gite, Profilo)
+   ============================================ */
+
+.placeholder-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px calc(80px + var(--safe-bottom) + 40px);
+    color: var(--gray-label);
+}
+
+.placeholder-icon {
+    margin-bottom: 16px;
+}
+.placeholder-icon svg {
+    width: 48px;
+    height: 48px;
+}
+
+.placeholder-text {
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--gray-label);
 }
 
 /* ============================================

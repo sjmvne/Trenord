@@ -29,6 +29,15 @@ function getTicketInfo(fromIdx, toIdx) {
     };
 }
 
+// ── Tab-Screen Map ──
+const SCREEN_MAP = {
+    home: 'home-screen',
+    acquista: 'config-screen',
+    wallet: 'wallet-screen',
+    gite: 'gite-screen',
+    profilo: 'profilo-screen'
+};
+
 // ── App State ──
 let tickets = [];
 let selectedFromIdx = 0;
@@ -36,6 +45,7 @@ let selectedToIdx = 1;
 let ticketCount = 1;
 let currentDetailTicket = null;
 let qrInstance = null;
+let wakeLockSentinel = null;
 
 // ── DOM References ──
 const configScreen = document.getElementById('config-screen');
@@ -99,9 +109,9 @@ function bindEvents() {
     // Generate ticket(s)
     document.getElementById('btn-genera').addEventListener('click', generateTickets);
 
-    // Back to config
-    document.getElementById('btn-back-config').addEventListener('click', () => {
-        navigateScreen(walletScreen, configScreen, true);
+    // Tabbar navigation
+    document.querySelectorAll('#global-tabbar .tabbar-item').forEach(item => {
+        item.addEventListener('click', () => switchTab(item.dataset.tab));
     });
 
     // Close detail
@@ -264,7 +274,7 @@ function generateTickets() {
 
     saveTickets();
     renderWalletTickets();
-    navigateScreen(configScreen, walletScreen);
+    switchTab('wallet');
 }
 
 // ── localStorage Persistence ──
@@ -528,12 +538,15 @@ function openDetail(ticketId) {
     detailScreen.classList.remove('closing');
     detailScreen.classList.add('open');
 
+    requestMaxBrightness();
+
     requestAnimationFrame(() => {
         generateQRCode(ticket);
     });
 }
 
 function closeDetail() {
+    releaseMaxBrightness();
     detailScreen.classList.add('closing');
     setTimeout(() => {
         detailScreen.classList.remove('open', 'closing');
@@ -586,6 +599,47 @@ function buildQRContent(ticket) {
     const qrUUID = generateUUID(true);
 
     return base64 + ':' + checksum + ':' + qrUUID;
+}
+
+// ── Tab Navigation ──
+
+function switchTab(tabName) {
+    // Hide all tab screens
+    Object.values(SCREEN_MAP).forEach(id => {
+        document.getElementById(id).classList.remove('active');
+    });
+    // Show target
+    const targetId = SCREEN_MAP[tabName];
+    if (targetId) {
+        document.getElementById(targetId).classList.add('active');
+    }
+    // Update tabbar
+    document.querySelectorAll('#global-tabbar .tabbar-item').forEach(item => {
+        item.classList.toggle('active', item.dataset.tab === tabName);
+    });
+    // If wallet, render tickets
+    if (tabName === 'wallet') {
+        renderWalletTickets();
+    }
+}
+
+// ── Wake Lock (Max Brightness) ──
+
+async function requestMaxBrightness() {
+    try {
+        if ('wakeLock' in navigator) {
+            wakeLockSentinel = await navigator.wakeLock.request('screen');
+        }
+    } catch (e) {
+        console.log('Wake Lock not available:', e);
+    }
+}
+
+function releaseMaxBrightness() {
+    if (wakeLockSentinel) {
+        wakeLockSentinel.release();
+        wakeLockSentinel = null;
+    }
 }
 
 // ── Navigation ──

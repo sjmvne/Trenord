@@ -16,10 +16,31 @@
 </head>
 <body>
 
-    <!-- ====== SCREEN 1: CONFIGURAZIONE ====== -->
-    <div id="config-screen" class="screen active">
+    <!-- ====== SCREEN: HOME ====== -->
+    <div id="home-screen" class="screen active" data-tab="home">
         <div class="config-header">
-            <div class="config-header-title">Configura Biglietto</div>
+            <div class="config-header-title">Trenord</div>
+        </div>
+        <div class="home-body">
+            <div class="home-welcome-card">
+                <div class="home-welcome-icon">
+                    <svg viewBox="0 0 48 48" fill="none" stroke="#006B32" stroke-width="2">
+                        <rect x="8" y="6" width="32" height="36" rx="4"/>
+                        <line x1="16" y1="14" x2="32" y2="14"/>
+                        <line x1="16" y1="22" x2="28" y2="22"/>
+                        <line x1="16" y1="30" x2="24" y2="30"/>
+                    </svg>
+                </div>
+                <h3 class="home-welcome-title">Benvenuto</h3>
+                <p class="home-welcome-text">Acquista e gestisci i tuoi biglietti STIBM direttamente dall'app.<br>Vai su <strong>Acquista</strong> per creare un nuovo biglietto oppure controlla il tuo <strong>Wallet</strong>.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== SCREEN: ACQUISTA (Configurazione) ====== -->
+    <div id="config-screen" class="screen" data-tab="acquista">
+        <div class="config-header">
+            <div class="config-header-title">Acquista</div>
         </div>
         <div class="config-body">
 
@@ -109,13 +130,10 @@
         </div>
     </div>
 
-    <!-- ====== SCREEN 2: WALLET ====== -->
-    <div id="wallet-screen" class="screen">
+    <!-- ====== SCREEN: WALLET ====== -->
+    <div id="wallet-screen" class="screen" data-tab="wallet">
         <div class="wallet-header">
             <div class="wallet-header-top">
-                <button id="btn-back-config" class="header-icon-btn" aria-label="Indietro">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-                </button>
                 <span class="wallet-title">Wallet</span>
                 <div class="wallet-header-right">
                     <button id="btn-activation-info" class="header-icon-btn" aria-label="Info">
@@ -160,33 +178,59 @@
                 <button class="btn-outline-green">Digitalizza titoli di viaggio</button>
             </div>
         </div>
+    </div>
 
-        <!-- Bottom Tab Bar -->
-        <div class="bottom-tabbar">
-            <div class="tabbar-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5l9-7 9 7V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                <span>Home</span>
+    <!-- ====== SCREEN: GITE IN TRENO ====== -->
+    <div id="gite-screen" class="screen" data-tab="gite">
+        <div class="config-header">
+            <div class="config-header-title">Gite in Treno</div>
+        </div>
+        <div class="placeholder-body">
+            <div class="placeholder-icon">
+                <svg viewBox="0 0 48 48" fill="none" stroke="#8E8E93" stroke-width="1.5"><polygon points="24 4 30.18 16.54 44 18.54 34 28.28 36.36 42 24 35.54 11.64 42 14 28.28 4 18.54 17.82 16.54 24 4"/></svg>
             </div>
-            <div class="tabbar-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-                <span>Acquista</span>
-            </div>
-            <div class="tabbar-item active">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="15" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-                <span>Wallet</span>
-            </div>
-            <div class="tabbar-item has-badge" data-badge="5">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                <span>Gite in Treno</span>
-            </div>
-            <div class="tabbar-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                <span>Profilo</span>
-            </div>
+            <p class="placeholder-text">Sezione in arrivo</p>
         </div>
     </div>
 
-    <!-- ====== SCREEN 3: DETTAGLI BIGLIETTO (Modal) ====== -->
+    <!-- ====== SCREEN: PROFILO ====== -->
+    <div id="profilo-screen" class="screen" data-tab="profilo">
+        <div class="config-header">
+            <div class="config-header-title">Profilo</div>
+        </div>
+        <div class="placeholder-body">
+            <div class="placeholder-icon">
+                <svg viewBox="0 0 48 48" fill="none" stroke="#8E8E93" stroke-width="1.5"><path d="M40 42v-4a8 8 0 0 0-8-8H16a8 8 0 0 0-8 8v4"/><circle cx="24" cy="14" r="8"/></svg>
+            </div>
+            <p class="placeholder-text">Sezione in arrivo</p>
+        </div>
+    </div>
+
+    <!-- ====== GLOBAL BOTTOM TAB BAR ====== -->
+    <div class="bottom-tabbar" id="global-tabbar">
+        <div class="tabbar-item active" data-tab="home">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5l9-7 9 7V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span>Home</span>
+        </div>
+        <div class="tabbar-item" data-tab="acquista">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            <span>Acquista</span>
+        </div>
+        <div class="tabbar-item" data-tab="wallet">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="15" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+            <span>Wallet</span>
+        </div>
+        <div class="tabbar-item has-badge" data-badge="5" data-tab="gite">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span>Gite in Treno</span>
+        </div>
+        <div class="tabbar-item" data-tab="profilo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Profilo</span>
+        </div>
+    </div>
+
+    <!-- ====== SCREEN: DETTAGLI BIGLIETTO (Modal) ====== -->
     <div id="detail-screen" class="screen-modal">
         <div class="detail-backdrop"></div>
         <div class="detail-panel">
