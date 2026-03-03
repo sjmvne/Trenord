@@ -866,7 +866,7 @@ html, body {
    ============================================ */
 
 /* Desktop container (max-width for larger screens) */
-@media (min-width: 430px) {
+@media (min-width: 768px) {
     .screen, .screen-modal {
         max-width: 428px;
         left: 50%;
