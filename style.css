@@ -38,6 +38,16 @@ html, body {
     overflow: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Fix iOS standalone: estende il bg fino al bordo inferiore */
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+}
+
+/* Fix iOS standalone PWA — rimuove gap sotto la tabbar */
+@supports (padding: env(safe-area-inset-bottom)) {
+    html {
+        height: -webkit-fill-available;
+    }
 }
 
 /* ============================================
@@ -82,7 +92,7 @@ html, body {
 
 .config-header {
     background: linear-gradient(180deg, var(--green-dark) 0%, var(--green-header) 100%);
-    padding: var(--safe-top) 16px 16px;
+    padding: var(--safe-top) 16px 0;
     padding-top: calc(var(--safe-top) + 52px);
     text-align: center;
     flex-shrink: 0;
@@ -92,6 +102,44 @@ html, body {
     font-size: 17px;
     font-weight: 600;
     letter-spacing: -0.2px;
+}
+
+/* Config Tabs (Acquista screen) */
+.config-tabs {
+    padding: 10px 16px 12px;
+}
+.config-tab-bar {
+    display: flex;
+    background: rgba(255,255,255,0.2);
+    border-radius: 8px;
+    padding: 2px;
+    gap: 2px;
+}
+.config-tab {
+    flex: 1;
+    padding: 7px 4px;
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.85);
+    background: transparent;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+.config-tab.active {
+    background: #fff;
+    color: var(--green-dark);
+    font-weight: 600;
+}
+.config-tab-mxp svg {
+    flex-shrink: 0;
 }
 
 .config-body {
@@ -780,6 +828,9 @@ html, body {
     padding: 6px 0;
     padding-bottom: calc(6px + var(--safe-bottom));
     z-index: 100;
+    /* Fix iOS standalone: garantisce che il bg copra tutta l'area sotto */
+    -webkit-transform: translate3d(0,0,0);
+    transform: translate3d(0,0,0);
 }
 .tabbar-item {
     display: flex;
@@ -793,8 +844,8 @@ html, body {
     padding: 2px 0;
 }
 .tabbar-item svg {
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
 }
 .tabbar-item span {
     font-size: 10px;
@@ -802,6 +853,11 @@ html, body {
 }
 .tabbar-item.active {
     color: var(--green-dark);
+}
+/* Wallet ticket icon: fill verde quando attivo */
+.tabbar-item.active .tabbar-icon-wallet {
+    fill: var(--green-dark);
+    stroke: var(--green-dark);
 }
 
 /* Badge */
@@ -857,7 +913,7 @@ html, body {
     left: 0;
     right: 0;
     max-height: calc(100vh - var(--safe-top) - 44px);
-    background: var(--gray-bg);
+    background: #ffffff;
     border-radius: 16px 16px 0 0;
     display: flex;
     flex-direction: column;
@@ -865,6 +921,27 @@ html, body {
 }
 .screen-modal.closing .detail-panel {
     animation: panelDown 0.3s ease-in forwards;
+}
+
+/* Brightness overlay — fullscreen bianco dietro il modal */
+.brightness-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #ffffff;
+    z-index: -1;
+    pointer-events: none;
+}
+.screen-modal.open .brightness-overlay {
+    display: block;
+}
+
+/* Modalità luminosità massima quando QR è aperto */
+body.qr-brightness-mode {
+    background: #ffffff !important;
+}
+body.qr-brightness-mode .screen.active {
+    filter: brightness(1.15);
 }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -902,6 +979,7 @@ html, body {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     padding-bottom: calc(40px + var(--safe-bottom));
+    background: #ffffff;
 }
 
 .detail-pnr-section {

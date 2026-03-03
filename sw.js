@@ -1,12 +1,16 @@
-const CACHE_NAME = 'trenord-v2';
-const ASSETS = [
+const CACHE_NAME = 'trenord-v5';
+
+const CORE_ASSETS = [
     './',
     './index.html',
     './style.css',
     './app.js',
     './icon.svg',
     './manifest.json',
-    'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js'
+];
+
+const IMAGE_ASSETS = [
     './STIBM Areas/Mi1-Mi3.png',
     './STIBM Areas/Mi1-Mi4.png',
     './STIBM Areas/Mi1-Mi5.png',
@@ -41,12 +45,12 @@ const ASSETS = [
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME)
-            .then(cache => cache.addAll(ASSETS))
+            .then(cache => cache.addAll([...CORE_ASSETS, ...IMAGE_ASSETS]))
             .then(() => self.skipWaiting())
     );
 });
 
-// Activate — clean old caches
+// Activate — clean old caches and take control immediately
 self.addEventListener('activate', event => {
     event.waitUntil(
         caches.keys().then(keys =>
@@ -57,10 +61,30 @@ self.addEventListener('activate', event => {
     );
 });
 
-// Fetch — cache first, then network
+// Fetch — Network-first for core assets (HTML/CSS/JS), cache-first for images
 self.addEventListener('fetch', event => {
-    event.respondWith(
-        caches.match(event.request)
-            .then(cached => cached || fetch(event.request))
-    );
+    const url = new URL(event.request.url);
+    const isCore = event.request.destination === 'document'
+        || url.pathname.endsWith('.html')
+        || url.pathname.endsWith('.css')
+        || url.pathname.endsWith('.js');
+
+    if (isCore) {
+        // Network-first: try fresh version, fallback to cache
+        event.respondWith(
+            fetch(event.request)
+                .then(response => {
+                    const clone = response.clone();
+                    caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+                    return response;
+                })
+                .catch(() => caches.match(event.request))
+        );
+    } else {
+        // Cache-first for images and other static assets
+        event.respondWith(
+            caches.match(event.request)
+                .then(cached => cached || fetch(event.request))
+        );
+    }
 });

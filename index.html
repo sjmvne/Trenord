@@ -8,6 +8,7 @@
     <meta name="apple-mobile-web-app-title" content="Trenord">
     <meta name="theme-color" content="#006B32">
     <meta name="format-detection" content="telephone=no">
+    <meta name="mobile-web-app-capable" content="yes">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon.svg">
     <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -41,6 +42,16 @@
     <div id="config-screen" class="screen" data-tab="acquista">
         <div class="config-header">
             <div class="config-header-title">Acquista</div>
+            <div class="config-tabs">
+                <div class="config-tab-bar">
+                    <button class="config-tab active">Biglietti / Carnet</button>
+                    <button class="config-tab">Abbonamenti</button>
+                    <button class="config-tab config-tab-mxp">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>
+                        MXP
+                    </button>
+                </div>
+            </div>
         </div>
         <div class="config-body">
 
@@ -209,23 +220,23 @@
     <!-- ====== GLOBAL BOTTOM TAB BAR ====== -->
     <div class="bottom-tabbar" id="global-tabbar">
         <div class="tabbar-item active" data-tab="home">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5l9-7 9 7V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5L14 4l10 8.5V23a1.5 1.5 0 0 1-1.5 1.5h-5V18a1.5 1.5 0 0 0-1.5-1.5h-2A1.5 1.5 0 0 0 12.5 18v6.5h-5A1.5 1.5 0 0 1 6 23V12.5z"/></svg>
             <span>Home</span>
         </div>
         <div class="tabbar-item" data-tab="acquista">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 7.5h17l-2 11H9.5L7.5 7.5z"/><path d="M7.5 7.5L6.5 4H3"/><circle cx="11" cy="23" r="1.5"/><circle cx="20.5" cy="23" r="1.5"/></svg>
             <span>Acquista</span>
         </div>
         <div class="tabbar-item" data-tab="wallet">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="15" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+            <svg class="tabbar-icon-wallet" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5A2 2 0 0 1 5 6.5h18a2 2 0 0 1 2 2v3a2.5 2.5 0 0 0 0 5v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3a2.5 2.5 0 0 0 0-5v-3z"/><line x1="9" y1="11" x2="19" y2="11"/><line x1="9" y1="14" x2="19" y2="14"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
             <span>Wallet</span>
         </div>
-        <div class="tabbar-item has-badge" data-badge="5" data-tab="gite">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <div class="tabbar-item" data-tab="gite">
+            <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 23l8-14 5.5 9 3.5-5 5 10H3z"/><circle cx="20.5" cy="8" r="2.5"/></svg>
             <span>Gite in Treno</span>
         </div>
         <div class="tabbar-item" data-tab="profilo">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="9.5" r="4.5"/><path d="M5 24.5c0-5 4-8.5 9-8.5s9 3.5 9 8.5"/></svg>
             <span>Profilo</span>
         </div>
     </div>
@@ -234,6 +245,8 @@
     <div id="detail-screen" class="screen-modal">
         <div class="detail-backdrop"></div>
         <div class="detail-panel">
+            <!-- Brightness overlay per massima luminosità percepita -->
+            <div class="brightness-overlay" id="brightness-overlay"></div>
             <div class="detail-header">
                 <span class="detail-header-title">Dettagli biglietto</span>
                 <button id="btn-detail-close" class="detail-header-btn">Fine</button>

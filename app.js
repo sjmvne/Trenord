@@ -623,9 +623,10 @@ function switchTab(tabName) {
     }
 }
 
-// ── Wake Lock (Max Brightness) ──
+// ── Wake Lock & Brightness ──
 
 async function requestMaxBrightness() {
+    // 1. Wake Lock — impedisce allo schermo di spegnersi
     try {
         if ('wakeLock' in navigator) {
             wakeLockSentinel = await navigator.wakeLock.request('screen');
@@ -633,13 +634,34 @@ async function requestMaxBrightness() {
     } catch (e) {
         console.log('Wake Lock not available:', e);
     }
+
+    // 2. Forza luminosità percepita al massimo (sfondo bianco puro + CSS)
+    document.body.classList.add('qr-brightness-mode');
+
+    // 3. iOS Screen Brightness API (non-standard, solo su alcuni browser)
+    try {
+        if (screen && 'brightness' in screen) {
+            screen.brightness = 1.0;
+        }
+    } catch (e) { /* ignore */ }
 }
 
 function releaseMaxBrightness() {
+    // Rilascia Wake Lock
     if (wakeLockSentinel) {
         wakeLockSentinel.release();
         wakeLockSentinel = null;
     }
+
+    // Rimuovi classe luminosità
+    document.body.classList.remove('qr-brightness-mode');
+
+    // Ripristina brightness
+    try {
+        if (screen && 'brightness' in screen) {
+            screen.brightness = -1; // auto
+        }
+    } catch (e) { /* ignore */ }
 }
 
 // ── Navigation ──
