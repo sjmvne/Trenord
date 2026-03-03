@@ -3,196 +3,533 @@
    ============================================ */
 
 // ── Zone Configuration ──
-const ZONE_CONFIG = {
-    'Mi1 | Mi1': { price: 2.20, duration: 90,  fromZone: 'MI1', toZone: 'MI1' },
-    'Mi1 | Mi3': { price: 2.20, duration: 90,  fromZone: 'MI1', toZone: 'MI3' },
-    'Mi1 | Mi4': { price: 2.60, duration: 105, fromZone: 'MI1', toZone: 'MI4' },
-    'Mi1 | Mi5': { price: 3.00, duration: 120, fromZone: 'MI1', toZone: 'MI5' },
-    'Mi1 | Mi6': { price: 3.40, duration: 135, fromZone: 'MI1', toZone: 'MI6' },
-    'Mi1 | Mi7': { price: 3.80, duration: 150, fromZone: 'MI1', toZone: 'MI7' },
-    'Mi1 | Mi8': { price: 4.20, duration: 165, fromZone: 'MI1', toZone: 'MI8' },
-    'Mi1 | Mi9': { price: 4.60, duration: 180, fromZone: 'MI1', toZone: 'MI9' }
-};
+const ZONES = [
+    { label: 'Mi1', number: 1, color: '#5B8DBE' },
+    { label: 'Mi3', number: 3, color: '#5AAD47' },
+    { label: 'Mi4', number: 4, color: '#8BB43E' },
+    { label: 'Mi5', number: 5, color: '#C8B832' },
+    { label: 'Mi6', number: 6, color: '#E09030' },
+    { label: 'Mi7', number: 7, color: '#C07035' },
+    { label: 'Mi8', number: 8, color: '#A05040' },
+    { label: 'Mi9', number: 9, color: '#CC6088' }
+];
+
+function getTicketInfo(fromIdx, toIdx) {
+    const from = ZONES[fromIdx];
+    const to = ZONES[toIdx];
+    const zoneCount = to.number - from.number + 1;
+    return {
+        label: from.label + ' | ' + to.label,
+        fromZone: from.label.toUpperCase(),
+        toZone: to.label.toUpperCase(),
+        price: Math.round((1.00 + zoneCount * 0.40) * 100) / 100,
+        duration: 45 + zoneCount * 15,
+        zoneCount: zoneCount,
+        imageFile: 'STIBM Areas/' + from.label + '-' + to.label + '.png'
+    };
+}
 
 // ── App State ──
-let currentTicket = null;
+let tickets = [];
+let selectedFromIdx = 0;
+let selectedToIdx = 1;
+let ticketCount = 1;
+let currentDetailTicket = null;
 let qrInstance = null;
 
 // ── DOM References ──
-const configScreen  = document.getElementById('config-screen');
-const walletScreen  = document.getElementById('wallet-screen');
-const detailScreen  = document.getElementById('detail-screen');
-const infoModal     = document.getElementById('info-modal');
-const activationModal = document.getElementById('activation-modal');
+const configScreen = document.getElementById('config-screen');
+const walletScreen = document.getElementById('wallet-screen');
+const detailScreen = document.getElementById('detail-screen');
 
-const startDateInput  = document.getElementById('start-date');
-const endDateInput    = document.getElementById('end-date');
-const viaggioSelect   = document.getElementById('viaggio-select');
-const prezzoInput     = document.getElementById('prezzo-input');
+const startDateInput = document.getElementById('start-date');
+const endDateInput = document.getElementById('end-date');
+
+const sliderFrom = document.getElementById('slider-from');
+const sliderTo = document.getElementById('slider-to');
+const sliderFill = document.getElementById('slider-fill');
+const zoneBadges = document.getElementById('zone-badges');
+const zoneMapImg = document.getElementById('zone-map-img');
+const sliderLabelsEl = document.getElementById('slider-labels');
+
+const ticketCountText = document.getElementById('ticket-count-text');
+const btnCountMinus = document.getElementById('btn-count-minus');
+const btnCountPlus = document.getElementById('btn-count-plus');
+const btnGeneraText = document.getElementById('btn-genera-text');
 
 // ── Initialization ──
 document.addEventListener('DOMContentLoaded', () => {
+    loadTickets();
     initDefaults();
+    initSliderLabels();
+    updateSlider();
     bindEvents();
     registerSW();
 });
 
 function initDefaults() {
-    // Set default start date: now, rounded to nearest minute
     const now = new Date();
     now.setSeconds(0, 0);
     startDateInput.value = toLocalDatetimeString(now);
-
-    // Calculate and set end date
     updateEndDate();
-    updatePrice();
+}
+
+function initSliderLabels() {
+    sliderLabelsEl.innerHTML = '';
+    ZONES.forEach(z => {
+        const span = document.createElement('span');
+        span.textContent = z.label;
+        span.dataset.zone = z.label;
+        sliderLabelsEl.appendChild(span);
+    });
 }
 
 function bindEvents() {
-    // Config form
-    viaggioSelect.addEventListener('change', () => {
-        updatePrice();
-        updateEndDate();
-    });
+    // Slider events
+    sliderFrom.addEventListener('input', onSliderFromChange);
+    sliderTo.addEventListener('input', onSliderToChange);
+
+    // Date change
     startDateInput.addEventListener('change', updateEndDate);
 
-    // Generate ticket
-    document.getElementById('btn-genera').addEventListener('click', generateTicket);
+    // Ticket counter
+    btnCountMinus.addEventListener('click', () => updateTicketCount(-1));
+    btnCountPlus.addEventListener('click', () => updateTicketCount(1));
 
-    // Back to config from wallet
+    // Generate ticket(s)
+    document.getElementById('btn-genera').addEventListener('click', generateTickets);
+
+    // Back to config
     document.getElementById('btn-back-config').addEventListener('click', () => {
         navigateScreen(walletScreen, configScreen, true);
     });
 
-    // Show QR Code detail
-    document.getElementById('btn-mostra-qr').addEventListener('click', openDetail);
-
     // Close detail
     document.getElementById('btn-detail-close').addEventListener('click', closeDetail);
 
-    // Info modal (card ⓘ)
-    document.getElementById('btn-ticket-info').addEventListener('click', () => openModal('info-modal'));
-
-    // Activation modal (header ⓘ)
+    // Activation modal
     document.getElementById('btn-activation-info').addEventListener('click', () => openModal('activation-modal'));
+
+    // Norme link
+    document.getElementById('btn-norme').addEventListener('click', () => openModal('info-modal'));
 
     // Modal backdrop close
     document.querySelectorAll('.modal-overlay').forEach(overlay => {
         overlay.addEventListener('click', (e) => {
-            if (e.target === overlay) {
-                closeModal(overlay.id);
-            }
+            if (e.target === overlay) closeModal(overlay.id);
         });
     });
 
-    // Norme link
-    document.getElementById('btn-norme').addEventListener('click', () => {
-        openModal('info-modal');
-    });
+    // Expired toggle
+    document.getElementById('expired-toggle').addEventListener('click', toggleExpired);
 }
 
-// ── Price & Duration Auto-Update ──
+// ── Zone Slider Logic ──
 
-function updatePrice() {
-    const viaggio = viaggioSelect.value;
-    const config = ZONE_CONFIG[viaggio];
-    if (config) {
-        prezzoInput.value = config.price.toFixed(2);
+function onSliderFromChange() {
+    let fromVal = parseInt(sliderFrom.value);
+    let toVal = parseInt(sliderTo.value);
+    if (fromVal >= toVal) {
+        fromVal = toVal - 1;
+        sliderFrom.value = fromVal;
+    }
+    selectedFromIdx = fromVal;
+    updateSlider();
+    updateEndDate();
+}
+
+function onSliderToChange() {
+    let fromVal = parseInt(sliderFrom.value);
+    let toVal = parseInt(sliderTo.value);
+    if (toVal <= fromVal) {
+        toVal = fromVal + 1;
+        sliderTo.value = toVal;
+    }
+    selectedToIdx = toVal;
+    updateSlider();
+    updateEndDate();
+}
+
+function updateSlider() {
+    selectedFromIdx = parseInt(sliderFrom.value);
+    selectedToIdx = parseInt(sliderTo.value);
+    const max = 7;
+
+    // Update fill bar
+    const fromPct = (selectedFromIdx / max) * 100;
+    const toPct = (selectedToIdx / max) * 100;
+    sliderFill.style.left = fromPct + '%';
+    sliderFill.style.width = (toPct - fromPct) + '%';
+
+    // Update badges
+    updateZoneBadges();
+
+    // Update map image
+    updateMapImage();
+
+    // Update labels
+    updateSliderLabels();
+
+    // Update generate button
+    updateGenerateButton();
+}
+
+function updateZoneBadges() {
+    zoneBadges.innerHTML = '';
+    for (let i = selectedFromIdx; i <= selectedToIdx; i++) {
+        const z = ZONES[i];
+        const badge = document.createElement('span');
+        badge.className = 'zone-badge';
+        badge.textContent = z.label;
+        badge.style.backgroundColor = z.color;
+        zoneBadges.appendChild(badge);
     }
 }
 
+function updateMapImage() {
+    const info = getTicketInfo(selectedFromIdx, selectedToIdx);
+    zoneMapImg.src = info.imageFile;
+    zoneMapImg.alt = 'Mappa zone ' + info.label;
+}
+
+function updateSliderLabels() {
+    const labels = sliderLabelsEl.querySelectorAll('span');
+    labels.forEach((label, i) => {
+        if (i >= selectedFromIdx && i <= selectedToIdx) {
+            label.classList.add('active');
+        } else {
+            label.classList.remove('active');
+        }
+    });
+}
+
+function updateGenerateButton() {
+    const info = getTicketInfo(selectedFromIdx, selectedToIdx);
+    btnGeneraText.textContent = info.label + '  ' + formatPrice(info.price);
+}
+
+// ── Ticket Counter ──
+
+function updateTicketCount(delta) {
+    ticketCount = Math.max(1, Math.min(10, ticketCount + delta));
+    ticketCountText.textContent = ticketCount + (ticketCount === 1 ? ' Biglietto' : ' Biglietti');
+    btnCountMinus.disabled = ticketCount <= 1;
+    btnCountPlus.disabled = ticketCount >= 10;
+}
+
+// ── Date Auto-Update ──
+
 function updateEndDate() {
-    const viaggio = viaggioSelect.value;
-    const config = ZONE_CONFIG[viaggio];
+    const info = getTicketInfo(selectedFromIdx, selectedToIdx);
     const startVal = startDateInput.value;
-    if (config && startVal) {
+    if (startVal) {
         const startDate = new Date(startVal);
-        const endDate = new Date(startDate.getTime() + config.duration * 60000);
+        const endDate = new Date(startDate.getTime() + info.duration * 60000);
         endDateInput.value = toLocalDatetimeString(endDate);
     }
 }
 
 // ── Ticket Generation ──
 
-function generateTicket() {
-    const viaggio = viaggioSelect.value;
-    const config = ZONE_CONFIG[viaggio];
+function generateTickets() {
+    const info = getTicketInfo(selectedFromIdx, selectedToIdx);
     const startVal = startDateInput.value;
     const endVal = endDateInput.value;
-    const prezzo = parseFloat(prezzoInput.value);
 
     if (!startVal || !endVal) {
         showAlert('Errore', 'Inserisci le date di validità.');
         return;
     }
-    if (isNaN(prezzo) || prezzo <= 0) {
-        showAlert('Errore', 'Inserisci un prezzo valido.');
-        return;
-    }
 
     const startDate = new Date(startVal);
     const endDate = new Date(endVal);
-    const purchaseDate = new Date(startDate.getTime() - 10 * 60000); // k6 = start - 10 min
+    const purchaseDate = new Date(startDate.getTime() - 10 * 60000);
 
-    const pnr = generatePNR();
-    const uuid = generateUUID(false); // lowercase for k10
-    const fromZone = config.fromZone;
-    const toZone = config.toZone;
+    for (let i = 0; i < ticketCount; i++) {
+        tickets.push({
+            id: generateUUID(false),
+            pnr: generatePNR(),
+            uuid: generateUUID(false),
+            viaggio: info.label,
+            prezzo: info.price,
+            startDate: startDate.toISOString(),
+            endDate: endDate.toISOString(),
+            purchaseDate: purchaseDate.toISOString(),
+            fromZone: info.fromZone,
+            toZone: info.toZone,
+            classe: 'Unica',
+            status: 'active'
+        });
+    }
 
-    currentTicket = {
-        pnr,
-        uuid,
-        viaggio,
-        prezzo,
-        startDate,
-        endDate,
-        purchaseDate,
-        fromZone,
-        toZone,
-        classe: 'Unica'
-    };
-
-    populateWallet();
+    saveTickets();
+    renderWalletTickets();
     navigateScreen(configScreen, walletScreen);
 }
 
-function populateWallet() {
-    const t = currentTicket;
-    document.getElementById('wallet-pnr').textContent = t.pnr;
-    document.getElementById('wallet-classe').textContent = t.classe;
-    document.getElementById('wallet-viaggio').textContent = t.viaggio;
-    document.getElementById('wallet-validita-start').textContent = formatDateShort(t.startDate);
-    document.getElementById('wallet-validita-end').textContent = formatDateShort(t.endDate);
+// ── localStorage Persistence ──
+
+function saveTickets() {
+    localStorage.setItem('trenord_tickets', JSON.stringify(tickets));
+}
+
+function loadTickets() {
+    try {
+        const data = localStorage.getItem('trenord_tickets');
+        if (data) {
+            tickets = JSON.parse(data);
+        }
+    } catch (e) {
+        tickets = [];
+    }
+}
+
+function checkExpiredTickets() {
+    const now = new Date();
+    let changed = false;
+    tickets.forEach(t => {
+        if (t.status === 'active' && new Date(t.endDate) < now) {
+            t.status = 'expired';
+            changed = true;
+        }
+    });
+    if (changed) saveTickets();
+}
+
+// ── Wallet Rendering ──
+
+function renderWalletTickets() {
+    checkExpiredTickets();
+
+    const activeTickets = tickets.filter(t => t.status === 'active');
+    const expiredTickets = tickets.filter(t => t.status === 'expired');
+
+    const ticketList = document.getElementById('ticket-list');
+    const expiredList = document.getElementById('expired-list');
+    const expiredSection = document.getElementById('expired-section');
+
+    // Render active tickets
+    ticketList.innerHTML = '';
+    if (activeTickets.length === 0) {
+        ticketList.innerHTML = '<div class="empty-state"><p>Nessun biglietto attivo</p></div>';
+    } else {
+        activeTickets.forEach(t => {
+            ticketList.appendChild(createTicketCard(t, false));
+        });
+    }
+
+    // Render expired tickets
+    if (expiredTickets.length > 0) {
+        expiredSection.style.display = 'block';
+        expiredList.innerHTML = '';
+        expiredTickets.forEach(t => {
+            expiredList.appendChild(createTicketCard(t, true));
+        });
+    } else {
+        expiredSection.style.display = 'none';
+    }
+}
+
+function createTicketCard(ticket, isExpired) {
+    const container = document.createElement('div');
+    container.className = 'swipe-container';
+    container.dataset.ticketId = ticket.id;
+
+    const startDate = new Date(ticket.startDate);
+    const endDate = new Date(ticket.endDate);
+
+    container.innerHTML = `
+        <div class="swipe-action">
+            <button class="swipe-delete-btn">Elimina</button>
+        </div>
+        <div class="ticket-card swipe-content ${isExpired ? 'ticket-expired' : ''}">
+            <div class="ticket-card-header">
+                <span class="ticket-type-label">Ordinario</span>
+                <button class="info-icon-gray btn-ticket-info" aria-label="Info">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></svg>
+                </button>
+            </div>
+            <div class="ticket-field">
+                <span class="ticket-label">VALIDITÀ</span>
+                <div class="ticket-validita">
+                    <span>${formatDateShort(startDate)}</span>
+                    <span class="validita-sep">|</span>
+                    <span>${formatDateShort(endDate)}</span>
+                </div>
+            </div>
+            <div class="ticket-row-2col">
+                <div class="ticket-field">
+                    <span class="ticket-label">PNR</span>
+                    <span class="ticket-value">${ticket.pnr}</span>
+                </div>
+                <div class="ticket-field">
+                    <span class="ticket-label">CLASSE</span>
+                    <span class="ticket-value">${ticket.classe}</span>
+                </div>
+            </div>
+            <div class="ticket-field">
+                <span class="ticket-label">VIAGGIO</span>
+                <span class="ticket-value ticket-value-bold">${ticket.viaggio}</span>
+            </div>
+            <div class="stibm-badge">STIBM</div>
+            <button class="btn-green-full btn-qr btn-mostra-qr">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Mostra QR Code
+            </button>
+        </div>
+    `;
+
+    // Init swipe-to-delete
+    initSwipe(container, ticket.id);
+
+    // QR button
+    const qrBtn = container.querySelector('.btn-mostra-qr');
+    qrBtn.addEventListener('click', (e) => {
+        const content = container.querySelector('.swipe-content');
+        const tx = content.style.transform;
+        if (tx && tx !== 'translateX(0px)' && tx !== 'translateX(0)') return;
+        openDetail(ticket.id);
+    });
+
+    // Info button
+    container.querySelector('.btn-ticket-info').addEventListener('click', () => {
+        openModal('info-modal');
+    });
+
+    return container;
+}
+
+// ── Swipe-to-Delete (iOS style) ──
+
+function initSwipe(container, ticketId) {
+    const content = container.querySelector('.swipe-content');
+    const deleteBtn = container.querySelector('.swipe-delete-btn');
+
+    let startX = 0, startY = 0, currentX = 0;
+    let isDragging = false, isOpen = false, isHorizontal = null;
+    const THRESHOLD = 80;
+
+    content.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        isDragging = true;
+        isHorizontal = null;
+        content.style.transition = 'none';
+    }, { passive: true });
+
+    content.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+
+        const dx = e.touches[0].clientX - startX;
+        const dy = e.touches[0].clientY - startY;
+
+        // Determine direction on first significant move
+        if (isHorizontal === null && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
+            isHorizontal = Math.abs(dx) > Math.abs(dy);
+        }
+
+        if (!isHorizontal) return;
+
+        e.preventDefault();
+
+        const offset = isOpen ? dx - THRESHOLD : dx;
+        currentX = Math.min(0, Math.max(-THRESHOLD, offset));
+        content.style.transform = 'translateX(' + currentX + 'px)';
+    }, { passive: false });
+
+    content.addEventListener('touchend', () => {
+        if (!isDragging) return;
+        isDragging = false;
+        content.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+
+        if (currentX < -(THRESHOLD / 2)) {
+            content.style.transform = 'translateX(-' + THRESHOLD + 'px)';
+            isOpen = true;
+        } else {
+            content.style.transform = 'translateX(0)';
+            isOpen = false;
+        }
+        currentX = 0;
+        isHorizontal = null;
+    }, { passive: true });
+
+    // Delete button
+    deleteBtn.addEventListener('click', () => {
+        const h = container.offsetHeight;
+        container.style.transition = 'height 0.3s ease, opacity 0.3s ease, margin-bottom 0.3s ease';
+        container.style.height = h + 'px';
+        container.style.overflow = 'hidden';
+        requestAnimationFrame(() => {
+            container.style.height = '0px';
+            container.style.opacity = '0';
+            container.style.marginBottom = '0';
+        });
+        setTimeout(() => {
+            deleteTicket(ticketId);
+        }, 320);
+    });
+
+    // Tap to close swipe
+    content.addEventListener('click', (e) => {
+        if (isOpen) {
+            e.preventDefault();
+            e.stopPropagation();
+            content.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            content.style.transform = 'translateX(0)';
+            isOpen = false;
+        }
+    });
+}
+
+function deleteTicket(ticketId) {
+    tickets = tickets.filter(t => t.id !== ticketId);
+    saveTickets();
+    renderWalletTickets();
+}
+
+// ── Expired Toggle ──
+
+function toggleExpired() {
+    const list = document.getElementById('expired-list');
+    const chevron = document.querySelector('.expired-chevron');
+    const isCollapsed = list.classList.contains('collapsed');
+
+    if (isCollapsed) {
+        list.classList.remove('collapsed');
+        chevron.classList.add('open');
+    } else {
+        list.classList.add('collapsed');
+        chevron.classList.remove('open');
+    }
 }
 
 // ── Detail Screen ──
 
-function openDetail() {
-    if (!currentTicket) return;
-    const t = currentTicket;
+function openDetail(ticketId) {
+    const ticket = tickets.find(t => t.id === ticketId);
+    if (!ticket) return;
 
-    document.getElementById('detail-pnr').textContent = t.pnr;
+    currentDetailTicket = ticket;
+    const startDate = new Date(ticket.startDate);
+    const endDate = new Date(ticket.endDate);
 
-    // Zone text: "Mi1-Mi4" format
-    const zoneFrom = t.viaggio.split(' | ')[0];
-    const zoneTo = t.viaggio.split(' | ')[1];
+    document.getElementById('detail-pnr').textContent = ticket.pnr;
+
+    const zoneFrom = ticket.viaggio.split(' | ')[0];
+    const zoneTo = ticket.viaggio.split(' | ')[1];
     document.getElementById('detail-zone').textContent = zoneFrom + '-' + zoneTo;
 
-    // Info fields
     document.getElementById('detail-validita').textContent =
-        formatDateLong(t.startDate) + ' - ' + formatDateLong(t.endDate);
-    document.getElementById('detail-prezzo').textContent =
-        formatPrice(t.prezzo);
-    document.getElementById('detail-classe').textContent = t.classe;
-    document.getElementById('detail-viaggio').textContent = t.viaggio;
+        formatDateShort(startDate) + ' - ' + formatDateShort(endDate);
+    document.getElementById('detail-prezzo').textContent = formatPrice(ticket.prezzo);
+    document.getElementById('detail-classe').textContent = ticket.classe;
+    document.getElementById('detail-viaggio').textContent = ticket.viaggio;
 
-    // Show detail panel first (so QR canvas renders properly)
     detailScreen.classList.remove('closing');
     detailScreen.classList.add('open');
 
-    // Generate QR Code after modal is visible
     requestAnimationFrame(() => {
-        generateQRCode();
+        generateQRCode(ticket);
     });
 }
 
@@ -200,20 +537,20 @@ function closeDetail() {
     detailScreen.classList.add('closing');
     setTimeout(() => {
         detailScreen.classList.remove('open', 'closing');
-        // Clean up QR
         const container = document.getElementById('qrcode-container');
         container.innerHTML = '';
         qrInstance = null;
+        currentDetailTicket = null;
     }, 350);
 }
 
 // ── QR Code Generation ──
 
-function generateQRCode() {
+function generateQRCode(ticket) {
     const container = document.getElementById('qrcode-container');
     container.innerHTML = '';
 
-    const qrContent = buildQRContent(currentTicket);
+    const qrContent = buildQRContent(ticket);
 
     qrInstance = new QRCode(container, {
         text: qrContent,
@@ -226,82 +563,35 @@ function generateQRCode() {
 }
 
 function buildQRContent(ticket) {
-    // Build JSON payload matching Trenord format
+    const startDate = new Date(ticket.startDate);
+    const endDate = new Date(ticket.endDate);
+    const purchaseDate = new Date(ticket.purchaseDate);
+
     const payload = {
         k0: 'TICKET',
         k1: ticket.pnr,
         k2: '8500',
         k3: 'UNIQUE',
-        k4: ticket.startDate.toISOString(),
-        k5: ticket.endDate.toISOString(),
-        k6: ticket.purchaseDate.toISOString(),
+        k4: startDate.toISOString(),
+        k5: endDate.toISOString(),
+        k6: purchaseDate.toISOString(),
         k7: { c: ticket.fromZone + 'a' },
         k8: { c: ticket.toZone },
         k10: ticket.uuid
     };
 
-    // Base64 encode the JSON
     const jsonStr = JSON.stringify(payload);
     const base64 = btoa(unescape(encodeURIComponent(jsonStr)));
-
-    // Generate checksum: 8 groups of 4 digits, 7 uppercase letters between them
     const checksum = generateChecksum();
-
-    // Generate separate UUID (uppercase) for the QR suffix
     const qrUUID = generateUUID(true);
 
     return base64 + ':' + checksum + ':' + qrUUID;
-}
-
-// ── Generators ──
-
-function generatePNR() {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    let result = '';
-    for (let i = 0; i < 9; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return result;
-}
-
-function generateUUID(uppercase) {
-    const hex = uppercase ? '0123456789ABCDEF' : '0123456789abcdef';
-    const template = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
-    let uuid = '';
-    for (let i = 0; i < template.length; i++) {
-        const c = template[i];
-        if (c === 'x') {
-            uuid += hex[Math.floor(Math.random() * 16)];
-        } else if (c === 'y') {
-            uuid += hex[(Math.floor(Math.random() * 4) + 8)]; // 8,9,a,b variants
-        } else {
-            uuid += c;
-        }
-    }
-    return uuid;
-}
-
-function generateChecksum() {
-    // Format: NNNNLNNNNLNNNNLNNNNLNNNNLNNNNLNNNNLNNNN
-    // 8 groups of 4 digits, 7 uppercase letters between them
-    const letters = 'ABCDEFG';
-    let result = '';
-    for (let i = 0; i < 8; i++) {
-        // 4 random digits (1000-9999)
-        result += String(Math.floor(1000 + Math.random() * 9000));
-        // Add letter between groups (not after the last)
-        if (i < 7) {
-            result += letters.charAt(Math.floor(Math.random() * letters.length));
-        }
-    }
-    return result;
 }
 
 // ── Navigation ──
 
 function navigateScreen(fromScreen, toScreen, isBack) {
     if (isBack) {
-        // Going back: fromScreen slides DOWN, toScreen revealed behind
         toScreen.style.display = 'flex';
         toScreen.style.zIndex = '1';
         fromScreen.style.zIndex = '2';
@@ -316,7 +606,6 @@ function navigateScreen(fromScreen, toScreen, isBack) {
             toScreen.style.zIndex = '';
         }, 360);
     } else {
-        // Going forward: toScreen slides UP over fromScreen
         toScreen.style.display = 'flex';
         toScreen.style.zIndex = '2';
         toScreen.classList.add('slide-in');
@@ -348,39 +637,70 @@ function closeModal(id) {
 }
 
 function showAlert(title, message) {
-    // Simple fallback alert
     alert(title + '\n' + message);
+}
+
+// ── Generators ──
+
+function generatePNR() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let result = '';
+    for (let i = 0; i < 9; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+}
+
+function generateUUID(uppercase) {
+    const hex = uppercase ? '0123456789ABCDEF' : '0123456789abcdef';
+    const template = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
+    let uuid = '';
+    for (let i = 0; i < template.length; i++) {
+        const c = template[i];
+        if (c === 'x') {
+            uuid += hex[Math.floor(Math.random() * 16)];
+        } else if (c === 'y') {
+            uuid += hex[(Math.floor(Math.random() * 4) + 8)];
+        } else {
+            uuid += c;
+        }
+    }
+    return uuid;
+}
+
+function generateChecksum() {
+    const letters = 'ABCDEFG';
+    let result = '';
+    for (let i = 0; i < 8; i++) {
+        result += String(Math.floor(1000 + Math.random() * 9000));
+        if (i < 7) {
+            result += letters.charAt(Math.floor(Math.random() * letters.length));
+        }
+    }
+    return result;
 }
 
 // ── Date Formatting ──
 
 function toLocalDatetimeString(date) {
-    // Format: YYYY-MM-DDTHH:MM (for datetime-local input)
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
+    return year + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
 }
 
 function formatDateShort(date) {
-    // Format: DD/MM/YY, HH:MM
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = String(date.getFullYear()).slice(-2);
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${day}/${month}/${year}, ${hours}:${minutes}`;
-}
-
-function formatDateLong(date) {
-    // Same as short for Trenord: DD/MM/YY, HH:MM
-    return formatDateShort(date);
+    return day + '/' + month + '/' + year + ', ' + hours + ':' + minutes;
 }
 
 function formatPrice(price) {
-    // Format: X,XX €
     return price.toFixed(2).replace('.', ',') + ' €';
 }
 

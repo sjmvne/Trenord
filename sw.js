@@ -1,4 +1,4 @@
-const CACHE_NAME = 'trenord-v1';
+const CACHE_NAME = 'trenord-v2';
 const ASSETS = [
     './',
     './index.html',
@@ -6,7 +6,35 @@ const ASSETS = [
     './app.js',
     './icon.svg',
     './manifest.json',
-    'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js'
+    'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js',
+    './STIBM Areas/Mi1-Mi3.png',
+    './STIBM Areas/Mi1-Mi4.png',
+    './STIBM Areas/Mi1-Mi5.png',
+    './STIBM Areas/Mi1-Mi6.png',
+    './STIBM Areas/Mi1-Mi7.png',
+    './STIBM Areas/Mi1-Mi8.png',
+    './STIBM Areas/Mi1-Mi9.png',
+    './STIBM Areas/Mi3-Mi4.png',
+    './STIBM Areas/Mi3-Mi5.png',
+    './STIBM Areas/Mi3-Mi6.png',
+    './STIBM Areas/Mi3-Mi7.png',
+    './STIBM Areas/Mi3-Mi8.png',
+    './STIBM Areas/Mi3-Mi9.png',
+    './STIBM Areas/Mi4-Mi5.png',
+    './STIBM Areas/Mi4-Mi6.png',
+    './STIBM Areas/Mi4-Mi7.png',
+    './STIBM Areas/Mi4-Mi8.png',
+    './STIBM Areas/Mi4-Mi9.png',
+    './STIBM Areas/Mi5-Mi6.png',
+    './STIBM Areas/Mi5-Mi7.png',
+    './STIBM Areas/Mi5-Mi8.png',
+    './STIBM Areas/Mi5-Mi9.png',
+    './STIBM Areas/Mi6-Mi7.png',
+    './STIBM Areas/Mi6-Mi8.png',
+    './STIBM Areas/Mi6-Mi9.png',
+    './STIBM Areas/Mi7-Mi8.png',
+    './STIBM Areas/Mi7-Mi9.png',
+    './STIBM Areas/Mi8-Mi9.png'
 ];
 
 // Install — cache all assets

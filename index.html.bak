@@ -22,8 +22,6 @@
             <div class="config-header-title">Configura Biglietto</div>
         </div>
         <div class="config-body">
-
-            <!-- VALIDITÀ -->
             <div class="form-section-label">VALIDITÀ</div>
             <div class="form-card">
                 <div class="form-row">
@@ -37,75 +35,37 @@
                 </div>
             </div>
 
-            <!-- ZONE STIBM -->
-            <div class="form-section-label">ZONE STIBM</div>
-            <div class="zone-card">
-                <div class="zone-badges-title">LA SOLUZIONE COMPRENDE QUESTE ZONE:</div>
-                <div class="zone-badges" id="zone-badges">
-                    <!-- filled by JS -->
-                </div>
-                <div class="zone-map-wrap">
-                    <img id="zone-map-img" src="STIBM Areas/Mi1-Mi3.png" alt="Mappa zone STIBM">
-                </div>
-            </div>
-
-            <!-- Modifica zone -->
-            <div class="zone-slider-section">
-                <div class="zone-slider-header">Modifica zone</div>
-                <div class="zone-slider-min-label">LA SOLUZIONE MINIMA COMPRENDE 2 ZONE</div>
-                <div class="zone-slider-wrap">
-                    <div class="zone-slider-track-bg"></div>
-                    <div class="zone-slider-track-fill" id="slider-fill"></div>
-                    <input type="range" id="slider-from" min="0" max="7" value="0" step="1">
-                    <input type="range" id="slider-to" min="0" max="7" value="1" step="1">
-                </div>
-                <div class="zone-slider-labels" id="slider-labels">
-                    <!-- filled by JS -->
-                </div>
-            </div>
-
-            <!-- TIPOLOGIA -->
-            <div class="form-section-label">TIPOLOGIA DI PRODOTTO</div>
+            <div class="form-section-label">DETTAGLI VIAGGIO</div>
             <div class="form-card">
                 <div class="form-row">
-                    <div class="form-row-icon-wrap">
-                        <svg class="form-row-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="20" height="15" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-                        <span>STIBM - Ordinario</span>
-                    </div>
+                    <label for="viaggio-select">Viaggio</label>
+                    <select id="viaggio-select">
+                        <option value="Mi1 | Mi1">Mi1 | Mi1</option>
+                        <option value="Mi1 | Mi3" selected>Mi1 | Mi3</option>
+                        <option value="Mi1 | Mi4">Mi1 | Mi4</option>
+                        <option value="Mi1 | Mi5">Mi1 | Mi5</option>
+                        <option value="Mi1 | Mi6">Mi1 | Mi6</option>
+                        <option value="Mi1 | Mi7">Mi1 | Mi7</option>
+                        <option value="Mi1 | Mi8">Mi1 | Mi8</option>
+                        <option value="Mi1 | Mi9">Mi1 | Mi9</option>
+                    </select>
                 </div>
-            </div>
-
-            <!-- BIGLIETTI -->
-            <div class="form-section-label">BIGLIETTI</div>
-            <div class="form-card">
+                <div class="form-divider"></div>
                 <div class="form-row">
-                    <div class="form-row-icon-wrap">
-                        <svg class="form-row-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                        <span id="ticket-count-text">1 Biglietto</span>
-                    </div>
-                    <div class="counter-btns">
-                        <button class="counter-btn" id="btn-count-minus" disabled aria-label="Riduci">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-                        </button>
-                        <button class="counter-btn" id="btn-count-plus" aria-label="Aumenta">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-                        </button>
+                    <label for="prezzo-input">Prezzo</label>
+                    <div class="price-input-wrap">
+                        <input type="number" id="prezzo-input" step="0.01" min="0" value="2.20">
+                        <span class="price-currency">€</span>
                     </div>
                 </div>
-            </div>
-
-            <!-- Classe -->
-            <div class="form-card" style="margin-top: 12px;">
+                <div class="form-divider"></div>
                 <div class="form-row">
                     <label>Classe</label>
                     <span class="form-value-fixed">Unica</span>
                 </div>
             </div>
 
-            <!-- Generate Button -->
-            <button id="btn-genera" class="btn-green-full btn-genera-zone">
-                <span id="btn-genera-text">Mi1 | Mi3 2,20 €</span>
-            </button>
+            <button id="btn-genera" class="btn-green-full">Genera Biglietto</button>
         </div>
     </div>
 
@@ -121,7 +81,7 @@
                     <button id="btn-activation-info" class="header-icon-btn" aria-label="Info">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></svg>
                     </button>
-                    <button class="header-icon-btn" aria-label="Aggiorna" onclick="renderWalletTickets()">
+                    <button class="header-icon-btn" aria-label="Aggiorna">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
                     </button>
                 </div>
@@ -135,17 +95,42 @@
             </div>
         </div>
 
-        <div class="wallet-body" id="wallet-body">
-            <!-- Active tickets -->
-            <div id="ticket-list"></div>
-
-            <!-- Expired section -->
-            <div id="expired-section" class="expired-section" style="display: none;">
-                <div class="expired-header" id="expired-toggle">
-                    <span>Biglietti scaduti</span>
-                    <svg class="expired-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        <div class="wallet-body">
+            <!-- Ticket Card -->
+            <div class="ticket-card">
+                <div class="ticket-card-header">
+                    <span class="ticket-type-label">Ordinario</span>
+                    <button id="btn-ticket-info" class="info-icon-gray" aria-label="Informazioni biglietto">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></svg>
+                    </button>
                 </div>
-                <div id="expired-list" class="expired-list collapsed"></div>
+                <div class="ticket-field">
+                    <span class="ticket-label">VALIDITÀ</span>
+                    <div class="ticket-validita">
+                        <span id="wallet-validita-start"></span>
+                        <span class="validita-sep">|</span>
+                        <span id="wallet-validita-end"></span>
+                    </div>
+                </div>
+                <div class="ticket-row-2col">
+                    <div class="ticket-field">
+                        <span class="ticket-label">PNR</span>
+                        <span class="ticket-value" id="wallet-pnr"></span>
+                    </div>
+                    <div class="ticket-field">
+                        <span class="ticket-label">CLASSE</span>
+                        <span class="ticket-value" id="wallet-classe">Unica</span>
+                    </div>
+                </div>
+                <div class="ticket-field">
+                    <span class="ticket-label">VIAGGIO</span>
+                    <span class="ticket-value ticket-value-bold" id="wallet-viaggio"></span>
+                </div>
+                <div class="stibm-badge">STIBM</div>
+                <button id="btn-mostra-qr" class="btn-green-full btn-qr">
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    Mostra QR Code
+                </button>
             </div>
 
             <!-- Ricaricami Card -->
@@ -205,7 +190,7 @@
                     <span class="detail-zone-text" id="detail-zone"></span>
                 </div>
 
-                <!-- Animated Checkmark -->
+                <!-- Animated Loader/Checkmark -->
                 <div class="animated-check-container">
                     <svg class="animated-check" viewBox="0 0 52 52">
                         <circle class="check-bg" cx="26" cy="26" r="20"/>

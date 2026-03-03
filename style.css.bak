@@ -58,6 +58,7 @@ html, body {
     display: flex;
 }
 
+/* Transition: slide from bottom */
 .screen.slide-in {
     display: flex;
     animation: slideUp 0.4s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
@@ -85,7 +86,6 @@ html, body {
     padding: var(--safe-top) 16px 16px;
     padding-top: calc(var(--safe-top) + 52px);
     text-align: center;
-    flex-shrink: 0;
 }
 .config-header-title {
     color: #fff;
@@ -113,7 +113,6 @@ html, body {
     background: #fff;
     border-radius: var(--card-radius);
     overflow: hidden;
-    box-shadow: var(--card-shadow);
 }
 
 .form-row {
@@ -141,21 +140,40 @@ html, body {
     appearance: none;
     max-width: 60%;
 }
+.form-row select {
+    padding-right: 4px;
+    color: var(--text-primary);
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23C7C7CC' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right center;
+    padding-right: 18px;
+}
 
-.form-row-icon-wrap {
+.price-input-wrap {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 4px;
+}
+.price-input-wrap input {
+    font-family: var(--font);
     font-size: 16px;
     color: var(--text-primary);
+    background: transparent;
+    border: none;
+    outline: none;
+    text-align: right;
+    width: 80px;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+    appearance: textfield;
 }
-.form-row-icon {
-    width: 22px;
-    height: 22px;
+.price-input-wrap input::-webkit-inner-spin-button,
+.price-input-wrap input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.price-currency {
+    font-size: 16px;
     color: var(--gray-label);
-    flex-shrink: 0;
 }
-
 .form-value-fixed {
     font-size: 16px;
     color: var(--gray-label);
@@ -166,227 +184,6 @@ html, body {
     background: var(--gray-sep);
     margin-left: 16px;
 }
-
-/* ============================================
-   ZONE CARD & MAP
-   ============================================ */
-
-.zone-card {
-    background: #fff;
-    border-radius: var(--card-radius);
-    padding: 16px 18px 0;
-    box-shadow: var(--card-shadow);
-    overflow: hidden;
-}
-
-.zone-badges-title {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--gray-label);
-    text-align: center;
-    letter-spacing: 0.3px;
-    margin-bottom: 8px;
-}
-
-.zone-badges {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    justify-content: center;
-    padding-bottom: 12px;
-}
-
-.zone-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px 12px;
-    border-radius: 5px;
-    color: #fff;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.3px;
-}
-
-.zone-map-wrap {
-    margin: 0 -18px;
-    background: #f8f8f8;
-    border-top: 0.5px solid var(--gray-sep);
-}
-.zone-map-wrap img {
-    width: 100%;
-    display: block;
-}
-
-/* ============================================
-   ZONE SLIDER (Dual Thumb)
-   ============================================ */
-
-.zone-slider-section {
-    padding: 20px 0 8px;
-}
-
-.zone-slider-header {
-    font-size: 20px;
-    font-weight: 400;
-    color: var(--text-primary);
-    margin-bottom: 12px;
-}
-
-.zone-slider-min-label {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--green-dark);
-    letter-spacing: 0.3px;
-    margin-bottom: 20px;
-}
-
-.zone-slider-wrap {
-    position: relative;
-    height: 40px;
-    margin: 0 8px;
-}
-
-.zone-slider-track-bg {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: #D1D1D6;
-    border-radius: 2px;
-    z-index: 1;
-}
-
-.zone-slider-track-fill {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    height: 4px;
-    background: var(--green-dark);
-    border-radius: 2px;
-    z-index: 2;
-    transition: left 0.1s, width 0.1s;
-}
-
-.zone-slider-wrap input[type="range"] {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    -webkit-appearance: none;
-    appearance: none;
-    background: transparent;
-    pointer-events: none;
-    z-index: 3;
-    margin: 0;
-    padding: 0;
-    outline: none;
-}
-
-.zone-slider-wrap input[type="range"]::-webkit-slider-runnable-track {
-    width: 100%;
-    height: 40px;
-    background: transparent;
-    cursor: pointer;
-}
-
-.zone-slider-wrap input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    margin-top: 6px;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: var(--green-dark);
-    border: 3px solid #fff;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
-    cursor: pointer;
-    pointer-events: all;
-    position: relative;
-    z-index: 4;
-}
-
-/* Firefox */
-.zone-slider-wrap input[type="range"]::-moz-range-track {
-    height: 4px;
-    background: transparent;
-    border: none;
-}
-.zone-slider-wrap input[type="range"]::-moz-range-thumb {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: var(--green-dark);
-    border: 3px solid #fff;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-    cursor: pointer;
-    pointer-events: all;
-}
-
-.zone-slider-labels {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 2px 0;
-    margin: 0 8px;
-}
-.zone-slider-labels span {
-    font-size: 12px;
-    font-weight: 600;
-    color: #AEAEB2;
-    text-align: center;
-    min-width: 24px;
-    transition: color 0.15s, font-weight 0.15s;
-}
-.zone-slider-labels span.active {
-    color: var(--text-primary);
-    font-weight: 700;
-}
-
-/* ============================================
-   TICKET COUNTER
-   ============================================ */
-
-.counter-btns {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-}
-
-.counter-btn {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    border: none;
-    background: none;
-    color: var(--green-dark);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    padding: 0;
-    transition: opacity 0.15s;
-}
-.counter-btn svg {
-    width: 30px;
-    height: 30px;
-}
-.counter-btn:active {
-    opacity: 0.5;
-}
-.counter-btn:disabled {
-    color: var(--gray-sep);
-    cursor: default;
-}
-.counter-btn:disabled:active {
-    opacity: 1;
-}
-
-/* ============================================
-   GENERATE BUTTON
-   ============================================ */
 
 .btn-green-full {
     display: flex;
@@ -410,12 +207,6 @@ html, body {
 }
 .btn-green-full:active {
     opacity: 0.7;
-}
-
-.btn-genera-zone {
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: 0.3px;
 }
 
 /* ============================================
@@ -515,58 +306,13 @@ html, body {
     padding-bottom: calc(80px + var(--safe-bottom) + 16px);
 }
 
-/* ============================================
-   SWIPE TO DELETE
-   ============================================ */
-
-.swipe-container {
-    position: relative;
-    overflow: hidden;
-    border-radius: var(--card-radius);
-    margin-bottom: 16px;
-    box-shadow: var(--card-shadow);
-}
-
-.swipe-action {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #FF3B30;
-    z-index: 1;
-}
-
-.swipe-delete-btn {
-    background: none;
-    border: none;
-    color: #fff;
-    font-family: var(--font);
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-}
-
-.swipe-content {
-    position: relative;
-    z-index: 2;
-    will-change: transform;
-}
-
-/* ============================================
-   TICKET CARD
-   ============================================ */
-
+/* Ticket Card */
 .ticket-card {
     background: #fff;
     border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
     padding: 18px;
+    margin-bottom: 16px;
 }
 .ticket-card-header {
     display: flex;
@@ -660,68 +406,7 @@ html, body {
     flex-shrink: 0;
 }
 
-/* Expired ticket */
-.ticket-card.ticket-expired {
-    opacity: 0.5;
-}
-.ticket-card.ticket-expired .ticket-type-label {
-    color: var(--gray-label);
-}
-.ticket-card.ticket-expired .stibm-badge {
-    background: var(--gray-label);
-}
-.ticket-card.ticket-expired .btn-green-full {
-    background: var(--gray-label);
-}
-
-/* ============================================
-   EXPIRED SECTION
-   ============================================ */
-
-.expired-section {
-    margin-top: 8px;
-    margin-bottom: 16px;
-}
-
-.expired-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 4px;
-    cursor: pointer;
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--gray-label);
-    -webkit-user-select: none;
-    user-select: none;
-}
-
-.expired-chevron {
-    width: 18px;
-    height: 18px;
-    transition: transform 0.3s;
-    color: var(--gray-label);
-}
-.expired-chevron.open {
-    transform: rotate(180deg);
-}
-
-.expired-list.collapsed {
-    display: none;
-}
-
-/* Empty state */
-.empty-state {
-    text-align: center;
-    padding: 40px 20px;
-    color: var(--gray-label);
-    font-size: 15px;
-}
-
-/* ============================================
-   RICARICAMI CARD
-   ============================================ */
-
+/* Ricaricami Card */
 .ricaricami-card {
     background: #fff;
     border-radius: var(--card-radius);
@@ -817,14 +502,15 @@ html, body {
     font-weight: 700;
     min-width: 16px;
     height: 16px;
-    line-height: 16px;
-    text-align: center;
     border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 0 4px;
 }
 
 /* ============================================
-   DETAIL SCREEN (Full-screen Modal)
+   DETAIL SCREEN (Modal)
    ============================================ */
 
 .screen-modal {
@@ -841,61 +527,71 @@ html, body {
 .detail-backdrop {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.4);
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
+    background: rgba(0,0,0,0.55);
     opacity: 0;
-    animation: fadeIn 0.3s forwards;
+    transition: opacity 0.35s;
 }
-.screen-modal.closing .detail-backdrop {
-    animation: fadeOut 0.25s forwards;
+.screen-modal.open .detail-backdrop {
+    opacity: 1;
 }
 
 .detail-panel {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    max-height: 92vh;
-    background: var(--gray-bg);
-    border-radius: 16px 16px 0 0;
+    top: 0; left: 0; right: 0; bottom: 0;
     display: flex;
     flex-direction: column;
-    animation: panelUp 0.35s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+.screen-modal.open .detail-panel {
+    transform: translateY(0);
 }
 .screen-modal.closing .detail-panel {
-    animation: panelDown 0.3s ease-in forwards;
+    transform: translateY(100%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.6, 1);
+}
+.screen-modal.closing .detail-backdrop {
+    opacity: 0;
 }
 
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
-@keyframes panelUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-@keyframes panelDown { from { transform: translateY(0); } to { transform: translateY(100%); } }
-
 .detail-header {
+    background: linear-gradient(180deg, #005a28 0%, var(--green-dark) 30%, var(--green-header) 100%);
+    padding-top: calc(var(--safe-top) + 12px);
+    padding-bottom: 14px;
+    padding-left: 20px;
+    padding-right: 20px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 16px 20px;
-    border-bottom: 0.5px solid var(--gray-sep);
+    justify-content: center;
+    position: relative;
+    border-radius: 14px 14px 0 0;
     flex-shrink: 0;
 }
 .detail-header-title {
+    color: #fff;
     font-size: 17px;
     font-weight: 600;
+    letter-spacing: -0.2px;
 }
 .detail-header-btn {
+    position: absolute;
+    right: 20px;
+    color: #fff;
     font-family: var(--font);
     font-size: 17px;
-    font-weight: 600;
-    color: #007AFF;
+    font-weight: 400;
     background: none;
     border: none;
     cursor: pointer;
+    padding: 4px 8px;
+}
+.detail-header-btn:active {
+    opacity: 0.6;
 }
 
 .detail-body {
     flex: 1;
+    background: #fff;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     padding-bottom: calc(40px + var(--safe-bottom));
@@ -903,23 +599,26 @@ html, body {
 
 .detail-pnr-section {
     text-align: center;
-    padding: 24px 24px 16px;
+    padding: 20px 0 12px;
 }
 .detail-pnr-label {
     display: block;
-    font-size: 13px;
+    font-size: 12px;
+    font-weight: 600;
     color: var(--gray-label);
-    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     margin-bottom: 4px;
 }
 .detail-pnr-value {
     display: block;
-    font-size: 28px;
+    font-size: 22px;
     font-weight: 700;
-    letter-spacing: 2px;
     color: var(--text-primary);
+    letter-spacing: 2px;
 }
 
+/* QR Code */
 .qrcode-wrap {
     display: flex;
     justify-content: center;
@@ -927,67 +626,82 @@ html, body {
 }
 .qrcode-wrap canvas,
 .qrcode-wrap img {
-    border-radius: 8px;
+    border-radius: 4px;
 }
 
+/* Ticket type text */
 .detail-ticket-type {
     text-align: center;
-    padding: 0 24px 8px;
+    margin-bottom: 8px;
 }
 .detail-type-text {
     display: block;
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 600;
-    color: var(--text-secondary);
+    color: var(--green-text);
+    margin-bottom: 2px;
 }
 .detail-zone-text {
     display: block;
-    font-size: 13px;
-    color: var(--gray-label);
-    margin-top: 2px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--green-text);
 }
 
 /* Animated Checkmark */
 .animated-check-container {
     display: flex;
     justify-content: center;
-    padding: 16px 0;
+    padding: 10px 0 20px;
 }
 .animated-check {
-    width: 52px;
-    height: 52px;
+    width: 36px;
+    height: 36px;
 }
 .check-bg {
-    fill: var(--green-dark);
-    opacity: 0.1;
+    fill: #4CAF50;
+    transform-origin: center;
+    animation: fillBg 1.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
 }
 .check-circle {
-    stroke: var(--green-dark);
-    stroke-width: 2;
-    stroke-dasharray: 126;
-    stroke-dashoffset: 126;
-    animation: drawCircle 1.2s ease-out infinite;
+    stroke: #4CAF50;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-dasharray: 125.66;
+    stroke-dashoffset: 125.66;
+    animation: drawCircle 1.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
 }
 .check-mark {
-    stroke: var(--green-dark);
-    stroke-width: 3;
+    stroke: #fff;
+    stroke-width: 4;
     stroke-linecap: round;
     stroke-linejoin: round;
     stroke-dasharray: 40;
     stroke-dashoffset: 40;
-    animation: drawCheck 1.2s ease-out infinite;
+    animation: drawCheck 1.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
 }
 
 @keyframes drawCircle {
-    0% { stroke-dashoffset: 126; }
-    40% { stroke-dashoffset: 0; }
-    100% { stroke-dashoffset: 0; }
+    0% { stroke-dashoffset: 125.66; opacity: 1; }
+    28% { stroke-dashoffset: 0; opacity: 1; }
+    33% { opacity: 0; }
+    100% { opacity: 0; stroke-dashoffset: 125.66; }
 }
+
+@keyframes fillBg {
+    0%, 28% { transform: scale(0); opacity: 0; }
+    38% { transform: scale(1); opacity: 1; }
+    78% { transform: scale(1); opacity: 1; }
+    92% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(0); opacity: 0; }
+}
+
 @keyframes drawCheck {
-    0% { stroke-dashoffset: 40; }
-    40% { stroke-dashoffset: 40; }
-    70% { stroke-dashoffset: 0; }
-    100% { stroke-dashoffset: 0; }
+    0%, 32% { stroke-dashoffset: 40; }
+    52% { stroke-dashoffset: 0; }
+    78% { stroke-dashoffset: 0; }
+    92% { stroke-dashoffset: 40; }
+    100% { stroke-dashoffset: 40; }
 }
 
 /* Detail Info Section */
@@ -1154,7 +868,7 @@ html, body {
    UTILITY / RESPONSIVE
    ============================================ */
 
-/* Desktop container */
+/* Desktop container (max-width for larger screens) */
 @media (min-width: 768px) {
     .screen, .screen-modal {
         max-width: 428px;
