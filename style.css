@@ -1762,6 +1762,8 @@ body.qr-brightness-mode .screen.active {
 
 .home-step-number {
     background: linear-gradient(135deg, #2C7F44 0%, #62A76C 100%);
+    color: #fff;
+    width: 32px;
     height: 32px;
     border-radius: 50%;
     display: flex;
@@ -1810,6 +1812,9 @@ body.qr-brightness-mode .screen.active {
 
 .home-step-text strong {
     color: #2C7F44;
+    font-weight: 600;
+}
+
 .home-welcome-text strong {
     color: var(--green-dark);
     font-weight: 600;
@@ -1837,6 +1842,7 @@ body.qr-brightness-mode .screen.active {
     width: 56px;
     height: 56px;
     background: linear-gradient(135deg, #2C7F44 0%, #62A76C 100%);
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
