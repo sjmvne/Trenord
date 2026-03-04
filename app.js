@@ -223,17 +223,32 @@ function bindEvents() {
 
     // Tabbar navigation
     document.querySelectorAll('#global-tabbar .tabbar-item').forEach(item => {
-        item.addEventListener('click', () => switchTab(item.dataset.tab));
+        item.addEventListener('click', () => {
+            switchTab(item.dataset.tab);
+            if (item.dataset.tab === 'gite') {
+                fetchChangelog();
+            }
+        });
     });
 
     // Close detail
     document.getElementById('btn-detail-close').addEventListener('click', closeDetail);
 
     // Activation modal
-    document.getElementById('btn-activation-info').addEventListener('click', () => openModal('activation-modal'));
+    document.getElementById('btn-wallet-info').addEventListener('click', () => openModal('info-modal'));
 
     // Norme link
     document.getElementById('btn-norme').addEventListener('click', () => openModal('info-modal'));
+
+    // Check updates button
+    const btnCheckUpdates = document.getElementById('btn-check-updates');
+    if (btnCheckUpdates) {
+        btnCheckUpdates.addEventListener('click', () => {
+            btnCheckUpdates.classList.add('rotating');
+            checkForUpdates();
+            setTimeout(() => btnCheckUpdates.classList.remove('rotating'), 1000);
+        });
+    }
 
     // Modal backdrop close
     document.querySelectorAll('.modal-overlay').forEach(overlay => {
@@ -502,7 +517,13 @@ function createTicketCard(ticket, isExpired) {
 
     container.innerHTML = `
         <div class="swipe-action">
-            <button class="swipe-delete-btn">Elimina</button>
+            <button class="swipe-delete-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
+                    <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    <line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/>
+                </svg>
+                <span>Elimina</span>
+            </button>
         </div>
         <div class="ticket-card swipe-content ${isExpired ? 'ticket-expired' : ''}">
             <div class="ticket-card-header">
@@ -564,7 +585,7 @@ function createTicketCard(ticket, isExpired) {
     return container;
 }
 
-// ── Swipe-to-Delete (iOS style) ──
+// ── Swipe-to-Delete (iOS style — improved) ──
 
 function initSwipe(container, ticketId) {
     const content = container.querySelector('.swipe-content');
@@ -572,7 +593,7 @@ function initSwipe(container, ticketId) {
 
     let startX = 0, startY = 0, currentX = 0;
     let isDragging = false, isOpen = false, isHorizontal = null;
-    const THRESHOLD = 80;
+    const THRESHOLD = 90;
 
     content.addEventListener('touchstart', (e) => {
         startX = e.touches[0].clientX;
@@ -588,13 +609,11 @@ function initSwipe(container, ticketId) {
         const dx = e.touches[0].clientX - startX;
         const dy = e.touches[0].clientY - startY;
 
-        // Determine direction on first significant move
-        if (isHorizontal === null && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
+        if (isHorizontal === null && (Math.abs(dx) > 10 || Math.abs(dy) > 10)) {
             isHorizontal = Math.abs(dx) > Math.abs(dy);
         }
 
         if (!isHorizontal) return;
-
         e.preventDefault();
 
         const offset = isOpen ? dx - THRESHOLD : dx;
@@ -603,11 +622,11 @@ function initSwipe(container, ticketId) {
     }, { passive: false });
 
     content.addEventListener('touchend', () => {
-        if (!isDragging) return;
+        if (!isDragging || isHorizontal === null) return;
         isDragging = false;
-        content.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        content.style.transition = 'transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
 
-        if (currentX < -(THRESHOLD / 2)) {
+        if (currentX < -(THRESHOLD * 0.4)) {
             content.style.transform = 'translateX(-' + THRESHOLD + 'px)';
             isOpen = true;
         } else {
@@ -615,13 +634,13 @@ function initSwipe(container, ticketId) {
             isOpen = false;
         }
         currentX = 0;
-        isHorizontal = null;
     }, { passive: true });
 
     // Delete button
-    deleteBtn.addEventListener('click', () => {
+    deleteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
         const h = container.offsetHeight;
-        container.style.transition = 'height 0.3s ease, opacity 0.3s ease, margin-bottom 0.3s ease';
+        container.style.transition = 'height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, margin-bottom 0.4s ease';
         container.style.height = h + 'px';
         container.style.overflow = 'hidden';
         requestAnimationFrame(() => {
@@ -631,7 +650,7 @@ function initSwipe(container, ticketId) {
         });
         setTimeout(() => {
             deleteTicket(ticketId);
-        }, 320);
+        }, 420);
     });
 
     // Tap to close swipe
@@ -639,7 +658,7 @@ function initSwipe(container, ticketId) {
         if (isOpen) {
             e.preventDefault();
             e.stopPropagation();
-            content.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            content.style.transition = 'transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
             content.style.transform = 'translateX(0)';
             isOpen = false;
         }
@@ -1477,6 +1496,7 @@ function forceReload() {
 
 const GITHUB_REPO = 'sjmvne/Trenord';
 let _latestCommitSHA = null;
+let _changelogLoaded = false;
 
 function checkForUpdates() {
     fetch('https://api.github.com/repos/' + GITHUB_REPO + '/commits?per_page=1', {
@@ -1523,4 +1543,105 @@ function applyUpdate() {
     }
     closeModal('update-modal');
     forceReload();
+}
+
+// ── Changelog Fetcher ──
+
+function fetchChangelog() {
+    if (_changelogLoaded) return;
+    
+    const list = document.getElementById('changelog-list');
+    
+    fetch('https://api.github.com/repos/' + GITHUB_REPO + '/commits?per_page=30', {
+        cache: 'default'
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(commits) {
+        _changelogLoaded = true;
+        
+        if (!Array.isArray(commits) || commits.length === 0) {
+            list.innerHTML = '<div class="changelog-empty">Nessun commit disponibile</div>';
+            return;
+        }
+        
+        var html = '';
+        var lastDate = null;
+        
+        commits.forEach(function(commit) {
+            var msg = commit.commit.message || 'No message';
+            var sha = commit.sha.substring(0, 7);
+            var author = (commit.commit.author && commit.commit.author.name) || 'Unknown';
+            var dateStr = '';
+            var dateGroup = '';
+            
+            if (commit.commit.author && commit.commit.author.date) {
+                var d = new Date(commit.commit.author.date);
+                dateStr = d.toLocaleString('it-IT', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                dateGroup = d.toLocaleDateString('it-IT', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+            }
+            
+            // Group by date
+            if (dateGroup && dateGroup !== lastDate) {
+                html += '<div class="changelog-date-divider">' + dateGroup + '</div>';
+                lastDate = dateGroup;
+            }
+            
+            // Extract emoji if present
+            var emoji = '';
+            var msgClean = msg;
+            var emojiMatch = msg.match(/^([\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}])/u);
+            if (emojiMatch) {
+                emoji = emojiMatch[1];
+                msgClean = msg.substring(emoji.length).trim();
+            }
+            
+            // Parse multi-line commit (first line = title, rest = description)
+            var lines = msgClean.split('\n');
+            var title = lines[0];
+            var description = lines.slice(1).join('\n').trim();
+            
+            html += '<div class="changelog-item">';
+            html += '  <div class="changelog-item-header">';
+            if (emoji) {
+                html += '    <span class="changelog-emoji">' + emoji + '</span>';
+            }
+            html += '    <div class="changelog-item-title-wrap">';
+            html += '      <span class="changelog-item-title">' + escapeHtml(title) + '</span>';
+            html += '      <div class="changelog-item-meta">';
+            html += '        <span class="changelog-sha">' + sha + '</span>';
+            html += '        <span class="changelog-dot">•</span>';
+            html += '        <span class="changelog-author">' + escapeHtml(author) + '</span>';
+            html += '        <span class="changelog-dot">•</span>';
+            html += '        <span class="changelog-date">' + dateStr + '</span>';
+            html += '      </div>';
+            html += '    </div>';
+            html += '  </div>';
+            if (description) {
+                html += '  <div class="changelog-item-description">' + escapeHtml(description).replace(/\n/g, '<br>') + '</div>';
+            }
+            html += '</div>';
+        });
+        
+        list.innerHTML = html;
+    })
+    .catch(function(err) {
+        console.log('Changelog fetch failed:', err);
+        list.innerHTML = '<div class="changelog-error">⚠️ Errore nel caricamento del changelog</div>';
+    });
+}
+
+function escapeHtml(text) {
+    var div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }

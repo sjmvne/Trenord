@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Trenord">
-    <meta name="theme-color" content="#006B32">
+    <meta name="theme-color" content="#2C7F44">
     <meta name="format-detection" content="telephone=no">
     <meta name="mobile-web-app-capable" content="yes">
     <link rel="manifest" href="manifest.json">
@@ -23,17 +23,48 @@
             <div class="config-header-title">Trenord</div>
         </div>
         <div class="home-body">
-            <div class="home-welcome-card">
-                <div class="home-welcome-icon">
-                    <svg viewBox="0 0 48 48" fill="none" stroke="#006B32" stroke-width="2">
-                        <rect x="8" y="6" width="32" height="36" rx="4"/>
-                        <line x1="16" y1="14" x2="32" y2="14"/>
-                        <line x1="16" y1="22" x2="28" y2="22"/>
-                        <line x1="16" y1="30" x2="24" y2="30"/>
-                    </svg>
+            <div class="home-guide-header">
+                <h2 class="home-guide-title">Guida Rapida</h2>
+                <p class="home-guide-subtitle">Come utilizzare l'app in 3 semplici passaggi</p>
+            </div>
+            <div class="home-guide-steps">
+                <div class="home-step-card">
+                    <div class="home-step-number">1</div>
+                    <div class="home-step-content">
+                        <div class="home-step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#62A76C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="9" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/>
+                                <path d="M3 3h2l.4 2M7 13h10l3-8H5.4M7 13L5.4 5M7 13l-1.5 5h12"/>
+                            </svg>
+                        </div>
+                        <h3 class="home-step-title">Acquista</h3>
+                        <p class="home-step-text">Vai sulla sezione <strong>Acquista</strong> e seleziona le zone STIBM o inserisci i comuni di partenza e arrivo.</p>
+                    </div>
                 </div>
-                <h3 class="home-welcome-title">Benvenuto</h3>
-                <p class="home-welcome-text">Acquista e gestisci i tuoi biglietti STIBM direttamente dall'app.<br>Vai su <strong>Acquista</strong> per creare un nuovo biglietto oppure controlla il tuo <strong>Wallet</strong>.</p>
+                <div class="home-step-card">
+                    <div class="home-step-number">2</div>
+                    <div class="home-step-content">
+                        <div class="home-step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#62A76C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                        </div>
+                        <h3 class="home-step-title">Genera QR</h3>
+                        <p class="home-step-text">Seleziona data, ora e numero passeggeri. Premi <strong>Genera</strong> e guarda l'animazione del QR Code.</p>
+                    </div>
+                </div>
+                <div class="home-step-card">
+                    <div class="home-step-number">3</div>
+                    <div class="home-step-content">
+                        <div class="home-step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#62A76C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/><circle cx="17" cy="14" r="1.5"/>
+                            </svg>
+                        </div>
+                        <h3 class="home-step-title">Gestisci Wallet</h3>
+                        <p class="home-step-text">I tuoi biglietti sono nel <strong>Wallet</strong>. Mostra il QR Code o elimina quelli non più necessari.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -234,7 +265,7 @@
             <div class="wallet-header-top">
                 <span class="wallet-title">Wallet</span>
                 <div class="wallet-header-right">
-                    <button id="btn-activation-info" class="header-icon-btn" aria-label="Info">
+                    <button id="btn-wallet-info" class="header-icon-btn" aria-label="Info">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></svg>
                     </button>
                     <button class="header-icon-btn" aria-label="Aggiorna" onclick="forceReload()">
@@ -272,13 +303,26 @@
     <!-- ====== SCREEN: GITE IN TRENO ====== -->
     <div id="gite-screen" class="screen" data-tab="gite">
         <div class="config-header">
-            <div class="config-header-title">Gite in Treno</div>
+            <div class="config-header-title">Changelog</div>
         </div>
-        <div class="placeholder-body">
-            <div class="placeholder-icon">
-                <svg viewBox="0 0 48 48" fill="none" stroke="#8E8E93" stroke-width="1.5"><polygon points="24 4 30.18 16.54 44 18.54 34 28.28 36.36 42 24 35.54 11.64 42 14 28.28 4 18.54 17.82 16.54 24 4"/></svg>
+        <div class="changelog-body">
+            <div class="changelog-header">
+                <div class="changelog-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#62A76C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="16 12 12 8 8 12"/>
+                        <line x1="12" y1="16" x2="12" y2="8"/>
+                    </svg>
+                </div>
+                <h2 class="changelog-title">Aggiornamenti</h2>
+                <p class="changelog-subtitle">Cronologia delle modifiche dall'inizio del progetto</p>
             </div>
-            <p class="placeholder-text">Sezione in arrivo</p>
+            <div class="changelog-list" id="changelog-list">
+                <div class="changelog-loading">
+                    <div class="spinner"></div>
+                    <p>Caricamento changelog...</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -415,8 +459,15 @@ toZona   = comuneArrivo.zona;   // "Mi7"
 
             <div class="tech-section tech-footer">
                 <div class="tech-version">
-                    <span class="version-label">Build v35</span>
-                    <span class="version-date">Mar 2026</span>
+                    <div class="tech-version-info">
+                        <span class="version-label">Build v35</span>
+                        <span class="version-date">Mar 2026</span>
+                    </div>
+                    <button class="btn-check-updates" id="btn-check-updates" aria-label="Controlla aggiornamenti">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                        </svg>
+                    </button>
                 </div>
                 <p class="disclaimer-text">⚠️ Questo è un progetto didattico. I biglietti generati non sono validi per viaggi reali su Trenord.</p>
             </div>
@@ -538,11 +589,37 @@ toZona   = comuneArrivo.zona;   // "Mi7"
 
     <!-- ====== MODAL: Informazioni Biglietto ====== -->
     <div id="info-modal" class="modal-overlay">
-        <div class="modal-card">
+        <div class="modal-card modal-card-wide">
             <div class="modal-title">Informazioni</div>
-            <div class="modal-body">
-                <p>BIGLIETTO INTEGRATO STIBM<br>
-                Vale per corse illimitate, sui treni e su tutti i mezzi di trasporto pubblico del bacino Milano e Monza Brianza, nel corso del periodo di validità che dipende dal numero di zone acquistate. Non ha una data di utilizzo prestabilita, ma deve essere attivato in modalità Tap&Go all'inizio del primo viaggio.</p>
+            <div class="modal-body modal-body-info">
+                <div class="info-block">
+                    <div class="info-block-emoji">🎟️</div>
+                    <div class="info-block-text">
+                        <strong>Biglietto Integrato STIBM</strong>
+                        <p>Corse illimitate su treni, metro e bus del bacino Milano e Monza Brianza. La durata dipende dalle zone acquistate.</p>
+                    </div>
+                </div>
+                <div class="info-block">
+                    <div class="info-block-emoji">🔄</div>
+                    <div class="info-block-text">
+                        <strong>Aggiornamenti</strong>
+                        <p>L'app controlla nuove versioni all'avvio. Puoi anche premere l'icona refresh nel Profilo.</p>
+                    </div>
+                </div>
+                <div class="info-block">
+                    <div class="info-block-emoji">📋</div>
+                    <div class="info-block-text">
+                        <strong>Changelog</strong>
+                        <p>Vai su Changelog per vedere la cronologia di tutti gli aggiornamenti.</p>
+                    </div>
+                </div>
+                <div class="info-block">
+                    <div class="info-block-emoji">🗑️</div>
+                    <div class="info-block-text">
+                        <strong>Eliminare un biglietto</strong>
+                        <p>Scorri un biglietto verso sinistra per rivelare il pulsante Elimina.</p>
+                    </div>
+                </div>
             </div>
             <div class="modal-actions">
                 <button class="modal-btn" onclick="closeModal('info-modal')">Ok</button>
