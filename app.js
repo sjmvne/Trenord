@@ -1475,3 +1475,22 @@ function registerSW() {
             .catch(err => console.log('SW registration failed:', err));
     }
 }
+
+// ── Force Reload (svuota cache SW e ricarica) ──
+
+function forceReload() {
+    if ('caches' in window) {
+        caches.keys().then(function(names) {
+            return Promise.all(names.map(function(name) { return caches.delete(name); }));
+        }).then(function() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistration().then(function(reg) {
+                    if (reg) reg.update();
+                });
+            }
+            window.location.reload(true);
+        });
+    } else {
+        window.location.reload(true);
+    }
+}

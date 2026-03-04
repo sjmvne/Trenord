@@ -1247,16 +1247,16 @@ body.qr-brightness-mode .screen.active {
 .detail-pnr-label {
     display: block;
     font-size: 12px;
-    color: #3C3C43;
+    color: #555556;
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
     letter-spacing: 0.2px;
 }
 .detail-pnr-value {
     display: block;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: bold;
-    color: #525257;
+    color: #555556;
 }
 
 .qrcode-wrap {
@@ -1267,8 +1267,8 @@ body.qr-brightness-mode .screen.active {
 .qrcode-wrap canvas,
 .qrcode-wrap img {
     border-radius: 0;
-    width: 60% !important;
-    height: 60% !important;
+    width: 50% !important;
+    height: 50% !important;
 }
 
 .detail-ticket-type {
@@ -1278,13 +1278,13 @@ body.qr-brightness-mode .screen.active {
 .detail-type-text {
     display: block;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 500;
     color: #62A76C;
 }
 .detail-zone-text {
     display: block;
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 500;
     color: #62A76C;
     margin-left: 0;
     margin-top: 5px;
@@ -1309,21 +1309,21 @@ body.qr-brightness-mode .screen.active {
     stroke-dashoffset: 126;
     fill: none;
     transform-origin: center;
-    animation: circleN1 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    animation: circleN1 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 /* N2 - Cerchio pieno chiaro che riempie */
 .check-bg {
     fill: #62A76C;
     opacity: 0;
     transform-origin: center;
-    animation: circleN2 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    animation: circleN2 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 /* N3 - Cerchio chiaro overlay */
 .check-overlay {
     fill: #B8DEC0;
     opacity: 0;
     transform-origin: center;
-    animation: circleN3 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    animation: circleN3 1.5s ease-in-out infinite;
 }
 /* Tick - Checkmark bianco */
 .check-mark {
@@ -1334,7 +1334,7 @@ body.qr-brightness-mode .screen.active {
     stroke-dasharray: 40;
     stroke-dashoffset: 40;
     opacity: 0;
-    animation: checkTick 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    animation: checkTick 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 /* N1 - Anello che si disegna, si stringe, si espande, torna normale */
@@ -1457,19 +1457,19 @@ body.qr-brightness-mode .screen.active {
         transform: scale(0);
     }
     50% { 
-        opacity: 1; 
+        opacity: 0.9; 
         transform: scale(0.2);
     }
-    70% { 
-        opacity: 1; 
+    65% { 
+        opacity: 0.7; 
         transform: scale(0.6);
     }
-    85% { 
-        opacity: 1; 
-        transform: scale(1);
+    78% { 
+        opacity: 0.4; 
+        transform: scale(0.85);
     }
-    95% { 
-        opacity: 0; 
+    90% { 
+        opacity: 0.1; 
         transform: scale(1);
     }
     100% { 
@@ -1487,15 +1487,15 @@ body.qr-brightness-mode .screen.active {
 }
 .detail-info-label {
     display: block;
-    font-size: 15px;
+    font-size: 14px;
     color: #b3b3b4;
     font-weight: 400;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
     font-family: system-ui;
 }
 .detail-info-value {
     display: block;
-    font-size: 16px;
+    font-size: 14px;
     color: #59596e;
     font-family: system-ui;
     font-weight: 500;
