@@ -124,10 +124,20 @@ function getTicketInfo(fromIdx, toIdx) {
         fromZone: from.label.toUpperCase(),
         toZone: to.label.toUpperCase(),
         price: price,
-        duration: 45 + zoneCount * 15,
+        duration: getTicketDuration(zoneCount),
         zoneCount: zoneCount,
         imageFile: 'STIBM Areas/' + from.label + '-' + to.label + '.png'
     };
+}
+
+// ── Durata biglietto STIBM (minuti) ──
+// Mi1-Mi3 (≤3 zone): 90 min
+// 4-5 zone: +15 min per zona aggiuntiva oltre la 3ª
+// 6+ zone: +30 min per zona aggiuntiva oltre la 5ª
+function getTicketDuration(zoneCount) {
+    if (zoneCount <= 3) return 90;
+    if (zoneCount <= 5) return 90 + (zoneCount - 3) * 15;
+    return 120 + (zoneCount - 5) * 30;
 }
 
 // ── Tab-Screen Map ──
@@ -176,6 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateSlider();
     bindEvents();
     registerSW();
+    checkForUpdates();
 });
 
 function initDefaults() {
@@ -230,9 +241,6 @@ function bindEvents() {
             if (e.target === overlay) closeModal(overlay.id);
         });
     });
-
-    // Expired toggle
-    document.getElementById('expired-toggle').addEventListener('click', toggleExpired);
 
     // Config tabs - Coming Soon
     document.querySelectorAll('.config-tab').forEach((tab, idx) => {
@@ -472,13 +480,8 @@ function renderWalletTickets() {
     checkExpiredTickets();
 
     const activeTickets = tickets.filter(t => t.status === 'active');
-    const expiredTickets = tickets.filter(t => t.status === 'expired');
-
     const ticketList = document.getElementById('ticket-list');
-    const expiredList = document.getElementById('expired-list');
-    const expiredSection = document.getElementById('expired-section');
 
-    // Render active tickets
     ticketList.innerHTML = '';
     if (activeTickets.length === 0) {
         ticketList.innerHTML = '<div class="empty-state"><p>Nessun biglietto attivo</p></div>';
@@ -486,17 +489,6 @@ function renderWalletTickets() {
         activeTickets.forEach(t => {
             ticketList.appendChild(createTicketCard(t, false));
         });
-    }
-
-    // Render expired tickets
-    if (expiredTickets.length > 0) {
-        expiredSection.style.display = 'block';
-        expiredList.innerHTML = '';
-        expiredTickets.forEach(t => {
-            expiredList.appendChild(createTicketCard(t, true));
-        });
-    } else {
-        expiredSection.style.display = 'none';
     }
 }
 
@@ -661,20 +653,6 @@ function deleteTicket(ticketId) {
 }
 
 // ── Expired Toggle ──
-
-function toggleExpired() {
-    const list = document.getElementById('expired-list');
-    const chevron = document.querySelector('.expired-chevron');
-    const isCollapsed = list.classList.contains('collapsed');
-
-    if (isCollapsed) {
-        list.classList.remove('collapsed');
-        chevron.classList.add('open');
-    } else {
-        list.classList.add('collapsed');
-        chevron.classList.remove('open');
-    }
-}
 
 // ── Detail Screen ──
 
@@ -1493,4 +1471,56 @@ function forceReload() {
     } else {
         window.location.reload(true);
     }
+}
+
+// ── GitHub Version Check ──
+
+const GITHUB_REPO = 'sjmvne/Trenord';
+let _latestCommitSHA = null;
+
+function checkForUpdates() {
+    fetch('https://api.github.com/repos/' + GITHUB_REPO + '/commits?per_page=1', {
+        cache: 'no-store'
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        if (!Array.isArray(data) || data.length === 0) return;
+        var latest = data[0];
+        var sha = latest.sha;
+        var savedSHA = localStorage.getItem('trenord_last_commit');
+
+        if (!savedSHA) {
+            // Prima installazione: salva e non mostrare popup
+            localStorage.setItem('trenord_last_commit', sha);
+            return;
+        }
+
+        if (sha !== savedSHA) {
+            _latestCommitSHA = sha;
+            var msg = latest.commit.message || 'Aggiornamento disponibile';
+            var dateStr = '';
+            if (latest.commit.author && latest.commit.author.date) {
+                var d = new Date(latest.commit.author.date);
+                dateStr = d.toLocaleDateString('it-IT', {
+                    day: 'numeric', month: 'long', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit'
+                });
+            }
+            document.getElementById('update-commit-msg').textContent = msg;
+            document.getElementById('update-commit-date').textContent = dateStr;
+            var modal = document.getElementById('update-modal');
+            modal.classList.add('open');
+        }
+    })
+    .catch(function(err) {
+        console.log('Version check failed:', err);
+    });
+}
+
+function applyUpdate() {
+    if (_latestCommitSHA) {
+        localStorage.setItem('trenord_last_commit', _latestCommitSHA);
+    }
+    closeModal('update-modal');
+    forceReload();
 }

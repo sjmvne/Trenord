@@ -226,7 +226,7 @@ html, body {
     box-shadow: none;
     border-bottom: 1px solid #E5E5EA;
     margin-bottom: 0;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .accordion-section:first-child {
@@ -240,17 +240,11 @@ html, body {
     justify-content: space-between;
     gap: 12px;
     width: 100%;
-    padding: 16px 18px;
+    padding: 14px 18px;
     background: #fff;
     border: none;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
-}
-
-.accordion-header-icon {
-    width: 44px;
-    height: 44px;
-    flex-shrink: 0;
 }
 
 .accordion-title {
@@ -262,14 +256,36 @@ html, body {
 }
 
 .accordion-chevron {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     flex-shrink: 0;
 }
 
 .accordion-section.open .accordion-chevron {
     transform: rotate(180deg);
+}
+
+.accordion-intro {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 8px 18px 18px;
+    background: #fff;
+}
+
+.accordion-intro-icon {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+}
+
+.accordion-intro-text {
+    font-size: 14px;
+    line-height: 1.45;
+    color: #8E8E93;
+    margin: 0;
+    flex: 1;
 }
 
 .accordion-body {
@@ -280,17 +296,6 @@ html, body {
 
 .accordion-section.open .accordion-body {
     max-height: 2800px;
-}
-
-.accordion-intro {
-    padding: 0 18px 16px;
-}
-
-.accordion-intro-text {
-    font-size: 14px;
-    line-height: 1.4;
-    color: #3C3C43;
-    margin-top: 20px;
 }
 
 /* ── Search Fields (Da - A) ── */
@@ -1297,8 +1302,8 @@ body.qr-brightness-mode .screen.active {
     padding: 8px 0 5px;
 }
 .animated-check {
-    width: 36px;
-    height: 36px;
+    width: 7%;
+    height: 7%;
     transform-origin: center;
 }
 /* N1 - Cerchio anello verde scuro */

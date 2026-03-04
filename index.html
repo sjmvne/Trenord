@@ -58,7 +58,11 @@
             <!-- ══ ACCORDION: Da - A ══ -->
             <div class="accordion-section" id="accordion-daa">
                 <button class="accordion-header" id="accordion-daa-btn">
-                    <svg class="accordion-header-icon" viewBox="0 0 56 56" fill="none">
+                    <span class="accordion-title">Da - A</span>
+                    <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="#C7C7CC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="accordion-intro">
+                    <svg class="accordion-intro-icon" viewBox="0 0 56 56" fill="none">
                         <rect rx="14" width="56" height="56" fill="#E8F5E9"/>
                         <path d="M18 38 C18 38 28 20 28 16 C28 20 38 38 38 38" stroke="#A5D6A7" stroke-width="1.5" fill="none" stroke-dasharray="3 3"/>
                         <path d="M20 14 C20 10, 26 8, 26 14 C26 18, 20 20, 20 14Z" fill="#62A76C"/>
@@ -71,13 +75,9 @@
                         <circle cx="40" cy="43" r="1.5" fill="#E37603"/>
                         <line x1="18" y1="43" x2="38" y2="43" stroke="#81C784" stroke-width="1" stroke-dasharray="2 2"/>
                     </svg>
-                    <span class="accordion-title">Da - A</span>
-                    <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="#62A76C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-                </button>
+                    <p class="accordion-intro-text">Inizia la ricerca di soluzioni da una stazione di partenza ad una stazione di arrivo.</p>
+                </div>
                 <div class="accordion-body" id="accordion-daa-body">
-                    <div class="accordion-intro">
-                        <p class="accordion-intro-text">Inizia la ricerca di soluzioni da una stazione di partenza ad una stazione di arrivo.</p>
-                    </div>
                     <div class="search-fields">
                         <div class="search-field-wrap">
                             <label class="search-label">PARTENZA</label>
@@ -176,7 +176,11 @@
             <!-- ══ ACCORDION: Zone STIBM ══ -->
             <div class="accordion-section" id="accordion-zone">
                 <button class="accordion-header" id="accordion-zone-btn">
-                    <svg class="accordion-header-icon" viewBox="0 0 56 56" fill="none">
+                    <span class="accordion-title">Zone STIBM</span>
+                    <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="#C7C7CC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="accordion-intro">
+                    <svg class="accordion-intro-icon" viewBox="0 0 56 56" fill="none">
                         <rect rx="14" width="56" height="56" fill="#FFF8E1"/>
                         <circle cx="26" cy="28" r="22" fill="#A61D27" opacity="0.15"/>
                         <circle cx="26" cy="28" r="18" fill="#E37603" opacity="0.2"/>
@@ -188,13 +192,9 @@
                         <line x1="26" y1="8" x2="26" y2="3" stroke="#62A76C" stroke-width="2" stroke-linecap="round"/>
                         <rect x="26" y="2" rx="1" width="8" height="5" fill="#62A76C"/>
                     </svg>
-                    <span class="accordion-title">Zone STIBM</span>
-                    <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="#62A76C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-                </button>
+                    <p class="accordion-intro-text">Acquista un biglietto a zone STIBM selezionando sulla mappa la soluzione più adatta a te.</p>
+                </div>
                 <div class="accordion-body" id="accordion-zone-body">
-                    <div class="accordion-intro">
-                        <p class="accordion-intro-text">Acquista un biglietto a zone STIBM selezionando sulla mappa la soluzione più adatta a te.</p>
-                    </div>
 
                     <!-- ZONE STIBM Content -->
                     <div class="form-section-label" style="margin-top:4px;">ZONE STIBM</div>
@@ -255,15 +255,6 @@
             <!-- Active tickets -->
             <div id="ticket-list"></div>
 
-            <!-- Expired section -->
-            <div id="expired-section" class="expired-section" style="display: none;">
-                <div class="expired-header" id="expired-toggle">
-                    <span>Biglietti scaduti</span>
-                    <svg class="expired-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-                </div>
-                <div id="expired-list" class="expired-list collapsed"></div>
-            </div>
-
             <!-- Ricaricami Card -->
             <div class="ricaricami-card">
                 <div class="ricaricami-header">
@@ -323,7 +314,7 @@
                     </div>
                     <div class="formula-item">
                         <span class="formula-label">Durata:</span>
-                        <code>45 + (numZone × 15) minuti</code>
+                        <code>≤3 zone: 90 min · 4-5: +15/zona · 6+: +30/zona</code>
                     </div>
                     <div class="formula-item">
                         <span class="formula-label">Zone:</span>
@@ -612,6 +603,21 @@ toZona   = comuneArrivo.zona;   // "Mi7"
                 </svg>
             </div>
             <div class="qr-success-text">Biglietto generato!</div>
+        </div>
+    </div>
+
+    <!-- ====== MODAL: Update Available ====== -->
+    <div id="update-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-title">🔄 Aggiornamento disponibile</div>
+            <div class="modal-body">
+                <p id="update-commit-msg" style="font-size:14px; color:#3C3C43; line-height:1.5;"></p>
+                <p style="font-size:12px; color:#8E8E93; margin-top:8px;" id="update-commit-date"></p>
+            </div>
+            <div class="modal-actions" style="display:flex; gap:8px;">
+                <button class="modal-btn" style="color:#8E8E93;" onclick="closeModal('update-modal')">Dopo</button>
+                <button class="modal-btn" style="color:#62A76C; font-weight:700;" onclick="applyUpdate()">Aggiorna</button>
+            </div>
         </div>
     </div>
 
