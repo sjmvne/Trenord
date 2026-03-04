@@ -408,30 +408,33 @@ function generateTickets() {
         return;
     }
 
-    const startDate = new Date(startVal);
-    const endDate = new Date(endVal);
-    const purchaseDate = new Date(startDate.getTime() - 10 * 60000);
+    // Show assembly animation with ticket data
+    showQRAssemblyAnimation(info, () => {
+        const startDate = new Date(startVal);
+        const endDate = new Date(endVal);
+        const purchaseDate = new Date(startDate.getTime() - 10 * 60000);
 
-    for (let i = 0; i < ticketCount; i++) {
-        tickets.push({
-            id: generateUUID(false),
-            pnr: generatePNR(),
-            uuid: generateUUID(false),
-            viaggio: info.label,
-            prezzo: info.price,
-            startDate: startDate.toISOString(),
-            endDate: endDate.toISOString(),
-            purchaseDate: purchaseDate.toISOString(),
-            fromZone: info.fromZone,
-            toZone: info.toZone,
-            classe: 'Unica',
-            status: 'active'
-        });
-    }
+        for (let i = 0; i < ticketCount; i++) {
+            tickets.push({
+                id: generateUUID(false),
+                pnr: generatePNR(),
+                uuid: generateUUID(false),
+                viaggio: info.label,
+                prezzo: info.price,
+                startDate: startDate.toISOString(),
+                endDate: endDate.toISOString(),
+                purchaseDate: purchaseDate.toISOString(),
+                fromZone: info.fromZone,
+                toZone: info.toZone,
+                classe: 'Unica',
+                status: 'active'
+            });
+        }
 
-    saveTickets();
-    renderWalletTickets();
-    switchTab('wallet');
+        saveTickets();
+        renderWalletTickets();
+        switchTab('wallet');
+    });
 }
 
 // ── localStorage Persistence ──
@@ -511,7 +514,10 @@ function createTicketCard(ticket, isExpired) {
         </div>
         <div class="ticket-card swipe-content ${isExpired ? 'ticket-expired' : ''}">
             <div class="ticket-card-header">
-                <span class="ticket-type-label">Ordinario</span>
+                <div class="ticket-type-with-icon">
+                    <svg class="ticket-type-icon" viewBox="0 0 24 24" fill="none" stroke="#62A76C" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/><circle cx="17" cy="14" r="1.5"/></svg>
+                    <span class="ticket-type-label">Ordinario</span>
+                </div>
                 <button class="info-icon-gray btn-ticket-info" aria-label="Info">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></svg>
                 </button>
@@ -943,7 +949,16 @@ function showComingSoonAlert(feature) {
     alert('🚧 ' + feature + ' - Coming Soon\n\nQuesta funzionalità sarà disponibile nei prossimi aggiornamenti.');
 }
 
-// ── Map Viewer ──
+// ── Map Viewer with Pinch-to-Zoom ──
+
+let mapZoomState = {
+    scale: 1,
+    minScale: 1,
+    maxScale: 4,
+    offsetX: 0,
+    offsetY: 0,
+    initialDistance: 0
+};
 
 function openMapViewer() {
     const modal = document.getElementById('map-viewer-modal');
@@ -952,12 +967,88 @@ function openMapViewer() {
     viewerImg.alt = zoneMapImg.alt;
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
+    
+    // Reset zoom state
+    mapZoomState = {
+        scale: 1,
+        minScale: 1,
+        maxScale: 4,
+        offsetX: 0,
+        offsetY: 0,
+        initialDistance: 0
+    };
+    updateMapTransform(viewerImg);
+    initMapZoom(viewerImg);
 }
 
 function closeMapViewer() {
     const modal = document.getElementById('map-viewer-modal');
     modal.classList.remove('active');
     document.body.style.overflow = '';
+}
+
+function initMapZoom(imgElement) {
+    let touchStartScale = 1;
+    let lastX = 0, lastY = 0;
+    let isPinching = false;
+    let isPanning = false;
+
+    // Remove old listeners if any
+    const newImg = imgElement.cloneNode(true);
+    imgElement.parentNode.replaceChild(newImg, imgElement);
+    const img = document.getElementById('map-viewer-img');
+
+    img.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 2) {
+            isPinching = true;
+            isPanning = false;
+            const dx = e.touches[0].clientX - e.touches[1].clientX;
+            const dy = e.touches[0].clientY - e.touches[1].clientY;
+            mapZoomState.initialDistance = Math.sqrt(dx * dx + dy * dy);
+            touchStartScale = mapZoomState.scale;
+        } else if (e.touches.length === 1 && mapZoomState.scale > 1) {
+            isPanning = true;
+            isPinching = false;
+            lastX = e.touches[0].clientX;
+            lastY = e.touches[0].clientY;
+        }
+    }, { passive: true });
+
+    img.addEventListener('touchmove', (e) => {
+        if (isPinching && e.touches.length === 2) {
+            e.preventDefault();
+            const dx = e.touches[0].clientX - e.touches[1].clientX;
+            const dy = e.touches[0].clientY - e.touches[1].clientY;
+            const currentDistance = Math.sqrt(dx * dx + dy * dy);
+            
+            const scaleFactor = currentDistance / mapZoomState.initialDistance;
+            mapZoomState.scale = Math.max(mapZoomState.minScale, Math.min(mapZoomState.maxScale, touchStartScale * scaleFactor));
+            updateMapTransform(img);
+        } else if (isPanning && e.touches.length === 1) {
+            e.preventDefault();
+            const currentX = e.touches[0].clientX;
+            const currentY = e.touches[0].clientY;
+            const deltaX = (currentX - lastX) / mapZoomState.scale;
+            const deltaY = (currentY - lastY) / mapZoomState.scale;
+            
+            mapZoomState.offsetX += deltaX;
+            mapZoomState.offsetY += deltaY;
+            
+            lastX = currentX;
+            lastY = currentY;
+            updateMapTransform(img);
+        }
+    }, { passive: false });
+
+    img.addEventListener('touchend', (e) => {
+        if (e.touches.length < 2) isPinching = false;
+        if (e.touches.length === 0) isPanning = false;
+    }, { passive: true });
+}
+
+function updateMapTransform(imgElement) {
+    imgElement.style.transform = `scale(${mapZoomState.scale}) translate(${mapZoomState.offsetX}px, ${mapZoomState.offsetY}px)`;
+    imgElement.style.cursor = mapZoomState.scale > 1 ? 'grab' : 'zoom-in';
 }
 
 // ── Accordion Logic ──
@@ -968,11 +1059,17 @@ let selectedComuneTo = null;
 function toggleAccordion(id) {
     const section = document.getElementById(id);
     const isOpen = section.classList.contains('open');
+    const commonSections = document.getElementById('common-form-sections');
+
     // Close all
     document.querySelectorAll('.accordion-section').forEach(s => s.classList.remove('open'));
+
     // Open clicked if it was closed
     if (!isOpen) {
         section.classList.add('open');
+        // Sposta le sezioni comuni alla fine di questo accordion body
+        const body = section.querySelector('.accordion-body');
+        body.appendChild(commonSections);
     }
 }
 
@@ -1099,6 +1196,224 @@ function capitalizeComune(str) {
         }
         return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
     }).join(' ');
+}
+
+// ── QR Assembly Animation (Epic) ──
+
+function showQRAssemblyAnimation(ticketData, callback) {
+    const modal = document.getElementById('qr-assembly-modal');
+    const termBody = document.getElementById('qr-terminal-body');
+    const grid = document.getElementById('qr-grid');
+    const pctEl = document.getElementById('qr-pct');
+    const progressFill = document.getElementById('qr-progress-fill');
+    const statusEl = document.getElementById('qr-status');
+
+    // Reset
+    termBody.innerHTML = '';
+    grid.innerHTML = '';
+    pctEl.textContent = '0%';
+    progressFill.style.width = '0%';
+    statusEl.textContent = 'Inizializzazione...';
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+
+    // Create 121 pixels (11x11 grid)
+    const GRID_SIZE = 11;
+    const totalPixels = GRID_SIZE * GRID_SIZE;
+    const pixels = [];
+    const qrPattern = generateQRPattern(GRID_SIZE);
+
+    for (let i = 0; i < totalPixels; i++) {
+        const px = document.createElement('div');
+        px.className = 'qr-px off';
+        grid.appendChild(px);
+        pixels.push(px);
+    }
+
+    // Generate ticket metadata
+    const uuid = generateUUID(false);
+    const pnr = generatePNR();
+    const sha = Array.from(crypto.getRandomValues(new Uint8Array(32))).map(b => b.toString(16).padStart(2, '0')).join('');
+    const now = new Date();
+    const timestamp = now.toISOString();
+
+    // Terminal sequence
+    const lines = [
+        { delay: 0, html: '<span class="t-green">$</span> ssh tpg@gateway.trenord.it -p 443' },
+        { delay: 400, html: '<span class="t-gray">Connecting to gateway.trenord.it:443...</span>' },
+        { delay: 900, html: '<span class="t-green">\u2713</span> <span class="t-gray">Connection established. TLS 1.3 (ECDHE-RSA-AES256)</span>' },
+        { delay: 1300, html: '<span class="t-gray">Last login: ' + now.toLocaleDateString('it-IT') + ' from 10.0.' + Math.floor(Math.random()*255) + '.' + Math.floor(Math.random()*255) + '</span>' },
+        { delay: 1700, html: '' },
+        { delay: 1800, html: '<span class="t-green">tpg@trenord</span>:<span class="t-cyan">~</span>$ init-ticket --type STIBM --mode ordinario' },
+        { delay: 2300, html: '<span class="t-yellow">[INIT]</span> Ticket Processing Gateway v4.2.1' },
+        { delay: 2600, html: '<span class="t-yellow">[INIT]</span> Allocating secure memory block...' },
+        { delay: 2900, html: '' },
+        { delay: 3000, html: '<span class="t-cyan">\u2501\u2501\u2501 CONFIGURAZIONE BIGLIETTO \u2501\u2501\u2501</span>' },
+        { delay: 3300, html: '<span class="t-gray">\u251c\u2500</span> <span class="t-white">Viaggio:</span>    <span class="t-green">' + ticketData.viaggio + '</span>' },
+        { delay: 3600, html: '<span class="t-gray">\u251c\u2500</span> <span class="t-white">Zone:</span>       <span class="t-green">' + ticketData.fromZone + ' \u2192 ' + ticketData.toZone + '</span> <span class="t-gray">(' + ticketData.zoneCount + ' zone)</span>' },
+        { delay: 3900, html: '<span class="t-gray">\u251c\u2500</span> <span class="t-white">Prezzo:</span>     <span class="t-green">\u20ac' + ticketData.price.toFixed(2) + '</span>' },
+        { delay: 4200, html: '<span class="t-gray">\u251c\u2500</span> <span class="t-white">Classe:</span>     <span class="t-green">Unica</span>' },
+        { delay: 4500, html: '<span class="t-gray">\u251c\u2500</span> <span class="t-white">Durata:</span>     <span class="t-green">' + ticketData.duration + ' min</span>' },
+        { delay: 4800, html: '<span class="t-gray">\u2514\u2500</span> <span class="t-white">Timestamp:</span>  <span class="t-orange">' + timestamp + '</span>' },
+        { delay: 5200, html: '' },
+        { delay: 5300, html: '<span class="t-green">tpg@trenord</span>:<span class="t-cyan">~</span>$ generate-identity --secure' },
+        { delay: 5700, html: '<span class="t-yellow">[AUTH]</span> Generating secure identifiers...' },
+        { delay: 6100, html: '<span class="t-gray">\u251c\u2500</span> <span class="t-white">UUID:</span>  <span class="t-magenta">' + uuid + '</span>' },
+        { delay: 6400, html: '<span class="t-gray">\u2514\u2500</span> <span class="t-white">PNR:</span>   <span class="t-magenta">' + pnr + '</span>' },
+        { delay: 6800, html: '' },
+        { delay: 6900, html: '<span class="t-green">tpg@trenord</span>:<span class="t-cyan">~</span>$ build-payload --encode base64' },
+        { delay: 7300, html: '<span class="t-yellow">[BUILD]</span> Assembling JSON payload...' },
+        { delay: 7700, html: '<span class="t-gray">{</span>' },
+        { delay: 7850, html: '  <span class="t-cyan">"id"</span>: <span class="t-orange">"' + uuid.substring(0, 18) + '..."</span>,' },
+        { delay: 8000, html: '  <span class="t-cyan">"pnr"</span>: <span class="t-orange">"' + pnr + '"</span>,' },
+        { delay: 8150, html: '  <span class="t-cyan">"zones"</span>: <span class="t-orange">"' + ticketData.fromZone + '-' + ticketData.toZone + '"</span>,' },
+        { delay: 8300, html: '  <span class="t-cyan">"price"</span>: <span class="t-magenta">' + ticketData.price.toFixed(2) + '</span>,' },
+        { delay: 8450, html: '  <span class="t-cyan">"class"</span>: <span class="t-orange">"U"</span>' },
+        { delay: 8600, html: '<span class="t-gray">}</span>' },
+        { delay: 9000, html: '' },
+        { delay: 9100, html: '<span class="t-green">tpg@trenord</span>:<span class="t-cyan">~</span>$ sha256sum --verify payload.json' },
+        { delay: 9500, html: '<span class="t-yellow">[CRYPTO]</span> Computing SHA-256 checksum...' },
+        { delay: 10000, html: '<span class="t-gray">SHA-256:</span> <span class="t-magenta">' + sha.substring(0, 32) + '</span>' },
+        { delay: 10300, html: '<span class="t-gray">         ' + sha.substring(32) + '</span>' },
+        { delay: 10700, html: '<span class="t-green">\u2713</span> <span class="t-white">Checksum verified</span>' },
+        { delay: 11100, html: '' },
+        { delay: 11200, html: '<span class="t-green">tpg@trenord</span>:<span class="t-cyan">~</span>$ qr-encode --ecc H --matrix 11x11' },
+        { delay: 11600, html: '<span class="t-yellow">[QR]</span> Encoding data matrix...' },
+        { delay: 12000, html: '<span class="t-yellow">[QR]</span> Error correction: <span class="t-white">Level H (30%)</span>' },
+        { delay: 12400, html: '<span class="t-yellow">[QR]</span> Matrix size: <span class="t-white">11\u00d711 modules</span>' },
+        { delay: 13200, html: '<span class="t-yellow">[QR]</span> Writing finder patterns...' },
+        { delay: 14200, html: '<span class="t-yellow">[QR]</span> Writing data blocks...' },
+        { delay: 16500, html: '<span class="t-green">\u2713</span> <span class="t-white">QR matrix complete \u2014 ' + totalPixels + ' modules written</span>' },
+        { delay: 17000, html: '' },
+        { delay: 17100, html: '<span class="t-green">tpg@trenord</span>:<span class="t-cyan">~</span>$ commit --sign --push' },
+        { delay: 17500, html: '<span class="t-yellow">[SIGN]</span> Signing ticket with RSA-4096...' },
+        { delay: 18000, html: '<span class="t-green">\u2713</span> <span class="t-white">Digital signature applied</span>' },
+        { delay: 18400, html: '<span class="t-green">\u2713</span> <span class="t-white">Ticket committed to ledger</span>' },
+        { delay: 18800, html: '' },
+        { delay: 19000, html: '<span class="t-green">\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501</span>' },
+        { delay: 19200, html: '<span class="t-green">\u2713 BIGLIETTO GENERATO CON SUCCESSO</span>' },
+        { delay: 19400, html: '<span class="t-green">\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501</span>' },
+    ];
+
+    // Progress phases
+    const phases = [
+        { at: 0, pct: 0, label: 'Inizializzazione...' },
+        { at: 900, pct: 5, label: 'Connessione TLS...' },
+        { at: 1700, pct: 10, label: 'Autenticazione...' },
+        { at: 3000, pct: 15, label: 'Configurazione biglietto...' },
+        { at: 5300, pct: 30, label: 'Generazione identit\u00e0...' },
+        { at: 6900, pct: 40, label: 'Costruzione payload...' },
+        { at: 9100, pct: 55, label: 'Verifica checksum SHA-256...' },
+        { at: 10700, pct: 65, label: 'Checksum verificato \u2713' },
+        { at: 11200, pct: 70, label: 'Encoding QR matrix...' },
+        { at: 13200, pct: 75, label: 'Scrittura finder patterns...' },
+        { at: 14200, pct: 80, label: 'Scrittura blocchi dati...' },
+        { at: 16500, pct: 90, label: 'QR matrix completa \u2713' },
+        { at: 17100, pct: 93, label: 'Firma digitale...' },
+        { at: 18400, pct: 97, label: 'Commit su ledger...' },
+        { at: 19200, pct: 100, label: 'Completato \u2713' },
+    ];
+
+    // Type terminal lines
+    lines.forEach(function(line) {
+        setTimeout(function() {
+            var div = document.createElement('div');
+            div.className = 't-line';
+            div.innerHTML = line.html;
+            termBody.appendChild(div);
+            termBody.scrollTop = termBody.scrollHeight;
+        }, line.delay);
+    });
+
+    // Update progress phases
+    phases.forEach(function(p) {
+        setTimeout(function() {
+            pctEl.textContent = p.pct + '%';
+            progressFill.style.width = p.pct + '%';
+            statusEl.textContent = p.label;
+        }, p.at);
+    });
+
+    // Animate QR grid - finder patterns first, then data
+    var finderPositions = getFinderPositions(GRID_SIZE);
+    finderPositions.forEach(function(idx, i) {
+        setTimeout(function() {
+            pixels[idx].className = 'qr-px glow';
+            setTimeout(function() {
+                pixels[idx].className = qrPattern[idx] ? 'qr-px on' : 'qr-px off';
+            }, 200);
+        }, 13200 + i * 40);
+    });
+
+    // Data modules
+    var dataPositions = [];
+    for (var i = 0; i < totalPixels; i++) {
+        if (finderPositions.indexOf(i) === -1) dataPositions.push(i);
+    }
+    // Shuffle
+    for (var k = dataPositions.length - 1; k > 0; k--) {
+        var j = Math.floor(Math.random() * (k + 1));
+        var tmp = dataPositions[k];
+        dataPositions[k] = dataPositions[j];
+        dataPositions[j] = tmp;
+    }
+    dataPositions.forEach(function(idx, i) {
+        setTimeout(function() {
+            pixels[idx].className = 'qr-px glow';
+            setTimeout(function() {
+                pixels[idx].className = qrPattern[idx] ? 'qr-px on' : 'qr-px off';
+            }, 150);
+        }, 14200 + i * 30);
+    });
+
+    // Close modal after animation
+    setTimeout(function() {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+        if (callback) callback();
+    }, 20000);
+}
+
+function generateQRPattern(size) {
+    var pattern = [];
+    for (var i = 0; i < size * size; i++) pattern.push(false);
+    // Finder patterns
+    var drawFinder = function(startRow, startCol) {
+        for (var r = 0; r < 3; r++) {
+            for (var c = 0; c < 3; c++) {
+                var isBorder = r === 0 || r === 2 || c === 0 || c === 2;
+                var isCenter = r === 1 && c === 1;
+                if (isBorder || isCenter) {
+                    pattern[(startRow + r) * size + (startCol + c)] = true;
+                }
+            }
+        }
+    };
+    drawFinder(0, 0);
+    drawFinder(0, size - 3);
+    drawFinder(size - 3, 0);
+    // Random data
+    for (var i = 0; i < pattern.length; i++) {
+        if (!pattern[i] && Math.random() > 0.45) {
+            pattern[i] = true;
+        }
+    }
+    return pattern;
+}
+
+function getFinderPositions(size) {
+    var positions = [];
+    var addFinder = function(startRow, startCol) {
+        for (var r = 0; r < 3; r++) {
+            for (var c = 0; c < 3; c++) {
+                positions.push((startRow + r) * size + (startCol + c));
+            }
+        }
+    };
+    addFinder(0, 0);
+    addFinder(0, size - 3);
+    addFinder(size - 3, 0);
+    return positions;
 }
 
 // ── PWA Service Worker Registration ──
