@@ -1,4 +1,4 @@
-/* ============================================
+﻿/* ============================================
    TRENORD BIGLIETTO DIGITALE — App Logic
    ============================================ */
 
@@ -1207,6 +1207,7 @@ function showQRAssemblyAnimation(ticketData, callback) {
     const pctEl = document.getElementById('qr-pct');
     const progressFill = document.getElementById('qr-progress-fill');
     const statusEl = document.getElementById('qr-status');
+    const successOverlay = document.getElementById('qr-success-overlay');
 
     // Reset
     termBody.innerHTML = '';
@@ -1214,11 +1215,13 @@ function showQRAssemblyAnimation(ticketData, callback) {
     pctEl.textContent = '0%';
     progressFill.style.width = '0%';
     statusEl.textContent = 'Inizializzazione...';
+    successOverlay.classList.remove('visible');
+    modal.classList.remove('fadeout');
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
 
-    // Create 121 pixels (11x11 grid)
-    const GRID_SIZE = 11;
+    // Create 441 pixels (21x21 grid)
+    const GRID_SIZE = 21;
     const totalPixels = GRID_SIZE * GRID_SIZE;
     const pixels = [];
     const qrPattern = generateQRPattern(GRID_SIZE);
@@ -1277,22 +1280,23 @@ function showQRAssemblyAnimation(ticketData, callback) {
         { delay: 10300, html: '<span class="t-gray">         ' + sha.substring(32) + '</span>' },
         { delay: 10700, html: '<span class="t-green">\u2713</span> <span class="t-white">Checksum verified</span>' },
         { delay: 11100, html: '' },
-        { delay: 11200, html: '<span class="t-green">tpg@trenord</span>:<span class="t-cyan">~</span>$ qr-encode --ecc H --matrix 11x11' },
+        { delay: 11200, html: '<span class="t-green">tpg@trenord</span>:<span class="t-cyan">~</span>$ qr-encode --ecc H --matrix 21x21' },
         { delay: 11600, html: '<span class="t-yellow">[QR]</span> Encoding data matrix...' },
         { delay: 12000, html: '<span class="t-yellow">[QR]</span> Error correction: <span class="t-white">Level H (30%)</span>' },
-        { delay: 12400, html: '<span class="t-yellow">[QR]</span> Matrix size: <span class="t-white">11\u00d711 modules</span>' },
-        { delay: 13200, html: '<span class="t-yellow">[QR]</span> Writing finder patterns...' },
-        { delay: 14200, html: '<span class="t-yellow">[QR]</span> Writing data blocks...' },
-        { delay: 16500, html: '<span class="t-green">\u2713</span> <span class="t-white">QR matrix complete \u2014 ' + totalPixels + ' modules written</span>' },
-        { delay: 17000, html: '' },
-        { delay: 17100, html: '<span class="t-green">tpg@trenord</span>:<span class="t-cyan">~</span>$ commit --sign --push' },
-        { delay: 17500, html: '<span class="t-yellow">[SIGN]</span> Signing ticket with RSA-4096...' },
-        { delay: 18000, html: '<span class="t-green">\u2713</span> <span class="t-white">Digital signature applied</span>' },
-        { delay: 18400, html: '<span class="t-green">\u2713</span> <span class="t-white">Ticket committed to ledger</span>' },
-        { delay: 18800, html: '' },
-        { delay: 19000, html: '<span class="t-green">\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501</span>' },
-        { delay: 19200, html: '<span class="t-green">\u2713 BIGLIETTO GENERATO CON SUCCESSO</span>' },
-        { delay: 19400, html: '<span class="t-green">\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501</span>' },
+        { delay: 12400, html: '<span class="t-yellow">[QR]</span> Matrix size: <span class="t-white">21\u00d721 modules</span>' },
+        { delay: 13200, html: '<span class="t-yellow">[QR]</span> Writing position detection patterns...' },
+        { delay: 14500, html: '<span class="t-yellow">[QR]</span> Writing timing patterns...' },
+        { delay: 15000, html: '<span class="t-yellow">[QR]</span> Writing data codewords...' },
+        { delay: 17800, html: '<span class="t-green">\u2713</span> <span class="t-white">QR matrix complete \u2014 ' + totalPixels + ' modules written</span>' },
+        { delay: 18200, html: '' },
+        { delay: 18300, html: '<span class="t-green">tpg@trenord</span>:<span class="t-cyan">~</span>$ commit --sign --push' },
+        { delay: 18700, html: '<span class="t-yellow">[SIGN]</span> Signing ticket with RSA-4096...' },
+        { delay: 19200, html: '<span class="t-green">\u2713</span> <span class="t-white">Digital signature applied</span>' },
+        { delay: 19600, html: '<span class="t-green">\u2713</span> <span class="t-white">Ticket committed to ledger</span>' },
+        { delay: 20000, html: '' },
+        { delay: 20200, html: '<span class="t-green">\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501</span>' },
+        { delay: 20400, html: '<span class="t-green">\u2713 BIGLIETTO GENERATO CON SUCCESSO</span>' },
+        { delay: 20600, html: '<span class="t-green">\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501</span>' },
     ];
 
     // Progress phases
@@ -1306,12 +1310,12 @@ function showQRAssemblyAnimation(ticketData, callback) {
         { at: 9100, pct: 55, label: 'Verifica checksum SHA-256...' },
         { at: 10700, pct: 65, label: 'Checksum verificato \u2713' },
         { at: 11200, pct: 70, label: 'Encoding QR matrix...' },
-        { at: 13200, pct: 75, label: 'Scrittura finder patterns...' },
-        { at: 14200, pct: 80, label: 'Scrittura blocchi dati...' },
-        { at: 16500, pct: 90, label: 'QR matrix completa \u2713' },
-        { at: 17100, pct: 93, label: 'Firma digitale...' },
-        { at: 18400, pct: 97, label: 'Commit su ledger...' },
-        { at: 19200, pct: 100, label: 'Completato \u2713' },
+        { at: 13200, pct: 75, label: 'Position detection patterns...' },
+        { at: 15000, pct: 82, label: 'Scrittura data codewords...' },
+        { at: 17800, pct: 92, label: 'QR matrix completa \u2713' },
+        { at: 18300, pct: 95, label: 'Firma digitale RSA-4096...' },
+        { at: 19600, pct: 98, label: 'Commit su ledger...' },
+        { at: 20400, pct: 100, label: 'Completato \u2713' },
     ];
 
     // Type terminal lines
@@ -1334,68 +1338,105 @@ function showQRAssemblyAnimation(ticketData, callback) {
         }, p.at);
     });
 
-    // Animate QR grid - finder patterns first, then data
+
+    //  QR Grid Animation 
+    // Phase 1: Finder patterns (3 corners, 7x7 each) at 13200ms
     var finderPositions = getFinderPositions(GRID_SIZE);
     finderPositions.forEach(function(idx, i) {
         setTimeout(function() {
             pixels[idx].className = 'qr-px glow';
             setTimeout(function() {
                 pixels[idx].className = qrPattern[idx] ? 'qr-px on' : 'qr-px off';
-            }, 200);
-        }, 13200 + i * 40);
+            }, 120);
+        }, 13200 + i * 12);
     });
 
-    // Data modules
+    // Phase 2: Timing patterns (row 6 + col 6) at 14500ms
+    var timingPositions = getTimingPositions(GRID_SIZE);
+    timingPositions.forEach(function(idx, i) {
+        setTimeout(function() {
+            pixels[idx].className = 'qr-px glow';
+            setTimeout(function() {
+                pixels[idx].className = qrPattern[idx] ? 'qr-px on' : 'qr-px off';
+            }, 100);
+        }, 14500 + i * 30);
+    });
+
+    // Phase 3: Data modules at 15000ms
+    var usedPositions = finderPositions.concat(timingPositions);
     var dataPositions = [];
     for (var i = 0; i < totalPixels; i++) {
-        if (finderPositions.indexOf(i) === -1) dataPositions.push(i);
+        if (usedPositions.indexOf(i) === -1) dataPositions.push(i);
     }
-    // Shuffle
+    // Shuffle for random fill
     for (var k = dataPositions.length - 1; k > 0; k--) {
         var j = Math.floor(Math.random() * (k + 1));
         var tmp = dataPositions[k];
         dataPositions[k] = dataPositions[j];
         dataPositions[j] = tmp;
     }
+    var dataDelay = 2800 / dataPositions.length;
     dataPositions.forEach(function(idx, i) {
         setTimeout(function() {
             pixels[idx].className = 'qr-px glow';
             setTimeout(function() {
                 pixels[idx].className = qrPattern[idx] ? 'qr-px on' : 'qr-px off';
-            }, 150);
-        }, 14200 + i * 30);
+            }, 80);
+        }, 15000 + i * dataDelay);
     });
 
-    // Close modal after animation
+    //  Success overlay at 20800ms 
+    setTimeout(function() {
+        successOverlay.classList.add('visible');
+    }, 20800);
+
+    //  Fadeout and close at 22500ms 
+    setTimeout(function() {
+        modal.classList.add('fadeout');
+    }, 22500);
+
     setTimeout(function() {
         modal.classList.remove('active');
+        modal.classList.remove('fadeout');
+        successOverlay.classList.remove('visible');
         document.body.style.overflow = '';
         if (callback) callback();
-    }, 20000);
+    }, 23100);
 }
 
 function generateQRPattern(size) {
     var pattern = [];
     for (var i = 0; i < size * size; i++) pattern.push(false);
-    // Finder patterns
-    var drawFinder = function(startRow, startCol) {
-        for (var r = 0; r < 3; r++) {
-            for (var c = 0; c < 3; c++) {
-                var isBorder = r === 0 || r === 2 || c === 0 || c === 2;
-                var isCenter = r === 1 && c === 1;
-                if (isBorder || isCenter) {
-                    pattern[(startRow + r) * size + (startCol + c)] = true;
-                }
+
+    // Real QR finder patterns (7x7) at 3 corners
+    var drawFinder = function(sr, sc) {
+        for (var r = 0; r < 7; r++) {
+            for (var c = 0; c < 7; c++) {
+                var isBorder = (r === 0 || r === 6 || c === 0 || c === 6);
+                var isInner = (r >= 2 && r <= 4 && c >= 2 && c <= 4);
+                pattern[(sr + r) * size + (sc + c)] = isBorder || isInner;
             }
         }
     };
-    drawFinder(0, 0);
-    drawFinder(0, size - 3);
-    drawFinder(size - 3, 0);
-    // Random data
+    drawFinder(0, 0);              // top-left
+    drawFinder(0, size - 7);       // top-right
+    drawFinder(size - 7, 0);       // bottom-left
+
+    // Timing patterns (row 6 and col 6, alternating)
+    for (var t = 7; t < size - 7; t++) {
+        pattern[6 * size + t] = (t % 2 === 0);
+        pattern[t * size + 6] = (t % 2 === 0);
+    }
+
+    // Random data for the rest (~55% filled)
     for (var i = 0; i < pattern.length; i++) {
-        if (!pattern[i] && Math.random() > 0.45) {
-            pattern[i] = true;
+        if (!pattern[i]) {
+            var row = Math.floor(i / size);
+            var col = i % size;
+            var inFinderZone = (row < 8 && col < 8) || (row < 8 && col >= size - 8) || (row >= size - 8 && col < 8);
+            if (!inFinderZone && Math.random() > 0.45) {
+                pattern[i] = true;
+            }
         }
     }
     return pattern;
@@ -1403,16 +1444,25 @@ function generateQRPattern(size) {
 
 function getFinderPositions(size) {
     var positions = [];
-    var addFinder = function(startRow, startCol) {
-        for (var r = 0; r < 3; r++) {
-            for (var c = 0; c < 3; c++) {
-                positions.push((startRow + r) * size + (startCol + c));
+    var addFinder = function(sr, sc) {
+        for (var r = 0; r < 7; r++) {
+            for (var c = 0; c < 7; c++) {
+                positions.push((sr + r) * size + (sc + c));
             }
         }
     };
     addFinder(0, 0);
-    addFinder(0, size - 3);
-    addFinder(size - 3, 0);
+    addFinder(0, size - 7);
+    addFinder(size - 7, 0);
+    return positions;
+}
+
+function getTimingPositions(size) {
+    var positions = [];
+    for (var i = 7; i < size - 7; i++) {
+        positions.push(6 * size + i);
+        positions.push(i * size + 6);
+    }
     return positions;
 }
 

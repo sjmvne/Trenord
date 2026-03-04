@@ -2179,12 +2179,12 @@ body.qr-brightness-mode .screen.active {
 }
 
 .qr-asm-grid {
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
     display: grid;
-    grid-template-columns: repeat(11, 1fr);
-    gap: 1px;
-    padding: 4px;
+    grid-template-columns: repeat(21, 1fr);
+    gap: 0px;
+    padding: 3px;
     background: rgba(98, 167, 108, 0.08);
     border: 1px solid rgba(98, 167, 108, 0.3);
     border-radius: 6px;
@@ -2199,22 +2199,25 @@ body.qr-brightness-mode .screen.active {
 }
 
 .qr-px {
-    border-radius: 1px;
-    transition: background 0.3s, box-shadow 0.3s;
+    border-radius: 0;
+    transition: background 0.2s, box-shadow 0.2s;
 }
 
 .qr-px.on {
-    background: #62A76C;
-    box-shadow: 0 0 3px rgba(98, 167, 108, 0.6);
+    background: var(--green-header);
 }
 
 .qr-px.off {
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.qr-px.finder {
+    background: var(--green-text);
 }
 
 .qr-px.glow {
-    background: #fff;
-    box-shadow: 0 0 8px #62A76C, 0 0 2px #fff;
+    background: var(--gray-sep);
+    box-shadow: 0 0 4px rgba(98, 167, 108, 0.8);
 }
 
 .qr-asm-stats {
@@ -2261,4 +2264,85 @@ body.qr-brightness-mode .screen.active {
     font-size: 10px;
     color: #636b78;
     letter-spacing: 0.5px;
+}
+
+/* ── Success Overlay ── */
+.qr-success-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(10, 14, 20, 0.95);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+.qr-success-overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.qr-success-circle {
+    width: 90px;
+    height: 90px;
+    transform: scale(0);
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.qr-success-overlay.visible .qr-success-circle {
+    transform: scale(1);
+}
+
+.qr-success-check {
+    width: 100%;
+    height: 100%;
+}
+
+.qr-success-check circle {
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    transition: stroke-dashoffset 0.6s ease 0.2s;
+}
+
+.qr-success-overlay.visible .qr-success-check circle {
+    stroke-dashoffset: 0;
+}
+
+.qr-success-check polyline {
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    transition: stroke-dashoffset 0.4s ease 0.6s;
+}
+
+.qr-success-overlay.visible .qr-success-check polyline {
+    stroke-dashoffset: 0;
+}
+
+.qr-success-text {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.4s ease 0.8s, transform 0.4s ease 0.8s;
+}
+
+.qr-success-overlay.visible .qr-success-text {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ── Modal Fadeout ── */
+.qr-assembly-modal.fadeout {
+    animation: modalFadeOut 0.6s ease forwards;
+}
+
+@keyframes modalFadeOut {
+    0% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.03); }
 }
