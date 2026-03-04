@@ -4,25 +4,126 @@
 
 // ── Zone Configuration ──
 const ZONES = [
-    { label: 'Mi1', number: 1, color: '#5B8DBE' },
-    { label: 'Mi3', number: 3, color: '#5AAD47' },
-    { label: 'Mi4', number: 4, color: '#8BB43E' },
-    { label: 'Mi5', number: 5, color: '#C8B832' },
-    { label: 'Mi6', number: 6, color: '#E09030' },
-    { label: 'Mi7', number: 7, color: '#C07035' },
-    { label: 'Mi8', number: 8, color: '#A05040' },
-    { label: 'Mi9', number: 9, color: '#CC6088' }
+    { label: 'Mi1', number: 1, color: '#BDA3C8', pattern: 'striped-purple' },
+    { label: 'Mi3', number: 3, color: '#BDA3C8', pattern: null },
+    { label: 'Mi4', number: 4, color: '#585DA4', pattern: null },
+    { label: 'Mi5', number: 5, color: '#63A166', pattern: null },
+    { label: 'Mi6', number: 6, color: '#E1DD70', pattern: null },
+    { label: 'Mi7', number: 7, color: '#DDA165', pattern: null },
+    { label: 'Mi8', number: 8, color: '#E37603', pattern: null },
+    { label: 'Mi9', number: 9, color: '#A61D27', pattern: 'striped-red' }
+];
+
+// ── Comuni STIBM ──
+const COMUNI_STIBM = [
+    {nome:"ABBIATEGRASSO",zona:"Mi7"},{nome:"AGRATE BRIANZA",zona:"Mi5"},{nome:"AICURZIO",zona:"Mi7"},
+    {nome:"ALBAIRATE",zona:"Mi6"},{nome:"ALBIATE",zona:"Mi6"},{nome:"ARCONATE",zona:"Mi7"},
+    {nome:"ARCORE",zona:"Mi5"},{nome:"ARESE",zona:"Mi4"},{nome:"ARLUNO",zona:"Mi6"},
+    {nome:"ASSAGO",zona:"Mi3"},{nome:"BARANZATE",zona:"Mi3"},{nome:"BAREGGIO",zona:"Mi4"},
+    {nome:"BARLASSINA",zona:"Mi6"},{nome:"BASIANO",zona:"Mi6"},{nome:"BASIGLIO",zona:"Mi4"},
+    {nome:"BELLINZAGO LOMBARDO",zona:"Mi6"},{nome:"BELLUSCO",zona:"Mi7"},{nome:"BERNAREGGIO",zona:"Mi7"},
+    {nome:"BERNATE TICINO",zona:"Mi8"},{nome:"BESANA IN BRIANZA",zona:"Mi7"},{nome:"BESATE",zona:"Mi7"},
+    {nome:"BIASSONO",zona:"Mi5"},{nome:"BINASCO",zona:"Mi5"},{nome:"BOFFALORA SOPRA TICINO",zona:"Mi7"},
+    {nome:"BOLLATE",zona:"Mi3"},{nome:"BOVISIO MASCIAGO",zona:"Mi5"},{nome:"BRESSO",zona:"Mi3"},
+    {nome:"BRIOSCO",zona:"Mi7"},{nome:"BRUGHERIO",zona:"Mi4"},{nome:"BUBBIANO",zona:"Mi6"},
+    {nome:"BUCCINASCO",zona:"Mi3"},{nome:"BURAGO DI MOLGORA",zona:"Mi6"},{nome:"BUSCATE",zona:"Mi8"},
+    {nome:"BUSNAGO",zona:"Mi7"},{nome:"BUSSERO",zona:"Mi4"},{nome:"BUSTO GAROLFO",zona:"Mi7"},
+    {nome:"CALVIGNASCO",zona:"Mi6"},{nome:"CAMBIAGO",zona:"Mi6"},{nome:"CAMPARADA",zona:"Mi6"},
+    {nome:"CANEGRATE",zona:"Mi7"},{nome:"CAPONAGO",zona:"Mi5"},{nome:"CARATE BRIANZA",zona:"Mi6"},
+    {nome:"CARNATE",zona:"Mi6"},{nome:"CARPIANO",zona:"Mi5"},{nome:"CARUGATE",zona:"Mi5"},
+    {nome:"CASALMAIOCCO",zona:"Mi6"},{nome:"CASARILE",zona:"Mi5"},{nome:"CASORATE PRIMO",zona:"Mi6"},
+    {nome:"CASOREZZO",zona:"Mi7"},{nome:"CASSANO D'ADDA",zona:"Mi7"},{nome:"CASSINA DE' PECCHI",zona:"Mi4"},
+    {nome:"CASSINETTA DI LUGAGNANO",zona:"Mi7"},{nome:"CASTANO PRIMO",zona:"Mi9"},
+    {nome:"CAVENAGO DI BRIANZA",zona:"Mi6"},{nome:"CERIANO LAGHETTO",zona:"Mi6"},
+    {nome:"CERNUSCO SUL NAVIGLIO",zona:"Mi4"},{nome:"CERRO AL LAMBRO",zona:"Mi6"},
+    {nome:"CERRO MAGGIORE",zona:"Mi6"},{nome:"CESANO BOSCONE",zona:"Mi3"},{nome:"CESANO MADERNO",zona:"Mi5"},
+    {nome:"CESATE",zona:"Mi5"},{nome:"CINISELLO BALSAMO",zona:"Mi3"},{nome:"CISLIANO",zona:"Mi5"},
+    {nome:"COGLIATE",zona:"Mi6"},{nome:"COLOGNO MONZESE",zona:"Mi3"},{nome:"COLTURANO",zona:"Mi5"},
+    {nome:"COMAZZO",zona:"Mi6"},{nome:"CONCOREZZO",zona:"Mi5"},{nome:"CORBETTA",zona:"Mi6"},
+    {nome:"CORMANO",zona:"Mi3"},{nome:"CORNAREDO",zona:"Mi4"},{nome:"CORNATE D'ADDA",zona:"Mi7"},
+    {nome:"CORREZZANA",zona:"Mi7"},{nome:"CORSICO",zona:"Mi3"},{nome:"CUGGIONO",zona:"Mi8"},
+    {nome:"CUSAGO",zona:"Mi4"},{nome:"CUSANO MILANINO",zona:"Mi3"},{nome:"DAIRAGO",zona:"Mi8"},
+    {nome:"DESIO",zona:"Mi5"},{nome:"DRESANO",zona:"Mi5"},{nome:"GAGGIANO",zona:"Mi5"},
+    {nome:"GARBAGNATE MILANESE",zona:"Mi4"},{nome:"GESSATE",zona:"Mi6"},{nome:"GIUSSANO",zona:"Mi6"},
+    {nome:"GORGONZOLA",zona:"Mi5"},{nome:"GREZZAGO",zona:"Mi7"},{nome:"GUDO VISCONTI",zona:"Mi6"},
+    {nome:"INVERUNO",zona:"Mi7"},{nome:"INZAGO",zona:"Mi6"},{nome:"LACCHIARELLA",zona:"Mi5"},
+    {nome:"LAINATE",zona:"Mi5"},{nome:"LAZZATE",zona:"Mi7"},{nome:"LEGNANO",zona:"Mi7"},
+    {nome:"LENTATE SUL SEVESO",zona:"Mi6"},{nome:"LESMO",zona:"Mi6"},{nome:"LIMBIATE",zona:"Mi5"},
+    {nome:"LISCATE",zona:"Mi5"},{nome:"LISSONE",zona:"Mi5"},{nome:"LOCATE DI TRIULZI",zona:"Mi4"},
+    {nome:"MACHERIO",zona:"Mi5"},{nome:"MAGENTA",zona:"Mi7"},{nome:"MAGNAGO",zona:"Mi9"},
+    {nome:"MARCALLO CON CASONE",zona:"Mi7"},{nome:"MASATE",zona:"Mi6"},{nome:"MEDA",zona:"Mi6"},
+    {nome:"MEDIGLIA",zona:"Mi4"},{nome:"MELEGNANO",zona:"Mi5"},{nome:"MELZO",zona:"Mi5"},
+    {nome:"MERLINO",zona:"Mi6"},{nome:"MESERO",zona:"Mi7"},{nome:"MEZZAGO",zona:"Mi7"},
+    {nome:"MILANO",zona:"Mi1"},{nome:"MISINTO",zona:"Mi7"},{nome:"MONZA",zona:"Mi4"},
+    {nome:"MORIMONDO",zona:"Mi7"},{nome:"MOTTA VISCONTI",zona:"Mi7"},{nome:"MUGGIÒ",zona:"Mi4"},
+    {nome:"MULAZZANO",zona:"Mi6"},{nome:"NERVIANO",zona:"Mi5"},{nome:"NOSATE",zona:"Mi9"},
+    {nome:"NOVA MILANESE",zona:"Mi4"},{nome:"NOVATE MILANESE",zona:"Mi3"},{nome:"NOVIGLIO",zona:"Mi5"},
+    {nome:"OPERA",zona:"Mi3"},{nome:"ORNAGO",zona:"Mi7"},{nome:"OSSONA",zona:"Mi6"},
+    {nome:"OZZERO",zona:"Mi7"},{nome:"PADERNO DUGNANO",zona:"Mi4"},{nome:"PANTIGLIATE",zona:"Mi4"},
+    {nome:"PARABIAGO",zona:"Mi6"},{nome:"PAULLO",zona:"Mi5"},{nome:"PERO",zona:"Mi3"},
+    {nome:"PESCHIERA BORROMEO",zona:"Mi3"},{nome:"PESSANO CON BORNAGO",zona:"Mi5"},
+    {nome:"PIEVE EMANUELE",zona:"Mi4"},{nome:"PIOLTELLO",zona:"Mi4"},
+    {nome:"POGLIANO MILANESE",zona:"Mi5"},{nome:"POZZO D'ADDA",zona:"Mi7"},
+    {nome:"POZZUOLO MARTESANA",zona:"Mi6"},{nome:"PREGNANA MILANESE",zona:"Mi5"},
+    {nome:"RENATE",zona:"Mi8"},{nome:"RESCALDINA",zona:"Mi7"},{nome:"RHO",zona:"Mi4"},
+    {nome:"ROBECCHETTO CON INDUNO",zona:"Mi9"},{nome:"ROBECCO SUL NAVIGLIO",zona:"Mi7"},
+    {nome:"RODANO",zona:"Mi4"},{nome:"RONCELLO",zona:"Mi7"},{nome:"RONCO BRIANTINO",zona:"Mi7"},
+    {nome:"ROSATE",zona:"Mi6"},{nome:"ROZZANO",zona:"Mi3"},{nome:"SAN DONATO MILANESE",zona:"Mi3"},
+    {nome:"SAN GIORGIO SU LEGNANO",zona:"Mi7"},{nome:"SAN GIULIANO MILANESE",zona:"Mi4"},
+    {nome:"SAN VITTORE OLONA",zona:"Mi6"},{nome:"SAN ZENONE AL LAMBRO",zona:"Mi6"},
+    {nome:"SANTO STEFANO TICINO",zona:"Mi6"},{nome:"SEDRIANO",zona:"Mi5"},{nome:"SEGRATE",zona:"Mi3"},
+    {nome:"SENAGO",zona:"Mi4"},{nome:"SEREGNO",zona:"Mi6"},{nome:"SESTO SAN GIOVANNI",zona:"Mi3"},
+    {nome:"SETTALA",zona:"Mi5"},{nome:"SETTIMO MILANESE",zona:"Mi3"},{nome:"SEVESO",zona:"Mi6"},
+    {nome:"SOLARO",zona:"Mi5"},{nome:"SORDIO",zona:"Mi6"},{nome:"SOVICO",zona:"Mi6"},
+    {nome:"SULBIATE",zona:"Mi7"},{nome:"TAVAZZANO CON VILLAVESCO",zona:"Mi7"},
+    {nome:"TREZZANO ROSA",zona:"Mi7"},{nome:"TREZZANO SUL NAVIGLIO",zona:"Mi4"},
+    {nome:"TREZZO SULL'ADDA",zona:"Mi7"},{nome:"TRIBIANO",zona:"Mi5"},{nome:"TRIUGGIO",zona:"Mi6"},
+    {nome:"TRUCCAZZANO",zona:"Mi6"},{nome:"TURBIGO",zona:"Mi9"},{nome:"USMATE VELATE",zona:"Mi6"},
+    {nome:"VANZAGHELLO",zona:"Mi9"},{nome:"VANZAGO",zona:"Mi5"},{nome:"VAPRIO D'ADDA",zona:"Mi7"},
+    {nome:"VAREDO",zona:"Mi5"},{nome:"VEDANO AL LAMBRO",zona:"Mi5"},{nome:"VEDUGGIO CON COLZANO",zona:"Mi8"},
+    {nome:"VERANO BRIANZA",zona:"Mi6"},{nome:"VERMEZZO",zona:"Mi6"},{nome:"VERNATE",zona:"Mi6"},
+    {nome:"VIGNATE",zona:"Mi5"},{nome:"VILLA CORTESE",zona:"Mi7"},{nome:"VILLASANTA",zona:"Mi5"},
+    {nome:"VIMERCATE",zona:"Mi6"},{nome:"VIMODRONE",zona:"Mi3"},{nome:"VITTUONE",zona:"Mi5"},
+    {nome:"VIZZOLO PREDABISSI",zona:"Mi5"},{nome:"ZELO BUON PERSICO",zona:"Mi6"},
+    {nome:"ZELO SURRIGONE",zona:"Mi6"},{nome:"ZIBIDO SAN GIACOMO",zona:"Mi4"}
 ];
 
 function getTicketInfo(fromIdx, toIdx) {
     const from = ZONES[fromIdx];
     const to = ZONES[toIdx];
-    const zoneCount = to.number - from.number + 1;
+    const zoneCount = toIdx - fromIdx + 1;
+
+    let price = 0;
+    if (fromIdx === 0) {
+        // Da Mi1 verso esterno (tariffario richiesto)
+        const mi1Table = {
+            2: 2.20,
+            3: 2.60,
+            4: 3.00,
+            5: 3.50,
+            6: 3.90,
+            7: 4.30,
+            8: 4.80
+        };
+        price = mi1Table[zoneCount] ?? 4.80;
+    } else {
+        // Tratte senza Mi1 (tariffario richiesto)
+        const noMi1Table = {
+            2: 1.70,
+            3: 2.20,
+            4: 2.60,
+            5: 3.10,
+            6: 3.60,
+            7: 4.10
+        };
+        price = noMi1Table[zoneCount] ?? 1.70;
+    }
+
     return {
         label: from.label + ' | ' + to.label,
         fromZone: from.label.toUpperCase(),
         toZone: to.label.toUpperCase(),
-        price: Math.round((1.00 + zoneCount * 0.40) * 100) / 100,
+        price: price,
         duration: 45 + zoneCount * 15,
         zoneCount: zoneCount,
         imageFile: 'STIBM Areas/' + from.label + '-' + to.label + '.png'
@@ -132,6 +233,48 @@ function bindEvents() {
 
     // Expired toggle
     document.getElementById('expired-toggle').addEventListener('click', toggleExpired);
+
+    // Config tabs - Coming Soon
+    document.querySelectorAll('.config-tab').forEach((tab, idx) => {
+        if (idx > 0) { // Skip first tab (Biglietti / Carnet)
+            tab.addEventListener('click', () => {
+                const tabName = tab.textContent.trim();
+                showComingSoonAlert(tabName);
+            });
+        }
+    });
+
+    // Map viewer
+    zoneMapImg.addEventListener('click', openMapViewer);
+    document.getElementById('map-viewer-modal').addEventListener('click', (e) => {
+        if (e.target.classList.contains('map-viewer-overlay') || 
+            e.target.classList.contains('map-viewer-image') ||
+            e.target.closest('.map-viewer-close')) {
+            closeMapViewer();
+        }
+    });
+
+    // Accordion toggle
+    document.getElementById('accordion-daa-btn').addEventListener('click', () => toggleAccordion('accordion-daa'));
+    document.getElementById('accordion-zone-btn').addEventListener('click', () => toggleAccordion('accordion-zone'));
+
+    // Search comuni
+    const searchFrom = document.getElementById('search-from');
+    const searchTo = document.getElementById('search-to');
+    searchFrom.addEventListener('input', () => onSearchInput('from'));
+    searchTo.addEventListener('input', () => onSearchInput('to'));
+    searchFrom.addEventListener('focus', () => onSearchInput('from'));
+    searchTo.addEventListener('focus', () => onSearchInput('to'));
+    document.getElementById('clear-from').addEventListener('click', () => clearSearch('from'));
+    document.getElementById('clear-to').addEventListener('click', () => clearSearch('to'));
+
+    // Close dropdowns on outside click
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.search-field-wrap')) {
+            document.getElementById('dropdown-from').classList.remove('open');
+            document.getElementById('dropdown-to').classList.remove('open');
+        }
+    });
 }
 
 // ── Zone Slider Logic ──
@@ -186,14 +329,28 @@ function updateSlider() {
 
 function updateZoneBadges() {
     zoneBadges.innerHTML = '';
+    const selectedZones = [];
     for (let i = selectedFromIdx; i <= selectedToIdx; i++) {
-        const z = ZONES[i];
+        selectedZones.push(ZONES[i]);
+    }
+    selectedZones.forEach((z, idx) => {
         const badge = document.createElement('span');
         badge.className = 'zone-badge';
+        if (z.pattern) {
+            badge.classList.add(z.pattern);
+        }
+        // Applica classi per border-radius
+        if (idx === 0) {
+            badge.classList.add('zone-badge-first');
+        } else if (idx === selectedZones.length - 1) {
+            badge.classList.add('zone-badge-last');
+        } else {
+            badge.classList.add('zone-badge-middle');
+        }
         badge.textContent = z.label;
         badge.style.backgroundColor = z.color;
         zoneBadges.appendChild(badge);
-    }
+    });
 }
 
 function updateMapImage() {
@@ -567,11 +724,11 @@ function generateQRCode(ticket) {
 
     qrInstance = new QRCode(container, {
         text: qrContent,
-        width: 280,
-        height: 280,
+        width: 300,
+        height: 300,
         colorDark: '#000000',
         colorLight: '#ffffff',
-        correctLevel: QRCode.CorrectLevel.H
+        correctLevel: QRCode.CorrectLevel.M
     });
 }
 
@@ -778,6 +935,170 @@ function formatDateShort(date) {
 
 function formatPrice(price) {
     return price.toFixed(2).replace('.', ',') + ' €';
+}
+
+// ── Coming Soon Alert ──
+
+function showComingSoonAlert(feature) {
+    alert('🚧 ' + feature + ' - Coming Soon\n\nQuesta funzionalità sarà disponibile nei prossimi aggiornamenti.');
+}
+
+// ── Map Viewer ──
+
+function openMapViewer() {
+    const modal = document.getElementById('map-viewer-modal');
+    const viewerImg = document.getElementById('map-viewer-img');
+    viewerImg.src = zoneMapImg.src;
+    viewerImg.alt = zoneMapImg.alt;
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeMapViewer() {
+    const modal = document.getElementById('map-viewer-modal');
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// ── Accordion Logic ──
+
+let selectedComuneFrom = null;
+let selectedComuneTo = null;
+
+function toggleAccordion(id) {
+    const section = document.getElementById(id);
+    const isOpen = section.classList.contains('open');
+    // Close all
+    document.querySelectorAll('.accordion-section').forEach(s => s.classList.remove('open'));
+    // Open clicked if it was closed
+    if (!isOpen) {
+        section.classList.add('open');
+    }
+}
+
+// ── Comuni Search Logic ──
+
+function onSearchInput(type) {
+    const input = document.getElementById('search-' + (type === 'from' ? 'from' : 'to'));
+    const dropdown = document.getElementById('dropdown-' + (type === 'from' ? 'from' : 'to'));
+    const clearBtn = document.getElementById('clear-' + (type === 'from' ? 'from' : 'to'));
+    const query = input.value.trim().toUpperCase();
+
+    clearBtn.classList.toggle('visible', input.value.length > 0);
+
+    if (query.length === 0) {
+        dropdown.classList.remove('open');
+        return;
+    }
+
+    const results = COMUNI_STIBM.filter(c => c.nome.includes(query)).slice(0, 15);
+    dropdown.innerHTML = '';
+
+    if (results.length === 0) {
+        dropdown.innerHTML = '<div class="search-dropdown-empty">Nessun comune trovato</div>';
+    } else {
+        results.forEach(c => {
+            const item = document.createElement('div');
+            item.className = 'search-dropdown-item';
+            item.innerHTML = '<span>' + capitalizeComune(c.nome) + '</span><span class="comune-zone-tag">' + c.zona + '</span>';
+            item.addEventListener('click', (e) => {
+                e.stopPropagation();
+                selectComune(type, c);
+            });
+            dropdown.appendChild(item);
+        });
+    }
+    dropdown.classList.add('open');
+}
+
+function selectComune(type, comune) {
+    const input = document.getElementById('search-' + (type === 'from' ? 'from' : 'to'));
+    const dropdown = document.getElementById('dropdown-' + (type === 'from' ? 'from' : 'to'));
+    const clearBtn = document.getElementById('clear-' + (type === 'from' ? 'from' : 'to'));
+
+    input.value = capitalizeComune(comune.nome);
+    dropdown.classList.remove('open');
+    clearBtn.classList.add('visible');
+
+    if (type === 'from') {
+        selectedComuneFrom = comune;
+    } else {
+        selectedComuneTo = comune;
+    }
+
+    // If both selected, auto-calculate zones
+    if (selectedComuneFrom && selectedComuneTo) {
+        applyComuniZones();
+    }
+}
+
+function clearSearch(type) {
+    const input = document.getElementById('search-' + (type === 'from' ? 'from' : 'to'));
+    const dropdown = document.getElementById('dropdown-' + (type === 'from' ? 'from' : 'to'));
+    const clearBtn = document.getElementById('clear-' + (type === 'from' ? 'from' : 'to'));
+    input.value = '';
+    dropdown.classList.remove('open');
+    clearBtn.classList.remove('visible');
+
+    if (type === 'from') {
+        selectedComuneFrom = null;
+    } else {
+        selectedComuneTo = null;
+    }
+
+    document.getElementById('search-result-zone').style.display = 'none';
+}
+
+function applyComuniZones() {
+    const fromZona = selectedComuneFrom.zona;
+    const toZona = selectedComuneTo.zona;
+
+    // Find zone indices in ZONES array
+    const fromZoneIdx = ZONES.findIndex(z => z.label === fromZona);
+    const toZoneIdx = ZONES.findIndex(z => z.label === toZona);
+
+    if (fromZoneIdx === -1 || toZoneIdx === -1) return;
+
+    // Ensure from <= to
+    const minIdx = Math.min(fromZoneIdx, toZoneIdx);
+    const maxIdx = Math.max(fromZoneIdx, toZoneIdx);
+
+    // Enforce minimum 2 zones
+    let finalMinIdx = minIdx;
+    let finalMaxIdx = maxIdx;
+    if (finalMinIdx === finalMaxIdx) {
+        if (finalMaxIdx < ZONES.length - 1) {
+            finalMaxIdx++;
+        } else {
+            finalMinIdx--;
+        }
+    }
+
+    // Update sliders
+    selectedFromIdx = finalMinIdx;
+    selectedToIdx = finalMaxIdx;
+    sliderFrom.value = selectedFromIdx;
+    sliderTo.value = selectedToIdx;
+    updateSlider();
+    updateEndDate();
+
+    // Show result
+    const resultDiv = document.getElementById('search-result-zone');
+    const resultText = document.getElementById('search-result-text');
+    const info = getTicketInfo(selectedFromIdx, selectedToIdx);
+    resultText.textContent = '✓ Zone calcolate: ' + info.label + ' — ' + formatPrice(info.price);
+    resultDiv.style.display = 'block';
+}
+
+function capitalizeComune(str) {
+    return str.split(' ').map(word => {
+        // Keep short prepositions/articles lowercase
+        const lower = word.toLowerCase();
+        if (['di', 'al', 'sul', 'con', 'in', 'del', 'dei', 'da', 'd\'adda', 'de\''].includes(lower)) {
+            return lower;
+        }
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    }).join(' ');
 }
 
 // ── PWA Service Worker Registration ──
