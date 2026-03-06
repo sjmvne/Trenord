@@ -714,14 +714,25 @@ function closeDetail() {
         container.innerHTML = '';
         qrInstance = null;
         currentDetailTicket = null;
+        qrShowingReal = false;
+        qrRealSrc = null;
+        qrFakeSrc = null;
     }, 350);
 }
 
 // ── QR Code Generation ──
 
+// Stato swap QR: true = vero (default), false = corrotto
+let qrShowingReal = true;
+let qrRealSrc = null;
+let qrFakeSrc = null;
+
 function generateQRCode(ticket) {
     const container = document.getElementById('qrcode-container');
     container.innerHTML = '';
+    qrShowingReal = true;
+    qrRealSrc = null;
+    qrFakeSrc = null;
 
     const qrContent = buildQRContent(ticket);
 
@@ -733,6 +744,104 @@ function generateQRCode(ticket) {
         colorLight: '#ffffff',
         correctLevel: QRCode.CorrectLevel.M
     });
+
+    // Dopo il rendering, prepara la versione corrotta
+    setTimeout(() => {
+        const img = container.querySelector('img');
+        if (!img) return;
+
+        const setup = () => {
+            qrRealSrc = img.src;
+            qrFakeSrc = buildCorruptedQR(img);
+            // Mostra il VERO di default
+            img.src = qrRealSrc;
+            qrShowingReal = true;
+            img.style.cursor = 'pointer';
+            img.addEventListener('click', toggleQR);
+        };
+
+        if (img.complete && img.naturalWidth > 0) {
+            setup();
+        } else {
+            img.onload = setup;
+        }
+    }, 200);
+}
+
+function toggleQR() {
+    const container = document.getElementById('qrcode-container');
+    if (!container || !qrRealSrc || !qrFakeSrc) return;
+    const img = container.querySelector('img');
+    if (!img) return;
+    qrShowingReal = !qrShowingReal;
+    img.src = qrShowingReal ? qrRealSrc : qrFakeSrc;
+}
+
+function buildCorruptedQR(img) {
+    const size = img.naturalWidth || 300;
+    const c = document.createElement('canvas');
+    c.width = size;
+    c.height = size;
+    const ctx = c.getContext('2d');
+    ctx.drawImage(img, 0, 0, size, size);
+
+    // Analizza i pixel per trovare quietZone e finderSize
+    const data = ctx.getImageData(0, 0, size, size).data;
+    const isBlack = (px, py) => {
+        if (px < 0 || py < 0 || px >= size || py >= size) return false;
+        return data[(py * size + px) * 4] < 128;
+    };
+
+    // Trova quiet zone
+    let qz = 0, qzY = 0;
+    outer: for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+            if (isBlack(x, y)) { qz = x; qzY = y; break outer; }
+        }
+    }
+
+    // Finder = prima riga continua di neri
+    let fEnd = qz;
+    for (let x = qz; x < size; x++) {
+        if (isBlack(x, qzY)) { fEnd = x; } else { break; }
+    }
+    const finderPx = fEnd - qz + 1;
+    const modPx = finderPx / 7;
+
+    // 3 finder positions
+    const finders = [
+        { x: qz, y: qzY },
+        { x: size - qz - finderPx, y: qzY },
+        { x: qz, y: size - qzY - finderPx }
+    ];
+
+    // Moduli bianchi dell'anello interno da rendere neri.
+    // Questi sono i punti che lo scanner attraversa orizzontalmente
+    // e verticalmente per rilevare il rapporto 1:1:3:1:1.
+    // Rendendoli neri, il rapporto diventa 2:0:3:1:1 (orizzontale)
+    // e 2:0:3:1:1 (verticale) → scanner non lo riconosce.
+    // Visivamente: 4 microscopici pixel neri nell'anello bianco,
+    // adiacenti al bordo nero → praticamente invisibili.
+    const corruptModules = [
+        { r: 3, c: 1 }, // centro-sinistra anello bianco (rompe scansione orizzontale)
+        { r: 3, c: 5 }, // centro-destra anello bianco (rompe scansione orizzontale)
+        { r: 1, c: 3 }, // centro-alto anello bianco (rompe scansione verticale)
+        { r: 5, c: 3 }, // centro-basso anello bianco (rompe scansione verticale)
+    ];
+
+    ctx.fillStyle = '#000000';
+    finders.forEach(f => {
+        corruptModules.forEach(m => {
+            ctx.fillRect(
+                Math.floor(f.x + m.c * modPx),
+                Math.floor(f.y + m.r * modPx),
+                Math.ceil(modPx),
+                Math.ceil(modPx)
+            );
+        });
+    });
+
+    return c.toDataURL();
 }
 
 function buildQRContent(ticket) {
