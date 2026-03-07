@@ -18,6 +18,54 @@
 </head>
 <body>
 
+    <!-- ====== SPLASH SCREEN ====== -->
+    <div id="splash-screen" class="splash-screen active">
+        <div class="splash-bg-grid"></div>
+        <div class="splash-particles" id="splash-particles"></div>
+        <div class="splash-radial"></div>
+
+        <div class="splash-content">
+            <div class="splash-logo-container">
+                <div class="splash-ring splash-ring-1"></div>
+                <div class="splash-ring splash-ring-2"></div>
+                <div class="splash-ring splash-ring-3"></div>
+                <div class="splash-logo-glow"></div>
+                <img src="icon.png" alt="Trenord+" class="splash-logo-img">
+            </div>
+
+            <div class="splash-text-group">
+                <div class="splash-app-name">Trenord<span class="splash-plus">+</span></div>
+                <div class="splash-tagline">Biglietto Digitale STIBM</div>
+            </div>
+
+            <div class="splash-loader">
+                <div class="splash-loader-track">
+                    <div class="splash-loader-fill" id="splash-loader-fill"></div>
+                </div>
+            </div>
+
+            <div class="splash-train-wrapper">
+                <div class="splash-track-line"></div>
+                <div class="splash-train" id="splash-train">
+                    <svg viewBox="0 0 80 32" fill="none">
+                        <rect x="4" y="4" width="72" height="22" rx="6" fill="#2C7F44"/>
+                        <rect x="8" y="8" width="14" height="10" rx="2" fill="#4AEAB1" opacity="0.6"/>
+                        <rect x="26" y="8" width="14" height="10" rx="2" fill="#4AEAB1" opacity="0.6"/>
+                        <rect x="44" y="8" width="14" height="10" rx="2" fill="#4AEAB1" opacity="0.6"/>
+                        <rect x="62" y="8" width="10" height="10" rx="2" fill="#FFD700" opacity="0.8"/>
+                        <circle cx="16" cy="28" r="3" fill="#fff"/>
+                        <circle cx="40" cy="28" r="3" fill="#fff"/>
+                        <circle cx="64" cy="28" r="3" fill="#fff"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="splash-footer">
+            <span class="splash-footer-text">3nord</span>
+        </div>
+    </div>
+
     <!-- ====== SCREEN: HOME ====== -->
     <div id="home-screen" class="screen active" data-tab="home">
         <div class="config-header">
@@ -431,7 +479,7 @@ toZona   = comuneArrivo.zona;   // "Mi7"
             <div class="tech-section tech-footer">
                 <div class="tech-version">
                     <div class="tech-version-info">
-                        <span class="version-label">Build v37</span>
+                        <span class="version-label">Build v39</span>
                         <span class="version-date">Mar 2026</span>
                     </div>
                     <button class="btn-check-updates" id="btn-check-updates" aria-label="Controlla aggiornamenti">
@@ -688,6 +736,56 @@ toZona   = comuneArrivo.zona;   // "Mi7"
             <div class="modal-actions" style="display:flex; gap:8px;">
                 <button class="modal-btn" style="color:#8E8E93;" onclick="closeModal('update-modal')">Dopo</button>
                 <button class="modal-btn" style="color:#62A76C; font-weight:700;" onclick="applyUpdate()">Aggiorna</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== SCREEN: Epic Update ====== -->
+    <div id="update-screen" class="update-screen">
+        <div class="update-bg-grid"></div>
+        <div class="update-particles" id="update-particles"></div>
+
+        <div class="update-content">
+            <div class="update-logo-ring">
+                <div class="update-logo-ring-orbit"></div>
+                <div class="update-logo-ring-orbit update-orbit-2"></div>
+                <div class="update-logo-ring-orbit update-orbit-3"></div>
+                <img src="icon.png" alt="Trenord+" class="update-logo-img">
+            </div>
+
+            <div class="update-text-area">
+                <div class="update-title">Aggiornamento in corso</div>
+                <div class="update-subtitle" id="update-status-text">Connessione al server...</div>
+            </div>
+
+            <div class="update-progress-wrapper">
+                <div class="update-progress-track">
+                    <div class="update-progress-fill" id="update-progress-fill"></div>
+                    <div class="update-progress-glow" id="update-progress-glow"></div>
+                </div>
+                <div class="update-progress-pct" id="update-progress-pct">0%</div>
+            </div>
+
+            <div class="update-train-track">
+                <div class="update-track-line"></div>
+                <div class="update-train" id="update-train">
+                    <svg viewBox="0 0 80 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="4" y="4" width="72" height="22" rx="6" fill="#2C7F44"/>
+                        <rect x="8" y="8" width="14" height="10" rx="2" fill="#4AEAB1" opacity="0.6"/>
+                        <rect x="26" y="8" width="14" height="10" rx="2" fill="#4AEAB1" opacity="0.6"/>
+                        <rect x="44" y="8" width="14" height="10" rx="2" fill="#4AEAB1" opacity="0.6"/>
+                        <rect x="62" y="8" width="10" height="10" rx="2" fill="#FFD700" opacity="0.8"/>
+                        <circle cx="16" cy="28" r="3" fill="#fff"/>
+                        <circle cx="40" cy="28" r="3" fill="#fff"/>
+                        <circle cx="64" cy="28" r="3" fill="#fff"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="update-version-badge" id="update-version-badge">
+                <span class="update-ver-old" id="update-ver-old"></span>
+                <svg class="update-ver-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+                <span class="update-ver-new" id="update-ver-new"></span>
             </div>
         </div>
     </div>

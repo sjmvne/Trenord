@@ -177,6 +177,7 @@ const btnGeneraText = document.getElementById('btn-genera-text');
 
 // ── Initialization ──
 document.addEventListener('DOMContentLoaded', () => {
+    initSplashScreen();
     loadTickets();
     initDefaults();
     initSliderLabels();
@@ -1724,7 +1725,116 @@ function applyUpdate() {
         localStorage.setItem('trenord_last_commit', _latestCommitSHA);
     }
     closeModal('update-modal');
-    forceReload();
+    showEpicUpdateScreen();
+}
+
+// ── Epic Update Screen ──
+
+function showEpicUpdateScreen() {
+    const screen = document.getElementById('update-screen');
+    const fillBar = document.getElementById('update-progress-fill');
+    const glowBar = document.getElementById('update-progress-glow');
+    const pctEl = document.getElementById('update-progress-pct');
+    const statusEl = document.getElementById('update-status-text');
+    const particlesContainer = document.getElementById('update-particles');
+
+    // Set version badge
+    const verLabel = document.querySelector('.version-label');
+    const currentBuild = verLabel ? verLabel.textContent.replace('Build ', '') : '?';
+    document.getElementById('update-ver-old').textContent = currentBuild;
+    document.getElementById('update-ver-new').textContent = 'new';
+
+    // Reset
+    fillBar.style.width = '0%';
+    glowBar.style.width = '0%';
+    pctEl.textContent = '0%';
+    screen.classList.remove('fadeout');
+    screen.classList.add('active');
+    document.body.style.overflow = 'hidden';
+
+    // Spawn particles
+    particlesContainer.innerHTML = '';
+    for (let i = 0; i < 30; i++) {
+        const p = document.createElement('div');
+        p.className = 'update-particle';
+        const size = Math.random() * 4 + 2;
+        const isGold = Math.random() > 0.75;
+        p.style.cssText = [
+            'width:' + size + 'px',
+            'height:' + size + 'px',
+            'left:' + (Math.random() * 100) + '%',
+            'background:' + (isGold ? 'rgba(255,215,0,0.7)' : 'rgba(78,204,120,0.6)'),
+            'animation-duration:' + (Math.random() * 3 + 2) + 's',
+            'animation-delay:' + (Math.random() * 4) + 's',
+            'box-shadow: 0 0 ' + (size * 2) + 'px ' + (isGold ? 'rgba(255,215,0,0.4)' : 'rgba(78,204,120,0.4)')
+        ].join(';');
+        particlesContainer.appendChild(p);
+    }
+
+    // Status text phases
+    const phases = [
+        { at: 0,    text: 'Connessione al server...' },
+        { at: 500,  text: 'Download nuovi componenti...' },
+        { at: 1200, text: 'Aggiornamento risorse UI...' },
+        { at: 2000, text: 'Compilazione moduli...' },
+        { at: 2800, text: 'Pulizia cache precedente...' },
+        { at: 3500, text: 'Applicazione patch...' },
+        { at: 4000, text: 'Verifica integrità...' },
+        { at: 4500, text: 'Finalizzazione...' },
+        { at: 4800, text: 'Aggiornamento completato ✓' }
+    ];
+
+    phases.forEach(function(phase) {
+        setTimeout(function() {
+            statusEl.style.opacity = '0';
+            setTimeout(function() {
+                statusEl.textContent = phase.text;
+                statusEl.style.opacity = '1';
+            }, 150);
+        }, phase.at);
+    });
+
+    // Smooth progress from 0 to 100% over ~4.8s
+    const duration = 4800;
+    const startTime = performance.now();
+
+    function animateProgress(now) {
+        const elapsed = now - startTime;
+        const rawPct = Math.min(elapsed / duration, 1);
+        // Eased progress (ease-out cubic)
+        const pct = 1 - Math.pow(1 - rawPct, 3);
+        const display = Math.round(pct * 100);
+
+        fillBar.style.width = display + '%';
+        glowBar.style.width = display + '%';
+        pctEl.textContent = display + '%';
+
+        if (rawPct < 1) {
+            requestAnimationFrame(animateProgress);
+        }
+    }
+    requestAnimationFrame(animateProgress);
+
+    // Actually clear caches in background while animation plays
+    if ('caches' in window) {
+        caches.keys().then(function(names) {
+            return Promise.all(names.map(function(name) { return caches.delete(name); }));
+        }).then(function() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistration().then(function(reg) {
+                    if (reg) reg.update();
+                });
+            }
+        });
+    }
+
+    // Fade out and reload at 5s
+    setTimeout(function() {
+        screen.classList.add('fadeout');
+        setTimeout(function() {
+            window.location.reload(true);
+        }, 600);
+    }, 5000);
 }
 
 // ── Changelog Fetcher ──
@@ -1826,4 +1936,59 @@ function escapeHtml(text) {
     var div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+// ── Splash Screen ──
+
+function initSplashScreen() {
+    const splash = document.getElementById('splash-screen');
+    if (!splash) return;
+
+    // Spawn particles
+    const container = document.getElementById('splash-particles');
+    if (container) {
+        for (let i = 0; i < 25; i++) {
+            const p = document.createElement('div');
+            p.className = 'splash-particle';
+            const size = Math.random() * 3.5 + 1.5;
+            const isGold = Math.random() > 0.8;
+            const duration = Math.random() * 4 + 3;
+            const delay = Math.random() * 3;
+            p.style.cssText = [
+                'width:' + size + 'px',
+                'height:' + size + 'px',
+                'left:' + (Math.random() * 100) + '%',
+                'bottom:' + (Math.random() * 20 - 10) + '%',
+                'background:' + (isGold ? 'rgba(255,215,0,0.7)' : 'rgba(78,204,120,0.5)'),
+                'box-shadow:0 0 ' + (size * 3) + 'px ' + (isGold ? 'rgba(255,215,0,0.3)' : 'rgba(78,204,120,0.3)'),
+                'animation-duration:' + duration + 's',
+                'animation-delay:' + delay + 's'
+            ].join(';');
+            container.appendChild(p);
+        }
+    }
+
+    // Dismiss splash after minimum time + page fully loaded
+    const minTime = 3000;
+    const startTime = Date.now();
+
+    function dismissSplash() {
+        const elapsed = Date.now() - startTime;
+        const remaining = Math.max(0, minTime - elapsed);
+
+        setTimeout(function() {
+            splash.classList.add('dismiss');
+            setTimeout(function() {
+                splash.classList.remove('active', 'dismiss');
+                splash.style.display = 'none';
+            }, 800);
+        }, remaining);
+    }
+
+    // Wait for window load (all resources) then dismiss
+    if (document.readyState === 'complete') {
+        dismissSplash();
+    } else {
+        window.addEventListener('load', dismissSplash);
+    }
 }

@@ -2755,3 +2755,668 @@ body.qr-brightness-mode .screen.active {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 }
+
+/* ============================================
+   EPIC UPDATE SCREEN
+   ============================================ */
+
+.update-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: linear-gradient(145deg, #0a1a0f 0%, #0f2918 30%, #143d20 60%, #0a1a0f 100%);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.update-screen.active {
+    display: flex;
+    animation: updateScreenIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.update-screen.fadeout {
+    animation: updateScreenOut 0.6s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+@keyframes updateScreenIn {
+    0% { opacity: 0; transform: scale(1.1); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes updateScreenOut {
+    0% { opacity: 1; transform: scale(1); filter: brightness(1); }
+    50% { filter: brightness(2.5); }
+    100% { opacity: 0; transform: scale(0.9); filter: brightness(0); }
+}
+
+/* ── Grid Background ── */
+.update-bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(78, 204, 120, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(78, 204, 120, 0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: gridDrift 8s linear infinite;
+}
+
+@keyframes gridDrift {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(-40px, -40px); }
+}
+
+/* ── Particles ── */
+.update-particles {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.update-particle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: particleFloat linear infinite;
+}
+
+@keyframes particleFloat {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-20vh) scale(1); opacity: 0; }
+}
+
+/* ── Content Container ── */
+.update-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    padding: 0 40px;
+    width: 100%;
+    max-width: 360px;
+}
+
+/* ── Logo with Orbiting Rings ── */
+.update-logo-ring {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.update-logo-img {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    position: relative;
+    z-index: 2;
+    animation: logoPulse 2s ease-in-out infinite;
+    box-shadow: 0 0 30px rgba(78, 204, 120, 0.4), 0 0 60px rgba(78, 204, 120, 0.15);
+}
+
+@keyframes logoPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 30px rgba(78, 204, 120, 0.4), 0 0 60px rgba(78, 204, 120, 0.15); }
+    50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(78, 204, 120, 0.6), 0 0 80px rgba(78, 204, 120, 0.25); }
+}
+
+.update-logo-ring-orbit {
+    position: absolute;
+    inset: 0;
+    border: 1.5px solid transparent;
+    border-top-color: rgba(78, 204, 120, 0.6);
+    border-right-color: rgba(78, 204, 120, 0.2);
+    border-radius: 50%;
+    animation: orbitSpin 2s linear infinite;
+}
+
+.update-orbit-2 {
+    inset: -10px;
+    border-top-color: rgba(74, 234, 177, 0.4);
+    border-right-color: transparent;
+    border-left-color: rgba(74, 234, 177, 0.15);
+    animation-duration: 3s;
+    animation-direction: reverse;
+}
+
+.update-orbit-3 {
+    inset: -20px;
+    border-top-color: rgba(255, 215, 0, 0.3);
+    border-right-color: transparent;
+    border-bottom-color: rgba(255, 215, 0, 0.1);
+    animation-duration: 4.5s;
+}
+
+@keyframes orbitSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ── Text Area ── */
+.update-text-area {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.update-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.3px;
+    animation: titleGlow 3s ease-in-out infinite;
+}
+
+@keyframes titleGlow {
+    0%, 100% { text-shadow: 0 0 20px rgba(78, 204, 120, 0.3); }
+    50% { text-shadow: 0 0 40px rgba(78, 204, 120, 0.6), 0 0 80px rgba(78, 204, 120, 0.2); }
+}
+
+.update-subtitle {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 400;
+    transition: opacity 0.3s ease;
+    min-height: 20px;
+}
+
+/* ── Progress Bar ── */
+.update-progress-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.update-progress-track {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+}
+
+.update-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #2C7F44, #4ecc78, #4AEAB1);
+    border-radius: 3px;
+    transition: width 0.15s linear;
+    position: relative;
+}
+
+.update-progress-glow {
+    position: absolute;
+    top: -4px;
+    left: 0;
+    width: 0%;
+    height: 14px;
+    background: radial-gradient(ellipse at right, rgba(78, 204, 120, 0.5), transparent 70%);
+    border-radius: 7px;
+    transition: width 0.15s linear;
+    filter: blur(3px);
+}
+
+.update-progress-pct {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.5);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.5px;
+}
+
+/* ── Train Animation ── */
+.update-train-track {
+    width: 100%;
+    position: relative;
+    height: 40px;
+    margin-top: 4px;
+}
+
+.update-track-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: repeating-linear-gradient(90deg, rgba(78, 204, 120, 0.3) 0px, rgba(78, 204, 120, 0.3) 12px, transparent 12px, transparent 20px);
+    animation: trackScroll 0.8s linear infinite;
+}
+
+@keyframes trackScroll {
+    0% { background-position: 0 0; }
+    100% { background-position: -20px 0; }
+}
+
+.update-train {
+    position: absolute;
+    left: -90px;
+    bottom: 2px;
+    width: 80px;
+    animation: trainCross 5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+    filter: drop-shadow(0 0 10px rgba(78, 204, 120, 0.4));
+}
+
+.update-train svg {
+    width: 100%;
+    height: auto;
+}
+
+@keyframes trainCross {
+    0% { left: -90px; }
+    15% { left: 10%; }
+    85% { left: 70%; }
+    100% { left: calc(100% + 90px); }
+}
+
+/* ── Version Badge ── */
+.update-version-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 20px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(78, 204, 120, 0.15);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    animation: badgeFadeIn 0.6s 0.5s ease both;
+}
+
+@keyframes badgeFadeIn {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.update-ver-old {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.35);
+    text-decoration: line-through;
+    text-decoration-color: rgba(255, 100, 100, 0.5);
+}
+
+.update-ver-arrow {
+    width: 18px;
+    height: 18px;
+    color: #4ecc78;
+    animation: arrowBounce 1.5s ease-in-out infinite;
+}
+
+@keyframes arrowBounce {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(4px); }
+}
+
+.update-ver-new {
+    font-size: 14px;
+    font-weight: 700;
+    color: #4AEAB1;
+    text-shadow: 0 0 12px rgba(74, 234, 177, 0.5);
+}
+
+/* ============================================
+   SPLASH SCREEN
+   ============================================ */
+
+.splash-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    background: linear-gradient(160deg, #061208 0%, #0d2415 35%, #15412a 65%, #0a1a0f 100%);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.splash-screen.active {
+    display: flex;
+}
+
+.splash-screen.dismiss {
+    animation: splashDismiss 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes splashDismiss {
+    0% { opacity: 1; transform: scale(1); }
+    40% { opacity: 1; transform: scale(1.02); }
+    100% { opacity: 0; transform: scale(1.08); pointer-events: none; }
+}
+
+/* ── Background Grid ── */
+.splash-bg-grid {
+    position: absolute;
+    inset: -40px;
+    background-image:
+        linear-gradient(rgba(78, 204, 120, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(78, 204, 120, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: splashGridDrift 12s linear infinite;
+    opacity: 0;
+    animation: splashGridFadeIn 1s 0.2s ease forwards, splashGridDrift 12s linear infinite;
+}
+
+@keyframes splashGridFadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes splashGridDrift {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    100% { transform: translate(-50px, -50px) rotate(0deg); }
+}
+
+/* ── Radial glow ── */
+.splash-radial {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(44, 127, 68, 0.25) 0%, transparent 70%);
+    animation: splashRadialPulse 3s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes splashRadialPulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+    50% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+}
+
+/* ── Particles ── */
+.splash-particles {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.splash-particle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    animation: splashParticleRise linear forwards;
+}
+
+@keyframes splashParticleRise {
+    0% { transform: translateY(0) scale(0); opacity: 0; }
+    15% { opacity: 0.8; transform: scale(1); }
+    85% { opacity: 0.6; }
+    100% { transform: translateY(-120vh) scale(0.5); opacity: 0; }
+}
+
+/* ── Content ── */
+.splash-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    width: 100%;
+    max-width: 320px;
+    padding: 0 32px;
+}
+
+/* ── Logo with Rings ── */
+.splash-logo-container {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: splashLogoEntry 1s 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes splashLogoEntry {
+    0% { opacity: 0; transform: scale(0.3) rotate(-10deg); }
+    60% { transform: scale(1.05) rotate(2deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+.splash-logo-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+    position: relative;
+    z-index: 3;
+    box-shadow:
+        0 0 40px rgba(78, 204, 120, 0.5),
+        0 0 80px rgba(78, 204, 120, 0.2),
+        0 8px 32px rgba(0, 0, 0, 0.4);
+    animation: splashLogoPulse 2.5s 1.3s ease-in-out infinite;
+}
+
+@keyframes splashLogoPulse {
+    0%, 100% { box-shadow: 0 0 40px rgba(78, 204, 120, 0.5), 0 0 80px rgba(78, 204, 120, 0.2), 0 8px 32px rgba(0, 0, 0, 0.4); }
+    50% { box-shadow: 0 0 60px rgba(78, 204, 120, 0.7), 0 0 120px rgba(78, 204, 120, 0.3), 0 8px 32px rgba(0, 0, 0, 0.4); }
+}
+
+.splash-logo-glow {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    border-radius: 22px;
+    background: rgba(78, 204, 120, 0.15);
+    filter: blur(20px);
+    z-index: 1;
+    animation: splashGlowPulse 2.5s 1.3s ease-in-out infinite;
+}
+
+@keyframes splashGlowPulse {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.3); opacity: 0.8; }
+}
+
+.splash-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1.5px solid transparent;
+}
+
+.splash-ring-1 {
+    inset: 10px;
+    border-top-color: rgba(78, 204, 120, 0.6);
+    border-right-color: rgba(78, 204, 120, 0.15);
+    animation: splashRingSpin 2.5s linear infinite;
+    opacity: 0;
+    animation: splashRingReveal 0.6s 0.8s ease forwards, splashRingSpin 2.5s linear infinite;
+}
+
+.splash-ring-2 {
+    inset: -2px;
+    border-bottom-color: rgba(74, 234, 177, 0.45);
+    border-left-color: rgba(74, 234, 177, 0.1);
+    animation: splashRingSpin 3.5s linear infinite reverse;
+    opacity: 0;
+    animation: splashRingReveal 0.6s 1s ease forwards, splashRingSpin 3.5s linear infinite reverse;
+}
+
+.splash-ring-3 {
+    inset: -14px;
+    border-top-color: rgba(255, 215, 0, 0.25);
+    border-left-color: rgba(255, 215, 0, 0.08);
+    animation: splashRingSpin 5s linear infinite;
+    opacity: 0;
+    animation: splashRingReveal 0.6s 1.2s ease forwards, splashRingSpin 5s linear infinite;
+}
+
+@keyframes splashRingSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes splashRingReveal {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* ── Text ── */
+.splash-text-group {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    animation: splashTextEntry 0.8s 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes splashTextEntry {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.splash-app-name {
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+    text-shadow: 0 0 30px rgba(78, 204, 120, 0.4);
+}
+
+.splash-plus {
+    color: #4AEAB1;
+    font-weight: 900;
+    text-shadow: 0 0 20px rgba(74, 234, 177, 0.6);
+}
+
+.splash-tagline {
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.45);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    animation: splashTaglineFade 0.8s 1s ease both;
+}
+
+@keyframes splashTaglineFade {
+    0% { opacity: 0; letter-spacing: 6px; }
+    100% { opacity: 1; letter-spacing: 2px; }
+}
+
+/* ── Loader ── */
+.splash-loader {
+    width: 100%;
+    animation: splashLoaderEntry 0.6s 1.2s ease both;
+}
+
+@keyframes splashLoaderEntry {
+    0% { opacity: 0; transform: scaleX(0.5); }
+    100% { opacity: 1; transform: scaleX(1); }
+}
+
+.splash-loader-track {
+    width: 100%;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+}
+
+.splash-loader-fill {
+    position: absolute;
+    top: 0;
+    left: -40%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, #4ecc78, #4AEAB1, transparent);
+    border-radius: 2px;
+    animation: splashLoaderSlide 1.4s 1.4s ease-in-out infinite;
+}
+
+@keyframes splashLoaderSlide {
+    0% { left: -40%; }
+    100% { left: 100%; }
+}
+
+/* ── Train ── */
+.splash-train-wrapper {
+    width: 100%;
+    position: relative;
+    height: 36px;
+    margin-top: -8px;
+    animation: splashTrainEntry 0.6s 1.4s ease both;
+}
+
+@keyframes splashTrainEntry {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+.splash-track-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: repeating-linear-gradient(90deg,
+        rgba(78, 204, 120, 0.2) 0px, rgba(78, 204, 120, 0.2) 12px,
+        transparent 12px, transparent 22px);
+    animation: splashTrackScroll 0.9s linear infinite;
+}
+
+@keyframes splashTrackScroll {
+    0% { background-position: 0 0; }
+    100% { background-position: -22px 0; }
+}
+
+.splash-train {
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70px;
+    filter: drop-shadow(0 0 12px rgba(78, 204, 120, 0.35));
+    animation: splashTrainBob 1.5s ease-in-out infinite;
+}
+
+.splash-train svg {
+    width: 100%;
+    height: auto;
+}
+
+@keyframes splashTrainBob {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-2px); }
+}
+
+/* ── Footer ── */
+.splash-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+    text-align: center;
+    z-index: 2;
+    animation: splashFooterEntry 0.8s 1.6s ease both;
+}
+
+@keyframes splashFooterEntry {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+.splash-footer-text {
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.2);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
