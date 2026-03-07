@@ -1,7 +1,7 @@
 {
-    "name": "Trenord",
-    "short_name": "Trenord",
-    "description": "Trenord Biglietto Digitale STIBM",
+    "name": "Trenord+",
+    "short_name": "Trenord+",
+    "description": "Acquista e gestisci i tuoi biglietti digitali STIBM direttamente dallo smartphone.",
     "start_url": "./index.html",
     "display": "standalone",
     "orientation": "portrait",
