@@ -1724,7 +1724,7 @@ body.qr-brightness-mode .screen.active {
 .home-guide-header {
     text-align: center;
     padding: 0 20px;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
     width: 100%;
 }
 
@@ -1744,7 +1744,7 @@ body.qr-brightness-mode .screen.active {
 .home-guide-steps {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 10px;
     padding: 0 16px;
     max-width: 500px;
     width: 100%;
@@ -1754,31 +1754,32 @@ body.qr-brightness-mode .screen.active {
     background: #fff;
     border-radius: 16px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    padding: 20px;
+    padding: 14px 16px;
     display: flex;
-    gap: 16px;
+    gap: 12px;
     align-items: flex-start;
 }
 
 .home-step-number {
     background: linear-gradient(135deg, #2C7F44 0%, #62A76C 100%);
     color: #fff;
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 700;
     flex-shrink: 0;
+    margin-top: 2px;
 }
 
 .home-step-content {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
 }
 
 .home-step-icon {
@@ -1797,7 +1798,7 @@ body.qr-brightness-mode .screen.active {
 }
 
 .home-step-title {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
     color: #1C1C1E;
     margin: 0;
@@ -2667,4 +2668,90 @@ body.qr-brightness-mode .screen.active {
 @keyframes modalFadeOut {
     0% { opacity: 1; transform: scale(1); }
     100% { opacity: 0; transform: scale(1.03); }
+}
+
+/* ============================================
+   TAP & GO MODAL
+   ============================================ */
+
+.tapgo-title {
+    padding: 24px 24px 16px;
+    font-size: 17px;
+    line-height: 1.4;
+}
+
+.tapgo-actions {
+    border-top: none;
+    padding: 0 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tapgo-btn {
+    width: 100%;
+    padding: 14px 20px;
+    font-family: var(--font);
+    font-size: 17px;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    border: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.tapgo-btn:active {
+    opacity: 0.7;
+}
+
+.tapgo-btn-confirm {
+    background: #6CAC6A;
+    color: #fff;
+}
+
+.tapgo-btn-cancel {
+    background: transparent;
+    color: #2C7F44;
+    border: 1.5px solid #2C7F44;
+}
+
+/* ============================================
+   QR DATA VIEWER (Detail Screen)
+   ============================================ */
+
+.qr-data-section {
+    margin-top: 16px;
+    padding: 0 4px;
+}
+
+.qr-data-block {
+    margin-bottom: 14px;
+}
+
+.qr-data-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #8E8E93;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+}
+
+.qr-data-pre {
+    background: #1C1C1E;
+    color: #A8F0B0;
+    font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+    font-size: 10px;
+    line-height: 1.5;
+    padding: 12px;
+    border-radius: 10px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+    margin: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }

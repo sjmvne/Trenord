@@ -163,9 +163,6 @@ const configScreen = document.getElementById('config-screen');
 const walletScreen = document.getElementById('wallet-screen');
 const detailScreen = document.getElementById('detail-screen');
 
-const startDateInput = document.getElementById('start-date');
-const endDateInput = document.getElementById('end-date');
-
 const sliderFrom = document.getElementById('slider-from');
 const sliderTo = document.getElementById('slider-to');
 const sliderFill = document.getElementById('slider-fill');
@@ -190,10 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initDefaults() {
-    const now = new Date();
-    now.setSeconds(0, 0);
-    startDateInput.value = toLocalDatetimeString(now);
-    updateEndDate();
+    // No date defaults needed — dates calculated at activation
 }
 
 function initSliderLabels() {
@@ -210,9 +204,6 @@ function bindEvents() {
     // Slider events
     sliderFrom.addEventListener('input', onSliderFromChange);
     sliderTo.addEventListener('input', onSliderToChange);
-
-    // Date change
-    startDateInput.addEventListener('change', updateEndDate);
 
     // Ticket counter
     btnCountMinus.addEventListener('click', () => updateTicketCount(-1));
@@ -237,8 +228,8 @@ function bindEvents() {
     // Activation modal
     document.getElementById('btn-wallet-info').addEventListener('click', () => openModal('info-modal'));
 
-    // Norme link
-    document.getElementById('btn-norme').addEventListener('click', () => openModal('info-modal'));
+    // Norme link — shows QR data for active tickets
+    document.getElementById('btn-norme').addEventListener('click', () => showQRData());
 
     // Check updates button
     const btnCheckUpdates = document.getElementById('btn-check-updates');
@@ -311,7 +302,6 @@ function onSliderFromChange() {
     }
     selectedFromIdx = fromVal;
     updateSlider();
-    updateEndDate();
 }
 
 function onSliderToChange() {
@@ -323,7 +313,6 @@ function onSliderToChange() {
     }
     selectedToIdx = toVal;
     updateSlider();
-    updateEndDate();
 }
 
 function updateSlider() {
@@ -407,35 +396,14 @@ function updateTicketCount(delta) {
     btnCountPlus.disabled = ticketCount >= 10;
 }
 
-// ── Date Auto-Update ──
-
-function updateEndDate() {
-    const info = getTicketInfo(selectedFromIdx, selectedToIdx);
-    const startVal = startDateInput.value;
-    if (startVal) {
-        const startDate = new Date(startVal);
-        const endDate = new Date(startDate.getTime() + info.duration * 60000);
-        endDateInput.value = toLocalDatetimeString(endDate);
-    }
-}
-
 // ── Ticket Generation ──
 
 function generateTickets() {
     const info = getTicketInfo(selectedFromIdx, selectedToIdx);
-    const startVal = startDateInput.value;
-    const endVal = endDateInput.value;
-
-    if (!startVal || !endVal) {
-        showAlert('Errore', 'Inserisci le date di validità.');
-        return;
-    }
 
     // Show assembly animation with ticket data
     showQRAssemblyAnimation(info, () => {
-        const startDate = new Date(startVal);
-        const endDate = new Date(endVal);
-        const purchaseDate = new Date(startDate.getTime() - 10 * 60000);
+        const purchaseDate = new Date();
 
         for (let i = 0; i < ticketCount; i++) {
             tickets.push({
@@ -444,13 +412,15 @@ function generateTickets() {
                 uuid: generateUUID(false),
                 viaggio: info.label,
                 prezzo: info.price,
-                startDate: startDate.toISOString(),
-                endDate: endDate.toISOString(),
+                duration: info.duration,
+                startDate: null,
+                endDate: null,
+                activatedDate: null,
                 purchaseDate: purchaseDate.toISOString(),
                 fromZone: info.fromZone,
                 toZone: info.toZone,
                 classe: 'Unica',
-                status: 'active'
+                status: 'purchased'
             });
         }
 
@@ -481,7 +451,7 @@ function checkExpiredTickets() {
     const now = new Date();
     let changed = false;
     tickets.forEach(t => {
-        if (t.status === 'active' && new Date(t.endDate) < now) {
+        if (t.status === 'active' && t.endDate && new Date(t.endDate) < now) {
             t.status = 'expired';
             changed = true;
         }
@@ -495,13 +465,15 @@ function renderWalletTickets() {
     checkExpiredTickets();
 
     const activeTickets = tickets.filter(t => t.status === 'active');
+    const purchasedTickets = tickets.filter(t => t.status === 'purchased');
+    const visibleTickets = [...activeTickets, ...purchasedTickets];
     const ticketList = document.getElementById('ticket-list');
 
     ticketList.innerHTML = '';
-    if (activeTickets.length === 0) {
+    if (visibleTickets.length === 0) {
         ticketList.innerHTML = '<div class="empty-state"><p>Nessun biglietto attivo</p></div>';
     } else {
-        activeTickets.forEach(t => {
+        visibleTickets.forEach(t => {
             ticketList.appendChild(createTicketCard(t, false));
         });
     }
@@ -512,8 +484,45 @@ function createTicketCard(ticket, isExpired) {
     container.className = 'swipe-container';
     container.dataset.ticketId = ticket.id;
 
-    const startDate = new Date(ticket.startDate);
-    const endDate = new Date(ticket.endDate);
+    const isPurchased = ticket.status === 'purchased';
+    const duration = ticket.duration || 90;
+
+    // Validità section
+    let validitaHTML = '';
+    if (isPurchased) {
+        validitaHTML = `
+            <div class="ticket-field">
+                <span class="ticket-label">VALIDITÀ</span>
+                <span class="ticket-value">${duration} min</span>
+            </div>`;
+    } else {
+        const startDate = new Date(ticket.startDate);
+        const endDate = new Date(ticket.endDate);
+        validitaHTML = `
+            <div class="ticket-field">
+                <span class="ticket-label">VALIDITÀ</span>
+                <div class="ticket-validita">
+                    <span>${formatDateShort(startDate)}</span>
+                    <span class="validita-sep">|</span>
+                    <span>${formatDateShort(endDate)}</span>
+                </div>
+            </div>`;
+    }
+
+    // Button section
+    let buttonHTML = '';
+    if (isPurchased) {
+        buttonHTML = `
+            <button class="btn-green-full btn-qr btn-tapgo">
+                Tap & Go
+            </button>`;
+    } else {
+        buttonHTML = `
+            <button class="btn-green-full btn-qr btn-mostra-qr">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Mostra QR Code
+            </button>`;
+    }
 
     container.innerHTML = `
         <div class="swipe-action">
@@ -535,14 +544,7 @@ function createTicketCard(ticket, isExpired) {
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></svg>
                 </button>
             </div>
-            <div class="ticket-field">
-                <span class="ticket-label">VALIDITÀ</span>
-                <div class="ticket-validita">
-                    <span>${formatDateShort(startDate)}</span>
-                    <span class="validita-sep">|</span>
-                    <span>${formatDateShort(endDate)}</span>
-                </div>
-            </div>
+            ${validitaHTML}
             <div class="ticket-row-2col">
                 <div class="ticket-field">
                     <span class="ticket-label">PNR</span>
@@ -558,24 +560,33 @@ function createTicketCard(ticket, isExpired) {
                 <span class="ticket-value ticket-value-bold">${ticket.viaggio}</span>
             </div>
             <div class="stibm-badge">STIBM</div>
-            <button class="btn-green-full btn-qr btn-mostra-qr">
-                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                Mostra QR Code
-            </button>
+            ${buttonHTML}
         </div>
     `;
 
     // Init swipe-to-delete
     initSwipe(container, ticket.id);
 
-    // QR button
-    const qrBtn = container.querySelector('.btn-mostra-qr');
-    qrBtn.addEventListener('click', (e) => {
-        const content = container.querySelector('.swipe-content');
-        const tx = content.style.transform;
-        if (tx && tx !== 'translateX(0px)' && tx !== 'translateX(0)') return;
-        openDetail(ticket.id);
-    });
+    if (isPurchased) {
+        // Tap & Go button
+        const tapGoBtn = container.querySelector('.btn-tapgo');
+        tapGoBtn.addEventListener('click', (e) => {
+            const content = container.querySelector('.swipe-content');
+            const tx = content.style.transform;
+            if (tx && tx !== 'translateX(0px)' && tx !== 'translateX(0)') return;
+            pendingActivationTicketId = ticket.id;
+            openModal('tapgo-modal');
+        });
+    } else {
+        // QR button
+        const qrBtn = container.querySelector('.btn-mostra-qr');
+        qrBtn.addEventListener('click', (e) => {
+            const content = container.querySelector('.swipe-content');
+            const tx = content.style.transform;
+            if (tx && tx !== 'translateX(0px)' && tx !== 'translateX(0)') return;
+            openDetail(ticket.id);
+        });
+    }
 
     // Info button
     container.querySelector('.btn-ticket-info').addEventListener('click', () => {
@@ -671,13 +682,44 @@ function deleteTicket(ticketId) {
     renderWalletTickets();
 }
 
-// ── Expired Toggle ──
+// ── Tap & Go Activation ──
+
+let pendingActivationTicketId = null;
+
+function activateTicket() {
+    if (!pendingActivationTicketId) return;
+    const ticket = tickets.find(t => t.id === pendingActivationTicketId);
+    if (!ticket || ticket.status !== 'purchased') {
+        closeModal('tapgo-modal');
+        pendingActivationTicketId = null;
+        return;
+    }
+
+    const now = new Date();
+    const duration = ticket.duration || 90;
+    const endDate = new Date(now.getTime() + duration * 60000);
+
+    ticket.activatedDate = now.toISOString();
+    ticket.startDate = now.toISOString();
+    ticket.endDate = endDate.toISOString();
+    ticket.status = 'active';
+
+    saveTickets();
+    closeModal('tapgo-modal');
+    pendingActivationTicketId = null;
+    renderWalletTickets();
+}
+
+function cancelActivation() {
+    closeModal('tapgo-modal');
+    pendingActivationTicketId = null;
+}
 
 // ── Detail Screen ──
 
 function openDetail(ticketId) {
     const ticket = tickets.find(t => t.id === ticketId);
-    if (!ticket) return;
+    if (!ticket || ticket.status !== 'active') return;
 
     currentDetailTicket = ticket;
     const startDate = new Date(ticket.startDate);
@@ -694,6 +736,10 @@ function openDetail(ticketId) {
     document.getElementById('detail-prezzo').textContent = formatPrice(ticket.prezzo);
     document.getElementById('detail-classe').textContent = ticket.classe;
     document.getElementById('detail-viaggio').textContent = ticket.viaggio;
+
+    // Hide QR data section when opening
+    const qrDataSection = document.getElementById('qr-data-section');
+    if (qrDataSection) qrDataSection.style.display = 'none';
 
     detailScreen.classList.remove('closing');
     detailScreen.classList.add('open');
@@ -718,6 +764,34 @@ function closeDetail() {
         qrRealSrc = null;
         qrFakeSrc = null;
     }, 350);
+}
+
+// ── QR Data Viewer ──
+
+function showQRData() {
+    if (!currentDetailTicket || currentDetailTicket.status !== 'active') return;
+    const qrContent = buildQRContent(currentDetailTicket);
+    const parts = qrContent.split(':');
+    const base64Part = parts[0];
+
+    // Decode base64 to JSON
+    let decodedJSON = '';
+    try {
+        const jsonStr = decodeURIComponent(escape(atob(base64Part)));
+        const parsed = JSON.parse(jsonStr);
+        decodedJSON = JSON.stringify(parsed, null, 2);
+    } catch(e) {
+        decodedJSON = 'Errore nella decodifica';
+    }
+
+    const section = document.getElementById('qr-data-section');
+    const rawEl = document.getElementById('qr-data-raw');
+    const decodedEl = document.getElementById('qr-data-decoded');
+
+    rawEl.textContent = qrContent;
+    decodedEl.textContent = decodedJSON;
+
+    section.style.display = section.style.display === 'block' ? 'none' : 'block';
 }
 
 // ── QR Code Generation ──
@@ -1283,7 +1357,6 @@ function applyComuniZones() {
     sliderFrom.value = selectedFromIdx;
     sliderTo.value = selectedToIdx;
     updateSlider();
-    updateEndDate();
 
     // Show result
     const resultDiv = document.getElementById('search-result-zone');
@@ -1346,82 +1419,82 @@ function showQRAssemblyAnimation(ticketData, callback) {
     const now = new Date();
     const timestamp = now.toISOString();
 
-    // Terminal sequence
+    // Terminal sequence (scaled to ~15s total)
     const lines = [
         { delay: 0, html: '<span class="t-green">$</span> ssh tpg@gateway.trenord.it -p 443' },
-        { delay: 400, html: '<span class="t-gray">Connecting to gateway.trenord.it:443...</span>' },
-        { delay: 900, html: '<span class="t-green">\u2713</span> <span class="t-gray">Connection established. TLS 1.3 (ECDHE-RSA-AES256)</span>' },
-        { delay: 1300, html: '<span class="t-gray">Last login: ' + now.toLocaleDateString('it-IT') + ' from 10.0.' + Math.floor(Math.random()*255) + '.' + Math.floor(Math.random()*255) + '</span>' },
-        { delay: 1700, html: '' },
-        { delay: 1800, html: '<span class="t-green">tpg@trenord</span>:<span class="t-cyan">~</span>$ init-ticket --type STIBM --mode ordinario' },
-        { delay: 2300, html: '<span class="t-yellow">[INIT]</span> Ticket Processing Gateway v4.2.1' },
-        { delay: 2600, html: '<span class="t-yellow">[INIT]</span> Allocating secure memory block...' },
-        { delay: 2900, html: '' },
-        { delay: 3000, html: '<span class="t-cyan">\u2501\u2501\u2501 CONFIGURAZIONE BIGLIETTO \u2501\u2501\u2501</span>' },
-        { delay: 3300, html: '<span class="t-gray">\u251c\u2500</span> <span class="t-white">Viaggio:</span>    <span class="t-green">' + ticketData.viaggio + '</span>' },
-        { delay: 3600, html: '<span class="t-gray">\u251c\u2500</span> <span class="t-white">Zone:</span>       <span class="t-green">' + ticketData.fromZone + ' \u2192 ' + ticketData.toZone + '</span> <span class="t-gray">(' + ticketData.zoneCount + ' zone)</span>' },
-        { delay: 3900, html: '<span class="t-gray">\u251c\u2500</span> <span class="t-white">Prezzo:</span>     <span class="t-green">\u20ac' + ticketData.price.toFixed(2) + '</span>' },
-        { delay: 4200, html: '<span class="t-gray">\u251c\u2500</span> <span class="t-white">Classe:</span>     <span class="t-green">Unica</span>' },
-        { delay: 4500, html: '<span class="t-gray">\u251c\u2500</span> <span class="t-white">Durata:</span>     <span class="t-green">' + ticketData.duration + ' min</span>' },
-        { delay: 4800, html: '<span class="t-gray">\u2514\u2500</span> <span class="t-white">Timestamp:</span>  <span class="t-orange">' + timestamp + '</span>' },
-        { delay: 5200, html: '' },
-        { delay: 5300, html: '<span class="t-green">tpg@trenord</span>:<span class="t-cyan">~</span>$ generate-identity --secure' },
-        { delay: 5700, html: '<span class="t-yellow">[AUTH]</span> Generating secure identifiers...' },
-        { delay: 6100, html: '<span class="t-gray">\u251c\u2500</span> <span class="t-white">UUID:</span>  <span class="t-magenta">' + uuid + '</span>' },
-        { delay: 6400, html: '<span class="t-gray">\u2514\u2500</span> <span class="t-white">PNR:</span>   <span class="t-magenta">' + pnr + '</span>' },
-        { delay: 6800, html: '' },
-        { delay: 6900, html: '<span class="t-green">tpg@trenord</span>:<span class="t-cyan">~</span>$ build-payload --encode base64' },
-        { delay: 7300, html: '<span class="t-yellow">[BUILD]</span> Assembling JSON payload...' },
-        { delay: 7700, html: '<span class="t-gray">{</span>' },
-        { delay: 7850, html: '  <span class="t-cyan">"id"</span>: <span class="t-orange">"' + uuid.substring(0, 18) + '..."</span>,' },
-        { delay: 8000, html: '  <span class="t-cyan">"pnr"</span>: <span class="t-orange">"' + pnr + '"</span>,' },
-        { delay: 8150, html: '  <span class="t-cyan">"zones"</span>: <span class="t-orange">"' + ticketData.fromZone + '-' + ticketData.toZone + '"</span>,' },
-        { delay: 8300, html: '  <span class="t-cyan">"price"</span>: <span class="t-magenta">' + ticketData.price.toFixed(2) + '</span>,' },
-        { delay: 8450, html: '  <span class="t-cyan">"class"</span>: <span class="t-orange">"U"</span>' },
-        { delay: 8600, html: '<span class="t-gray">}</span>' },
-        { delay: 9000, html: '' },
-        { delay: 9100, html: '<span class="t-green">tpg@trenord</span>:<span class="t-cyan">~</span>$ sha256sum --verify payload.json' },
-        { delay: 9500, html: '<span class="t-yellow">[CRYPTO]</span> Computing SHA-256 checksum...' },
-        { delay: 10000, html: '<span class="t-gray">SHA-256:</span> <span class="t-magenta">' + sha.substring(0, 32) + '</span>' },
-        { delay: 10300, html: '<span class="t-gray">         ' + sha.substring(32) + '</span>' },
-        { delay: 10700, html: '<span class="t-green">\u2713</span> <span class="t-white">Checksum verified</span>' },
-        { delay: 11100, html: '' },
-        { delay: 11200, html: '<span class="t-green">tpg@trenord</span>:<span class="t-cyan">~</span>$ qr-encode --ecc H --matrix 21x21' },
-        { delay: 11600, html: '<span class="t-yellow">[QR]</span> Encoding data matrix...' },
-        { delay: 12000, html: '<span class="t-yellow">[QR]</span> Error correction: <span class="t-white">Level H (30%)</span>' },
-        { delay: 12400, html: '<span class="t-yellow">[QR]</span> Matrix size: <span class="t-white">21\u00d721 modules</span>' },
-        { delay: 13200, html: '<span class="t-yellow">[QR]</span> Writing position detection patterns...' },
-        { delay: 14500, html: '<span class="t-yellow">[QR]</span> Writing timing patterns...' },
-        { delay: 15000, html: '<span class="t-yellow">[QR]</span> Writing data codewords...' },
-        { delay: 17800, html: '<span class="t-green">\u2713</span> <span class="t-white">QR matrix complete \u2014 ' + totalPixels + ' modules written</span>' },
-        { delay: 18200, html: '' },
-        { delay: 18300, html: '<span class="t-green">tpg@trenord</span>:<span class="t-cyan">~</span>$ commit --sign --push' },
-        { delay: 18700, html: '<span class="t-yellow">[SIGN]</span> Signing ticket with RSA-4096...' },
-        { delay: 19200, html: '<span class="t-green">\u2713</span> <span class="t-white">Digital signature applied</span>' },
-        { delay: 19600, html: '<span class="t-green">\u2713</span> <span class="t-white">Ticket committed to ledger</span>' },
-        { delay: 20000, html: '' },
-        { delay: 20200, html: '<span class="t-green">\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501</span>' },
-        { delay: 20400, html: '<span class="t-green">\u2713 BIGLIETTO GENERATO CON SUCCESSO</span>' },
-        { delay: 20600, html: '<span class="t-green">\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501</span>' },
+        { delay: 260, html: '<span class="t-gray">Connecting to gateway.trenord.it:443...</span>' },
+        { delay: 585, html: '<span class="t-green">\u2713</span> <span class="t-gray">Connection established. TLS 1.3 (ECDHE-RSA-AES256)</span>' },
+        { delay: 845, html: '<span class="t-gray">Last login: ' + now.toLocaleDateString('it-IT') + ' from 10.0.' + Math.floor(Math.random()*255) + '.' + Math.floor(Math.random()*255) + '</span>' },
+        { delay: 1100, html: '' },
+        { delay: 1170, html: '<span class="t-green">tpg@trenord</span>:<span class="t-cyan">~</span>$ init-ticket --type STIBM --mode ordinario' },
+        { delay: 1500, html: '<span class="t-yellow">[INIT]</span> Ticket Processing Gateway v4.2.1' },
+        { delay: 1690, html: '<span class="t-yellow">[INIT]</span> Allocating secure memory block...' },
+        { delay: 1880, html: '' },
+        { delay: 1950, html: '<span class="t-cyan">\u2501\u2501\u2501 CONFIGURAZIONE BIGLIETTO \u2501\u2501\u2501</span>' },
+        { delay: 2145, html: '<span class="t-gray">\u251c\u2500</span> <span class="t-white">Viaggio:</span>    <span class="t-green">' + ticketData.label + '</span>' },
+        { delay: 2340, html: '<span class="t-gray">\u251c\u2500</span> <span class="t-white">Zone:</span>       <span class="t-green">' + ticketData.fromZone + ' \u2192 ' + ticketData.toZone + '</span> <span class="t-gray">(' + ticketData.zoneCount + ' zone)</span>' },
+        { delay: 2535, html: '<span class="t-gray">\u251c\u2500</span> <span class="t-white">Prezzo:</span>     <span class="t-green">\u20ac' + ticketData.price.toFixed(2) + '</span>' },
+        { delay: 2730, html: '<span class="t-gray">\u251c\u2500</span> <span class="t-white">Classe:</span>     <span class="t-green">Unica</span>' },
+        { delay: 2925, html: '<span class="t-gray">\u251c\u2500</span> <span class="t-white">Durata:</span>     <span class="t-green">' + ticketData.duration + ' min</span>' },
+        { delay: 3120, html: '<span class="t-gray">\u2514\u2500</span> <span class="t-white">Timestamp:</span>  <span class="t-orange">' + timestamp + '</span>' },
+        { delay: 3380, html: '' },
+        { delay: 3445, html: '<span class="t-green">tpg@trenord</span>:<span class="t-cyan">~</span>$ generate-identity --secure' },
+        { delay: 3705, html: '<span class="t-yellow">[AUTH]</span> Generating secure identifiers...' },
+        { delay: 3965, html: '<span class="t-gray">\u251c\u2500</span> <span class="t-white">UUID:</span>  <span class="t-magenta">' + uuid + '</span>' },
+        { delay: 4160, html: '<span class="t-gray">\u2514\u2500</span> <span class="t-white">PNR:</span>   <span class="t-magenta">' + pnr + '</span>' },
+        { delay: 4420, html: '' },
+        { delay: 4485, html: '<span class="t-green">tpg@trenord</span>:<span class="t-cyan">~</span>$ build-payload --encode base64' },
+        { delay: 4745, html: '<span class="t-yellow">[BUILD]</span> Assembling JSON payload...' },
+        { delay: 5005, html: '<span class="t-gray">{</span>' },
+        { delay: 5100, html: '  <span class="t-cyan">"id"</span>: <span class="t-orange">"' + uuid.substring(0, 18) + '..."</span>,' },
+        { delay: 5200, html: '  <span class="t-cyan">"pnr"</span>: <span class="t-orange">"' + pnr + '"</span>,' },
+        { delay: 5300, html: '  <span class="t-cyan">"zones"</span>: <span class="t-orange">"' + ticketData.fromZone + '-' + ticketData.toZone + '"</span>,' },
+        { delay: 5395, html: '  <span class="t-cyan">"price"</span>: <span class="t-magenta">' + ticketData.price.toFixed(2) + '</span>,' },
+        { delay: 5490, html: '  <span class="t-cyan">"class"</span>: <span class="t-orange">"U"</span>' },
+        { delay: 5590, html: '<span class="t-gray">}</span>' },
+        { delay: 5850, html: '' },
+        { delay: 5915, html: '<span class="t-green">tpg@trenord</span>:<span class="t-cyan">~</span>$ sha256sum --verify payload.json' },
+        { delay: 6175, html: '<span class="t-yellow">[CRYPTO]</span> Computing SHA-256 checksum...' },
+        { delay: 6500, html: '<span class="t-gray">SHA-256:</span> <span class="t-magenta">' + sha.substring(0, 32) + '</span>' },
+        { delay: 6695, html: '<span class="t-gray">         ' + sha.substring(32) + '</span>' },
+        { delay: 6955, html: '<span class="t-green">\u2713</span> <span class="t-white">Checksum verified</span>' },
+        { delay: 7215, html: '' },
+        { delay: 7280, html: '<span class="t-green">tpg@trenord</span>:<span class="t-cyan">~</span>$ qr-encode --ecc H --matrix 21x21' },
+        { delay: 7540, html: '<span class="t-yellow">[QR]</span> Encoding data matrix...' },
+        { delay: 7800, html: '<span class="t-yellow">[QR]</span> Error correction: <span class="t-white">Level H (30%)</span>' },
+        { delay: 8060, html: '<span class="t-yellow">[QR]</span> Matrix size: <span class="t-white">21\u00d721 modules</span>' },
+        { delay: 8580, html: '<span class="t-yellow">[QR]</span> Writing position detection patterns...' },
+        { delay: 9425, html: '<span class="t-yellow">[QR]</span> Writing timing patterns...' },
+        { delay: 9750, html: '<span class="t-yellow">[QR]</span> Writing data codewords...' },
+        { delay: 11570, html: '<span class="t-green">\u2713</span> <span class="t-white">QR matrix complete \u2014 ' + totalPixels + ' modules written</span>' },
+        { delay: 11830, html: '' },
+        { delay: 11895, html: '<span class="t-green">tpg@trenord</span>:<span class="t-cyan">~</span>$ commit --sign --push' },
+        { delay: 12155, html: '<span class="t-yellow">[SIGN]</span> Signing ticket with RSA-4096...' },
+        { delay: 12480, html: '<span class="t-green">\u2713</span> <span class="t-white">Digital signature applied</span>' },
+        { delay: 12740, html: '<span class="t-green">\u2713</span> <span class="t-white">Ticket committed to ledger</span>' },
+        { delay: 13000, html: '' },
+        { delay: 13130, html: '<span class="t-green">\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501</span>' },
+        { delay: 13260, html: '<span class="t-green">\u2713 BIGLIETTO GENERATO CON SUCCESSO</span>' },
+        { delay: 13390, html: '<span class="t-green">\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501</span>' },
     ];
 
     // Progress phases
     const phases = [
         { at: 0, pct: 0, label: 'Inizializzazione...' },
-        { at: 900, pct: 5, label: 'Connessione TLS...' },
-        { at: 1700, pct: 10, label: 'Autenticazione...' },
-        { at: 3000, pct: 15, label: 'Configurazione biglietto...' },
-        { at: 5300, pct: 30, label: 'Generazione identit\u00e0...' },
-        { at: 6900, pct: 40, label: 'Costruzione payload...' },
-        { at: 9100, pct: 55, label: 'Verifica checksum SHA-256...' },
-        { at: 10700, pct: 65, label: 'Checksum verificato \u2713' },
-        { at: 11200, pct: 70, label: 'Encoding QR matrix...' },
-        { at: 13200, pct: 75, label: 'Position detection patterns...' },
-        { at: 15000, pct: 82, label: 'Scrittura data codewords...' },
-        { at: 17800, pct: 92, label: 'QR matrix completa \u2713' },
-        { at: 18300, pct: 95, label: 'Firma digitale RSA-4096...' },
-        { at: 19600, pct: 98, label: 'Commit su ledger...' },
-        { at: 20400, pct: 100, label: 'Completato \u2713' },
+        { at: 585, pct: 5, label: 'Connessione TLS...' },
+        { at: 1100, pct: 10, label: 'Autenticazione...' },
+        { at: 1950, pct: 15, label: 'Configurazione biglietto...' },
+        { at: 3445, pct: 30, label: 'Generazione identit\u00e0...' },
+        { at: 4485, pct: 40, label: 'Costruzione payload...' },
+        { at: 5915, pct: 55, label: 'Verifica checksum SHA-256...' },
+        { at: 6955, pct: 65, label: 'Checksum verificato \u2713' },
+        { at: 7280, pct: 70, label: 'Encoding QR matrix...' },
+        { at: 8580, pct: 75, label: 'Position detection patterns...' },
+        { at: 9750, pct: 82, label: 'Scrittura data codewords...' },
+        { at: 11570, pct: 92, label: 'QR matrix completa \u2713' },
+        { at: 11895, pct: 95, label: 'Firma digitale RSA-4096...' },
+        { at: 12740, pct: 98, label: 'Commit su ledger...' },
+        { at: 13260, pct: 100, label: 'Completato \u2713' },
     ];
 
     // Type terminal lines
@@ -1446,7 +1519,7 @@ function showQRAssemblyAnimation(ticketData, callback) {
 
 
     //  QR Grid Animation 
-    // Phase 1: Finder patterns (3 corners, 7x7 each) at 13200ms
+    // Phase 1: Finder patterns (3 corners, 7x7 each) at 8580ms
     var finderPositions = getFinderPositions(GRID_SIZE);
     finderPositions.forEach(function(idx, i) {
         setTimeout(function() {
@@ -1454,10 +1527,10 @@ function showQRAssemblyAnimation(ticketData, callback) {
             setTimeout(function() {
                 pixels[idx].className = qrPattern[idx] ? 'qr-px on' : 'qr-px off';
             }, 120);
-        }, 13200 + i * 12);
+        }, 8580 + i * 8);
     });
 
-    // Phase 2: Timing patterns (row 6 + col 6) at 14500ms
+    // Phase 2: Timing patterns (row 6 + col 6) at 9425ms
     var timingPositions = getTimingPositions(GRID_SIZE);
     timingPositions.forEach(function(idx, i) {
         setTimeout(function() {
@@ -1465,10 +1538,10 @@ function showQRAssemblyAnimation(ticketData, callback) {
             setTimeout(function() {
                 pixels[idx].className = qrPattern[idx] ? 'qr-px on' : 'qr-px off';
             }, 100);
-        }, 14500 + i * 30);
+        }, 9425 + i * 20);
     });
 
-    // Phase 3: Data modules at 15000ms
+    // Phase 3: Data modules at 9750ms
     var usedPositions = finderPositions.concat(timingPositions);
     var dataPositions = [];
     for (var i = 0; i < totalPixels; i++) {
@@ -1481,25 +1554,25 @@ function showQRAssemblyAnimation(ticketData, callback) {
         dataPositions[k] = dataPositions[j];
         dataPositions[j] = tmp;
     }
-    var dataDelay = 2800 / dataPositions.length;
+    var dataDelay = 1820 / dataPositions.length;
     dataPositions.forEach(function(idx, i) {
         setTimeout(function() {
             pixels[idx].className = 'qr-px glow';
             setTimeout(function() {
                 pixels[idx].className = qrPattern[idx] ? 'qr-px on' : 'qr-px off';
             }, 80);
-        }, 15000 + i * dataDelay);
+        }, 9750 + i * dataDelay);
     });
 
-    //  Success overlay at 20800ms 
+    //  Success overlay at 13520ms 
     setTimeout(function() {
         successOverlay.classList.add('visible');
-    }, 20800);
+    }, 13520);
 
-    //  Fadeout and close at 22500ms 
+    //  Fadeout and close at 14600ms 
     setTimeout(function() {
         modal.classList.add('fadeout');
-    }, 22500);
+    }, 14600);
 
     setTimeout(function() {
         modal.classList.remove('active');
@@ -1507,7 +1580,7 @@ function showQRAssemblyAnimation(ticketData, callback) {
         successOverlay.classList.remove('visible');
         document.body.style.overflow = '';
         if (callback) callback();
-    }, 23100);
+    }, 15000);
 }
 
 function generateQRPattern(size) {

@@ -31,38 +31,22 @@
                 <div class="home-step-card">
                     <div class="home-step-number">1</div>
                     <div class="home-step-content">
-                        <div class="home-step-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="#62A76C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="9" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/>
-                                <path d="M3 3h2l.4 2M7 13h10l3-8H5.4M7 13L5.4 5M7 13l-1.5 5h12"/>
-                            </svg>
-                        </div>
                         <h3 class="home-step-title">Acquista</h3>
-                        <p class="home-step-text">Vai sulla sezione <strong>Acquista</strong> e seleziona le zone STIBM o inserisci i comuni di partenza e arrivo.</p>
+                        <p class="home-step-text">Seleziona le zone STIBM o cerca i comuni di partenza e arrivo nella sezione <strong>Acquista</strong>.</p>
                     </div>
                 </div>
                 <div class="home-step-card">
                     <div class="home-step-number">2</div>
                     <div class="home-step-content">
-                        <div class="home-step-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="#62A76C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                            </svg>
-                        </div>
-                        <h3 class="home-step-title">Genera QR</h3>
-                        <p class="home-step-text">Seleziona data, ora e numero passeggeri. Premi <strong>Genera</strong> e guarda l'animazione del QR Code.</p>
+                        <h3 class="home-step-title">Attiva con Tap & Go</h3>
+                        <p class="home-step-text">Il biglietto viene salvato nel <strong>Wallet</strong>. Premi <strong>Tap & Go</strong> per obliterarlo quando sei pronto a viaggiare.</p>
                     </div>
                 </div>
                 <div class="home-step-card">
                     <div class="home-step-number">3</div>
                     <div class="home-step-content">
-                        <div class="home-step-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="#62A76C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/><circle cx="17" cy="14" r="1.5"/>
-                            </svg>
-                        </div>
-                        <h3 class="home-step-title">Gestisci Wallet</h3>
-                        <p class="home-step-text">I tuoi biglietti sono nel <strong>Wallet</strong>. Mostra il QR Code o elimina quelli non più necessari.</p>
+                        <h3 class="home-step-title">Mostra QR Code</h3>
+                        <p class="home-step-text">Dopo l'attivazione, usa <strong>Mostra QR Code</strong> per visualizzare il biglietto al controllo.</p>
                     </div>
                 </div>
             </div>
@@ -141,20 +125,6 @@
 
                     <!-- SEZIONI COMUNI (spostate via JS in base all'accordion aperto) -->
                     <div id="common-form-sections">
-
-                        <!-- VALIDITÀ -->
-                        <div class="form-section-label">VALIDITÀ</div>
-                        <div class="form-card">
-                            <div class="form-row">
-                                <label for="start-date">Inizio</label>
-                                <input type="datetime-local" id="start-date">
-                            </div>
-                            <div class="form-divider"></div>
-                            <div class="form-row">
-                                <label for="end-date">Fine</label>
-                                <input type="datetime-local" id="end-date">
-                            </div>
-                        </div>
 
                         <!-- TIPOLOGIA -->
                         <div class="form-section-label">TIPOLOGIA DI PRODOTTO</div>
@@ -460,7 +430,7 @@ toZona   = comuneArrivo.zona;   // "Mi7"
             <div class="tech-section tech-footer">
                 <div class="tech-version">
                     <div class="tech-version-info">
-                        <span class="version-label">Build v35</span>
+                        <span class="version-label">Build v36</span>
                         <span class="version-date">Mar 2026</span>
                     </div>
                     <button class="btn-check-updates" id="btn-check-updates" aria-label="Controlla aggiornamenti">
@@ -572,6 +542,18 @@ toZona   = comuneArrivo.zona;   // "Mi7"
                     <span>Vedi norme utilizzo biglietto</span>
                     <svg viewBox="0 0 24 24" fill="none" stroke="#C7C7CC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                 </div>
+
+                <!-- QR Data Viewer (shown on click of norme link) -->
+                <div id="qr-data-section" class="qr-data-section" style="display:none;">
+                    <div class="qr-data-block">
+                        <div class="qr-data-label">Stringa QR (raw)</div>
+                        <pre class="qr-data-pre" id="qr-data-raw"></pre>
+                    </div>
+                    <div class="qr-data-block">
+                        <div class="qr-data-label">Payload decodificato</div>
+                        <pre class="qr-data-pre" id="qr-data-decoded"></pre>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -643,6 +625,17 @@ toZona   = comuneArrivo.zona;   // "Mi7"
             </div>
             <div class="modal-actions">
                 <button class="modal-btn" onclick="closeModal('activation-modal')">Ok</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== MODAL: Tap & Go Confirmation ====== -->
+    <div id="tapgo-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-title tapgo-title">Sei sicuro di voler utilizzare ora il biglietto?</div>
+            <div class="modal-actions tapgo-actions">
+                <button class="tapgo-btn tapgo-btn-confirm" onclick="activateTicket()">Utilizza</button>
+                <button class="tapgo-btn tapgo-btn-cancel" onclick="cancelActivation()">Annulla</button>
             </div>
         </div>
     </div>
