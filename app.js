@@ -232,15 +232,7 @@ function bindEvents() {
     // Norme link — shows QR data for active tickets
     document.getElementById('btn-norme').addEventListener('click', () => showQRData());
 
-    // Check updates button
-    const btnCheckUpdates = document.getElementById('btn-check-updates');
-    if (btnCheckUpdates) {
-        btnCheckUpdates.addEventListener('click', () => {
-            btnCheckUpdates.classList.add('rotating');
-            checkForUpdates();
-            setTimeout(() => btnCheckUpdates.classList.remove('rotating'), 1000);
-        });
-    }
+    // Check updates button (removed - now in profilo sub-screen)
 
     // Modal backdrop close
     document.querySelectorAll('.modal-overlay').forEach(overlay => {
@@ -402,12 +394,20 @@ function updateTicketCount(delta) {
 function generateTickets() {
     const info = getTicketInfo(selectedFromIdx, selectedToIdx);
 
+    // Check billing data before generating
+    if (!hasBillingData()) {
+        _pendingTicketGeneration = info;
+        openModal('billing-required-modal');
+        return;
+    }
+
     // Show assembly animation with ticket data
     showQRAssemblyAnimation(info, () => {
         const purchaseDate = new Date();
+        const generatedTickets = [];
 
         for (let i = 0; i < ticketCount; i++) {
-            tickets.push({
+            const ticket = {
                 id: generateUUID(false),
                 pnr: generatePNR(),
                 uuid: generateUUID(false),
@@ -422,14 +422,22 @@ function generateTickets() {
                 toZone: info.toZone,
                 classe: 'Unica',
                 status: 'purchased'
-            });
+            };
+            tickets.push(ticket);
+            generatedTickets.push(ticket);
         }
 
         saveTickets();
+
+        // Generate order for storico acquisti
+        createOrder(generatedTickets, purchaseDate);
+
         renderWalletTickets();
         switchTab('wallet');
     });
 }
+
+let _pendingTicketGeneration = null;
 
 // ── localStorage Persistence ──
 
@@ -1990,5 +1998,685 @@ function initSplashScreen() {
         dismissSplash();
     } else {
         window.addEventListener('load', dismissSplash);
+    }
+}
+
+// ============================================
+// SUB-SCREEN NAVIGATION (iOS-style slide)
+// ============================================
+
+let subScreenStack = [];
+
+function openSubScreen(screenId) {
+    const screen = document.getElementById(screenId);
+    if (!screen) return;
+
+    subScreenStack.push(screenId);
+    screen.classList.remove('closing');
+    screen.classList.add('active');
+
+    // Trigger specific actions when opening screens
+    if (screenId === 'screen-dati-fatturazione') {
+        renderBillingView();
+    } else if (screenId === 'screen-storico-acquisti') {
+        renderStoricoAcquisti();
+    } else if (screenId === 'screen-notifiche') {
+        fetchNotificheChangelog();
+    } else if (screenId === 'screen-billing-edit') {
+        loadBillingDataIntoForm();
+    }
+}
+
+function closeSubScreen() {
+    if (subScreenStack.length === 0) return;
+
+    const currentId = subScreenStack.pop();
+    const screen = document.getElementById(currentId);
+    if (!screen) return;
+
+    screen.classList.add('closing');
+    screen.addEventListener('animationend', function handler() {
+        screen.classList.remove('active', 'closing');
+        screen.removeEventListener('animationend', handler);
+    });
+}
+
+function closeAllSubScreens() {
+    while (subScreenStack.length > 0) {
+        const id = subScreenStack.pop();
+        const screen = document.getElementById(id);
+        if (screen) {
+            screen.classList.remove('active', 'closing');
+        }
+    }
+}
+
+// ============================================
+// BILLING DATA (Dati Fatturazione)
+// ============================================
+
+function hasBillingData() {
+    try {
+        const data = localStorage.getItem('trenord_billing');
+        if (!data) return false;
+        const billing = JSON.parse(data);
+        return billing && billing.nome && billing.cognome && billing.codiceFiscale && billing.via && billing.numero && billing.cap && billing.paese && billing.comune;
+    } catch (e) {
+        return false;
+    }
+}
+
+function getBillingData() {
+    try {
+        const data = localStorage.getItem('trenord_billing');
+        return data ? JSON.parse(data) : null;
+    } catch (e) {
+        return null;
+    }
+}
+
+function saveBillingData() {
+    const nome = document.getElementById('billing-nome').value.trim();
+    const cognome = document.getElementById('billing-cognome').value.trim();
+    const cf = document.getElementById('billing-cf').value.trim().toUpperCase();
+    const via = document.getElementById('billing-via').value.trim();
+    const numero = document.getElementById('billing-numero').value.trim();
+    const cap = document.getElementById('billing-cap').value.trim();
+    const paese = document.getElementById('billing-paese').value.trim();
+    const comune = document.getElementById('billing-comune').value.trim();
+    const pec = document.getElementById('billing-pec').value.trim();
+
+    // Validate required fields
+    if (!nome || !cognome || !cf || !via || !numero || !cap || !paese || !comune) {
+        alert('Compila tutti i campi obbligatori (*)');
+        return;
+    }
+
+    const billing = { nome, cognome, codiceFiscale: cf, via, numero, cap, paese, comune, pec };
+    localStorage.setItem('trenord_billing', JSON.stringify(billing));
+
+    // Close the edit form screen
+    closeSubScreen();
+
+    // If we came from the billing view, refresh it
+    setTimeout(() => {
+        const billingViewScreen = document.getElementById('screen-dati-fatturazione');
+        if (billingViewScreen && billingViewScreen.classList.contains('active')) {
+            renderBillingView();
+        }
+    }, 350);
+
+    // If there's a pending ticket generation, proceed
+    if (_pendingTicketGeneration) {
+        const info = _pendingTicketGeneration;
+        _pendingTicketGeneration = null;
+        closeAllSubScreens();
+        setTimeout(() => {
+            generateTickets();
+        }, 400);
+    }
+}
+
+function loadBillingDataIntoForm() {
+    const billing = getBillingData();
+    document.getElementById('billing-nome').value = billing ? billing.nome : '';
+    document.getElementById('billing-cognome').value = billing ? billing.cognome : '';
+    document.getElementById('billing-cf').value = billing ? billing.codiceFiscale : '';
+    document.getElementById('billing-via').value = billing ? billing.via : '';
+    document.getElementById('billing-numero').value = billing ? billing.numero : '';
+    document.getElementById('billing-cap').value = billing ? billing.cap : '';
+    document.getElementById('billing-paese').value = billing ? billing.paese : '';
+    document.getElementById('billing-comune').value = billing ? billing.comune : '';
+    document.getElementById('billing-pec').value = billing ? (billing.pec || '') : '';
+}
+
+function renderBillingView() {
+    const container = document.getElementById('billing-view-container');
+    const billing = getBillingData();
+
+    if (!billing) {
+        // No data yet - show empty state with add button
+        container.innerHTML = `
+            <div class="billing-tabs">
+                <button class="billing-tab active">Privato</button>
+                <button class="billing-tab">Azienda</button>
+            </div>
+            <div style="text-align:center; padding:60px 20px; color:#8E8E93;">
+                <p style="font-size:15px; margin-bottom:20px;">Nessun dato di fatturazione inserito</p>
+            </div>
+            <div style="padding:0 16px 20px;">
+                <button class="billing-submit" style="background:transparent; color:#2C7F44; border:1.5px solid #2C7F44;" onclick="openSubScreen('screen-billing-edit')">Aggiungi Nuovo</button>
+            </div>
+        `;
+    } else {
+        const fullAddress = billing.via + ' ' + billing.numero + ', ' + billing.cap + ', ' + billing.comune + (billing.paese ? ' (' + billing.paese.substring(0,2).toUpperCase() + ')' : '') + ', Italia';
+        container.innerHTML = `
+            <div class="billing-tabs">
+                <button class="billing-tab active">Privato</button>
+                <button class="billing-tab">Azienda</button>
+            </div>
+            <div class="billing-saved-card">
+                <div class="billing-saved-header">
+                    <span class="billing-saved-label">INTESTATARIO</span>
+                    <div class="billing-saved-check">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                </div>
+                <div class="billing-saved-name">${escapeHtml(billing.nome)} ${escapeHtml(billing.cognome)}</div>
+                <div class="billing-saved-cf">${escapeHtml(billing.codiceFiscale)}</div>
+                <div class="billing-saved-address">${escapeHtml(fullAddress)}</div>
+                <div class="billing-saved-edit" onclick="openSubScreen('screen-billing-edit')">
+                    <span>Modifica dati fatturazione</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+            </div>
+            <div style="padding:0 16px 20px;">
+                <button class="billing-submit" style="background:transparent; color:#2C7F44; border:1.5px solid #2C7F44; margin-bottom:10px;" onclick="openSubScreen('screen-billing-edit')">Aggiungi Nuovo</button>
+                <button class="billing-submit" onclick="closeSubScreen()">Conferma</button>
+            </div>
+        `;
+    }
+}
+
+function goToBillingFromModal() {
+    closeModal('billing-required-modal');
+    setTimeout(() => {
+        openSubScreen('screen-dati-fatturazione');
+        setTimeout(() => {
+            openSubScreen('screen-billing-edit');
+        }, 380);
+    }, 300);
+}
+
+// ============================================
+// STORICO ACQUISTI (Purchase History / Orders)
+// ============================================
+
+function getOrders() {
+    try {
+        const data = localStorage.getItem('trenord_orders');
+        return data ? JSON.parse(data) : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function saveOrders(orders) {
+    localStorage.setItem('trenord_orders', JSON.stringify(orders));
+}
+
+function getDocCounter() {
+    try {
+        let counter = parseInt(localStorage.getItem('trenord_doc_counter') || '4994780');
+        return counter;
+    } catch (e) {
+        return 4994780;
+    }
+}
+
+function incrementDocCounter() {
+    let counter = getDocCounter() + 1;
+    localStorage.setItem('trenord_doc_counter', String(counter));
+    return counter;
+}
+
+function generateOrderId(date) {
+    const d = date instanceof Date ? date : new Date(date);
+    const yy = String(d.getFullYear()).slice(-2);
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    const hex = Array.from(crypto.getRandomValues(new Uint8Array(4))).map(b => b.toString(16).padStart(2, '0')).join('');
+    return 'tn-' + yy + mm + dd + '-as-' + hex;
+}
+
+function createOrder(generatedTickets, purchaseDate) {
+    const orders = getOrders();
+    const billing = getBillingData();
+    const totalPrice = generatedTickets.reduce((sum, t) => sum + t.prezzo, 0);
+    const docNumber = incrementDocCounter();
+
+    const order = {
+        orderId: generateOrderId(purchaseDate),
+        date: purchaseDate.toISOString(),
+        tickets: generatedTickets.map(t => ({
+            viaggio: t.viaggio,
+            fromZone: t.fromZone,
+            toZone: t.toZone,
+            prezzo: t.prezzo,
+            classe: t.classe
+        })),
+        total: totalPrice,
+        ticketCount: generatedTickets.length,
+        paymentMethod: 'Carta di credito',
+        billingSnapshot: billing ? { ...billing } : null,
+        docNumber: docNumber,
+        status: 'paid'
+    };
+
+    orders.unshift(order);
+    saveOrders(orders);
+}
+
+function renderStoricoAcquisti() {
+    const orders = getOrders();
+    const listEl = document.getElementById('storico-list');
+    const dateTextEl = document.getElementById('storico-date-text');
+
+    // Set date range text
+    const now = new Date();
+    const oneYearAgo = new Date(now);
+    oneYearAgo.setFullYear(now.getFullYear() - 1);
+    dateTextEl.textContent = formatDateCompact(oneYearAgo) + ' - ' + formatDateCompact(now);
+
+    if (orders.length === 0) {
+        listEl.innerHTML = '<div class="storico-empty">Nessun acquisto trovato</div>';
+        return;
+    }
+
+    let html = '';
+    orders.forEach(order => {
+        const d = new Date(order.date);
+        const dateStr = formatDateFull(d);
+        const timeStr = formatTimeShort(d);
+        const itemsLabel = order.ticketCount + 'x Bigliett' + (order.ticketCount === 1 ? 'o' : 'i');
+        const statusDate = formatDateCompact(d) + ', ' + timeStr;
+
+        html += `
+            <div class="order-card" onclick="openOrderDetail('${order.orderId}')">
+                <div class="order-card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/><circle cx="17" cy="14" r="1.5"/></svg>
+                </div>
+                <div class="order-card-info">
+                    <div class="order-card-id">${escapeHtml(order.orderId)}</div>
+                    <div class="order-card-date">${dateStr} ${timeStr}</div>
+                    <div class="order-card-items">${itemsLabel}</div>
+                    <div class="order-card-status">PAGATO IL ${statusDate}</div>
+                </div>
+                <div class="order-card-right">
+                    <div class="order-card-price">${formatPrice(order.total)}</div>
+                    <div class="order-card-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+                </div>
+            </div>
+        `;
+    });
+
+    listEl.innerHTML = html;
+}
+
+function openOrderDetail(orderId) {
+    const orders = getOrders();
+    const order = orders.find(o => o.orderId === orderId);
+    if (!order) return;
+
+    const d = new Date(order.date);
+    const dateStr = formatDateCompact(d);
+    const timeStr = formatTimeShort(d);
+
+    let itemsHTML = '';
+    order.tickets.forEach(t => {
+        itemsHTML += `
+            <div class="order-detail-item">
+                <div class="order-detail-item-desc">
+                    <div class="order-detail-item-name">1 Ordinario - STIBM</div>
+                    <div class="order-detail-item-zone">${t.fromZone} - ${t.toZone}</div>
+                </div>
+                <div class="order-detail-item-price">${formatPrice(t.prezzo)}</div>
+            </div>
+        `;
+    });
+
+    const contentEl = document.getElementById('order-detail-content');
+    contentEl.innerHTML = `
+        <div class="order-detail-section">
+            <div class="order-detail-id">Ordine n° ${escapeHtml(order.orderId)}</div>
+            <div class="order-detail-date">Acquistato il ${dateStr} alle ${timeStr}</div>
+            <div class="order-detail-payment">Metodo di pagamento  <strong>${escapeHtml(order.paymentMethod)}</strong></div>
+            <div class="order-detail-badge">Pagato il ${dateStr}, ${timeStr}</div>
+            <div class="order-detail-items-title">ACQUISTI</div>
+            ${itemsHTML}
+            <div class="order-detail-total">${formatPrice(order.total)}</div>
+        </div>
+    `;
+
+    // Set up the download/receipt button
+    const receiptBtn = document.getElementById('btn-view-receipt');
+    receiptBtn.onclick = () => openReceipt(orderId);
+
+    openSubScreen('screen-dettaglio-ordine');
+}
+
+function openReceipt(orderId) {
+    const orders = getOrders();
+    const order = orders.find(o => o.orderId === orderId);
+    if (!order) return;
+
+    const d = new Date(order.date);
+    const dateStr = formatDateCompact(d);
+    const timeStr = formatTimeShort(d);
+    const billing = order.billingSnapshot || getBillingData() || {};
+
+    let itemsRows = '';
+    order.tickets.forEach((t, idx) => {
+        itemsRows += `
+            <tr>
+                <td>8501</td>
+                <td>Ordinario - STIBM ${t.fromZone}-${t.toZone}</td>
+                <td class="text-right">1</td>
+                <td class="text-right">€${t.prezzo.toFixed(2)}</td>
+                <td class="text-right">€${t.prezzo.toFixed(2)}</td>
+            </tr>
+        `;
+    });
+
+    const receiptEl = document.getElementById('receipt-content');
+    receiptEl.innerHTML = `
+        <div class="receipt-paper" id="receipt-paper">
+            <div class="receipt-header">
+                <div class="receipt-logo">
+                    <div class="receipt-logo-title">⁞TRENORD</div>
+                    <div class="receipt-logo-sub">e-Store</div>
+                </div>
+                <div class="receipt-company-info">
+                    Trenord S.r.l<br>
+                    Piazzale Cadorna, 14 -20123 Milano - Italia<br>
+                    Tel. +39 02.85111 Fax. +39 02.85114708<br>
+                    PEC trenord@legalmail.it
+                </div>
+            </div>
+
+            <div class="receipt-intestatario">
+                <div class="receipt-intestatario-label">Intestatario Documento</div>
+                <div class="receipt-intestatario-name">${escapeHtml((billing.nome || '') + ' ' + (billing.cognome || '')).toUpperCase()}</div>
+            </div>
+
+            <table class="receipt-meta-table">
+                <tr>
+                    <th>Data</th>
+                    <th>Tipo Documento</th>
+                    <th>Numero Ordine</th>
+                    <th>Numero Documento</th>
+                    <th>Codice Fiscale</th>
+                </tr>
+                <tr>
+                    <td>${d.toLocaleDateString('it-IT')}</td>
+                    <td>Ricevuta fiscale</td>
+                    <td>${escapeHtml(order.orderId)}</td>
+                    <td>${order.docNumber}</td>
+                    <td>${escapeHtml(billing.codiceFiscale || 'N.D.')}</td>
+                </tr>
+                <tr>
+                    <th>Modalità di Inoltro</th>
+                    <th colspan="2">Modalità di pagamento</th>
+                    <th colspan="2"></th>
+                </tr>
+                <tr>
+                    <td>Via email.<br>Documento generato il<br>${dateStr} alle ${timeStr}</td>
+                    <td colspan="2">Carta di credito:<br>${formatPrice(order.total)}</td>
+                    <td colspan="2"></td>
+                </tr>
+            </table>
+
+            <table class="receipt-items-table">
+                <tr>
+                    <th>Codice Articolo</th>
+                    <th>Descrizione</th>
+                    <th class="text-right">Quantità</th>
+                    <th class="text-right">Prezzo Unitario</th>
+                    <th class="text-right">Totale Lordo</th>
+                </tr>
+                ${itemsRows}
+                <tr class="receipt-total-row">
+                    <td colspan="4" class="text-right"><strong>Totale</strong></td>
+                    <td class="text-right">€${order.total.toFixed(2)}</td>
+                </tr>
+            </table>
+        </div>
+    `;
+
+    openSubScreen('screen-ricevuta');
+}
+
+async function shareReceipt() {
+    const receiptPaper = document.getElementById('receipt-paper');
+    if (!receiptPaper) return;
+
+    try {
+        // Show loading state
+        const btn = document.getElementById('btn-share-receipt');
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = '<div class="spinner" style="width:20px;height:20px;border-width:2px;margin:0;"></div>';
+        btn.disabled = true;
+
+        const canvas = await html2canvas(receiptPaper, {
+            scale: 2,
+            backgroundColor: '#ffffff',
+            useCORS: true,
+            logging: false
+        });
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const imgData = canvas.toDataURL('image/png');
+
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+        pdf.addImage(imgData, 'PNG', 0, 10, pdfWidth, pdfHeight);
+        pdf.save('ricevuta-trenord.pdf');
+
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
+    } catch (e) {
+        console.error('PDF generation failed:', e);
+        alert('Errore nella generazione del PDF');
+        const btn = document.getElementById('btn-share-receipt');
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>';
+        btn.disabled = false;
+    }
+}
+
+// ============================================
+// ELIMINA DATI
+// ============================================
+
+function confirmDeleteData() {
+    openModal('delete-data-modal');
+}
+
+function executeDeleteData() {
+    closeModal('delete-data-modal');
+
+    // Preserve orders (ricevute) and doc counter
+    const orders = localStorage.getItem('trenord_orders');
+    const docCounter = localStorage.getItem('trenord_doc_counter');
+
+    // Clear all localStorage
+    localStorage.clear();
+
+    // Restore preserved data
+    if (orders) localStorage.setItem('trenord_orders', orders);
+    if (docCounter) localStorage.setItem('trenord_doc_counter', docCounter);
+
+    // Reload the app
+    setTimeout(() => {
+        window.location.reload(true);
+    }, 300);
+}
+
+// ============================================
+// AGGIORNA (Check Updates from Profilo)
+// ============================================
+
+function checkForUpdatesManual() {
+    const statusEl = document.getElementById('aggiorna-status');
+    const btn = document.getElementById('btn-aggiorna-check');
+    statusEl.textContent = 'Controllo in corso...';
+    btn.disabled = true;
+
+    fetch('https://api.github.com/repos/' + GITHUB_REPO + '/commits?per_page=1', {
+        cache: 'no-store'
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        if (!Array.isArray(data) || data.length === 0) {
+            statusEl.textContent = 'Impossibile controllare';
+            btn.disabled = false;
+            return;
+        }
+        var latest = data[0];
+        var sha = latest.sha;
+        var savedSHA = localStorage.getItem('trenord_last_commit');
+
+        if (!savedSHA) {
+            localStorage.setItem('trenord_last_commit', sha);
+            statusEl.textContent = '✓ App aggiornata all\'ultima versione';
+            statusEl.style.color = '#2C7F44';
+            btn.disabled = false;
+            return;
+        }
+
+        if (sha !== savedSHA) {
+            _latestCommitSHA = sha;
+            statusEl.textContent = '⬆️ Nuova versione disponibile!';
+            statusEl.style.color = '#E37603';
+            btn.textContent = 'Aggiorna ora';
+            btn.disabled = false;
+            btn.onclick = function() {
+                applyUpdate();
+            };
+        } else {
+            statusEl.textContent = '✓ App aggiornata all\'ultima versione';
+            statusEl.style.color = '#2C7F44';
+            btn.disabled = false;
+        }
+    })
+    .catch(function(err) {
+        statusEl.textContent = '⚠️ Errore di connessione';
+        statusEl.style.color = '#D32F2F';
+        btn.disabled = false;
+    });
+}
+
+// ============================================
+// NOTIFICHE (Changelog in sub-screen)
+// ============================================
+
+let _notificheChangelogLoaded = false;
+
+function fetchNotificheChangelog() {
+    if (_notificheChangelogLoaded) return;
+    
+    const list = document.getElementById('notifiche-changelog-list');
+    
+    fetch('https://api.github.com/repos/' + GITHUB_REPO + '/commits?per_page=30', {
+        cache: 'default'
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(commits) {
+        _notificheChangelogLoaded = true;
+        
+        if (!Array.isArray(commits) || commits.length === 0) {
+            list.innerHTML = '<div class="changelog-empty">Nessun commit disponibile</div>';
+            return;
+        }
+        
+        var html = '';
+        var lastDate = null;
+        
+        commits.forEach(function(commit) {
+            var msg = commit.commit.message || 'No message';
+            var sha = commit.sha.substring(0, 7);
+            var author = (commit.commit.author && commit.commit.author.name) || 'Unknown';
+            var dateStr = '';
+            var dateGroup = '';
+            
+            if (commit.commit.author && commit.commit.author.date) {
+                var d = new Date(commit.commit.author.date);
+                dateStr = d.toLocaleString('it-IT', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                dateGroup = d.toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
+            }
+            
+            if (dateGroup && dateGroup !== lastDate) {
+                html += '<div class="changelog-date-divider">' + dateGroup + '</div>';
+                lastDate = dateGroup;
+            }
+            
+            var emoji = '';
+            var msgClean = msg;
+            var emojiMatch = msg.match(/^([\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}])/u);
+            if (emojiMatch) {
+                emoji = emojiMatch[1];
+                msgClean = msg.substring(emoji.length).trim();
+            }
+            
+            var lines = msgClean.split('\n');
+            var title = lines[0];
+            var description = lines.slice(1).join('\n').trim();
+            
+            html += '<div class="changelog-item">';
+            html += '  <div class="changelog-item-header">';
+            if (emoji) html += '    <span class="changelog-emoji">' + emoji + '</span>';
+            html += '    <div class="changelog-item-title-wrap">';
+            html += '      <span class="changelog-item-title">' + escapeHtml(title) + '</span>';
+            html += '      <div class="changelog-item-meta">';
+            html += '        <span class="changelog-sha">' + sha + '</span>';
+            html += '        <span class="changelog-dot">•</span>';
+            html += '        <span class="changelog-author">' + escapeHtml(author) + '</span>';
+            html += '        <span class="changelog-dot">•</span>';
+            html += '        <span class="changelog-date">' + dateStr + '</span>';
+            html += '      </div>';
+            html += '    </div>';
+            html += '  </div>';
+            if (description) html += '  <div class="changelog-item-description">' + escapeHtml(description).replace(/\n/g, '<br>') + '</div>';
+            html += '</div>';
+        });
+        
+        list.innerHTML = html;
+    })
+    .catch(function(err) {
+        list.innerHTML = '<div class="changelog-error">⚠️ Errore nel caricamento del changelog</div>';
+    });
+}
+
+// ============================================
+// DATE FORMATTING HELPERS
+// ============================================
+
+function formatDateCompact(date) {
+    const d = date instanceof Date ? date : new Date(date);
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const yy = String(d.getFullYear()).slice(-2);
+    return dd + '/' + mm + '/' + yy;
+}
+
+function formatDateFull(date) {
+    const d = date instanceof Date ? date : new Date(date);
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const yyyy = d.getFullYear();
+    return dd + '/' + mm + '/' + yyyy;
+}
+
+function formatTimeShort(date) {
+    const d = date instanceof Date ? date : new Date(date);
+    const hh = String(d.getHours()).padStart(2, '0');
+    const min = String(d.getMinutes()).padStart(2, '0');
+    return hh + ':' + min;
+}
+
+// ============================================
+// FAQ (Accordion toggle)
+// ============================================
+
+function toggleFaq(el) {
+    const isOpen = el.classList.contains('open');
+    // Close all other FAQs
+    document.querySelectorAll('.faq-item.open').forEach(function(item) {
+        item.classList.remove('open');
+    });
+    // Toggle current
+    if (!isOpen) {
+        el.classList.add('open');
     }
 }

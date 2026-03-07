@@ -348,167 +348,499 @@
     <!-- ====== SCREEN: PROFILO ====== -->
     <div id="profilo-screen" class="screen" data-tab="profilo">
         <div class="config-header">
-            <div class="config-header-title">Documentazione Tecnica</div>
+            <div class="config-header-title">Profilo</div>
         </div>
-        <div class="tech-doc-container">
-            <div class="tech-section">
-                <div class="tech-section-header">
-                    <svg class="tech-icon" viewBox="0 0 24 24" fill="none" stroke="#62A76C" stroke-width="2">
-                        <rect x="3" y="3" width="18" height="18" rx="2"/>
-                        <path d="M3 9h18M9 21V9"/>
-                    </svg>
-                    <h3>Sistema di Generazione QR</h3>
+        <div class="profilo-body">
+            <!-- User Card -->
+            <div class="profilo-user-card">
+                <div class="profilo-user-avatar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#62A76C" stroke-width="1.5"><circle cx="12" cy="7" r="4"/><path d="M4 21v-2a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v2"/></svg>
                 </div>
-                <p class="tech-description">Questa applicazione genera biglietti STIBM (Sistema Tariffario Integrato Bacino di Milano) utilizzando un algoritmo di codifica basato su zone tariffarie, timestamp e checksum crittografico.</p>
+                <div class="profilo-user-info">
+                    <div class="profilo-user-greeting">Ciao,</div>
+                    <div class="profilo-user-name">Utente Trenord+</div>
+                </div>
+                <div class="profilo-user-chevron">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
             </div>
 
-            <div class="tech-section">
-                <div class="tech-section-header">
-                    <svg class="tech-icon" viewBox="0 0 24 24" fill="none" stroke="#585DA4" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"/>
-                        <path d="M12 6v6l4 2"/>
-                    </svg>
-                    <h3>Logica di Calcolo</h3>
-                </div>
-                <div class="formula-box">
-                    <div class="formula-item">
-                        <span class="formula-label">Prezzo:</span>
-                        <code>€0.80 + (numZone × €0.50)</code>
+            <!-- Informazioni -->
+            <div class="profilo-section-title">Informazioni</div>
+            <div class="profilo-group">
+                <div class="profilo-item" onclick="openSubScreen('screen-come-funziona')">
+                    <div class="profilo-item-icon icon-green">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></svg>
                     </div>
-                    <div class="formula-item">
-                        <span class="formula-label">Durata:</span>
-                        <code>≤3 zone: 90 min · 4-5: +15/zona · 6+: +30/zona</code>
+                    <span class="profilo-item-label">Come funziona</span>
+                    <div class="profilo-item-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+                </div>
+                <div class="profilo-item" onclick="openSubScreen('screen-aggiorna')">
+                    <div class="profilo-item-icon icon-blue">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
                     </div>
-                    <div class="formula-item">
-                        <span class="formula-label">Zone:</span>
-                        <code>Mi1, Mi3, Mi4, Mi5, Mi6, Mi7, Mi8, Mi9</code>
+                    <span class="profilo-item-label">Aggiorna</span>
+                    <div class="profilo-item-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+                </div>
+                <div class="profilo-item" onclick="openSubScreen('screen-notifiche')">
+                    <div class="profilo-item-icon icon-orange">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    </div>
+                    <span class="profilo-item-label">Notifiche</span>
+                    <div class="profilo-item-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+                </div>
+                <div class="profilo-item" onclick="openSubScreen('screen-faq')">
+                    <div class="profilo-item-icon icon-indigo">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/></svg>
+                    </div>
+                    <span class="profilo-item-label">FAQ</span>
+                    <div class="profilo-item-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+                </div>
+            </div>
+
+            <!-- Fatturazione -->
+            <div class="profilo-section-title">Fatturazione</div>
+            <div class="profilo-group">
+                <div class="profilo-item" onclick="openSubScreen('screen-dati-fatturazione')">
+                    <div class="profilo-item-icon icon-teal">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    </div>
+                    <span class="profilo-item-label">Dati fatturazione</span>
+                    <div class="profilo-item-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+                </div>
+                <div class="profilo-item" onclick="openSubScreen('screen-storico-acquisti')">
+                    <div class="profilo-item-icon icon-purple">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    </div>
+                    <span class="profilo-item-label">Storico acquisti</span>
+                    <div class="profilo-item-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+                </div>
+            </div>
+
+            <!-- Altro -->
+            <div class="profilo-section-title">Altro</div>
+            <div class="profilo-group">
+                <div class="profilo-item" onclick="confirmDeleteData()">
+                    <div class="profilo-item-icon icon-red">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </div>
+                    <span class="profilo-item-label text-red">Elimina dati</span>
+                    <div class="profilo-item-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="profilo-footer">
+                <div class="profilo-footer-version">Build v40 · Mar 2026</div>
+                <div class="profilo-footer-credits">Sviluppato con ❤️ da <a href="https://github.com/sjmvne" target="_blank" rel="noopener">@sjmvne</a></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== SUB-SCREEN: FAQ ====== -->
+    <div id="screen-faq" class="sub-screen">
+        <div class="sub-screen-header">
+            <button class="sub-screen-back" onclick="closeSubScreen()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                <span class="sub-screen-back-label">Profilo</span>
+            </button>
+            <span class="sub-screen-title">FAQ</span>
+        </div>
+        <div class="sub-screen-body">
+            <div class="faq-container">
+                <div class="faq-intro">Domande frequenti sull'utilizzo dell'app Trenord+</div>
+
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <span>Cos'è Trenord+ e a cosa serve?</span>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="faq-answer">Trenord+ è un'app web progressiva (PWA) che replica fedelmente l'esperienza dell'app ufficiale Trenord per la generazione di biglietti STIBM. Funziona interamente nel browser e salva tutti i dati in locale sul tuo dispositivo, senza necessità di account o registrazione.</div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <span>I biglietti generati sono validi per viaggiare?</span>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="faq-answer">No. I biglietti generati da Trenord+ sono una replica visiva a scopo dimostrativo. Per viaggiare è necessario acquistare un biglietto valido tramite i canali ufficiali di Trenord o ATM.</div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <span>I miei dati vengono inviati a qualche server?</span>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="faq-answer">No, tutti i dati (biglietti, dati di fatturazione, storico acquisti) vengono salvati esclusivamente nel localStorage del tuo browser. Nessun dato viene inviato, trasmesso o condiviso con server esterni. La tua privacy è totalmente garantita.</div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <span>Come funzionano le zone STIBM?</span>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="faq-answer">Il Sistema Tariffario Integrato del Bacino di Mobilità (STIBM) divide il territorio di Milano e provincia in zone concentriche da Mi1 a Mi9. Selezionando la zona di partenza e quella di arrivo, l'app calcola automaticamente il prezzo del biglietto in base al numero di zone attraversate.</div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <span>Posso usare l'app offline?</span>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="faq-answer">Sì! Trenord+ è una Progressive Web App (PWA) con Service Worker. Dopo il primo caricamento, l'app viene messa in cache e funziona completamente offline. Puoi generare, attivare e visualizzare biglietti anche senza connessione internet.</div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <span>Come installo l'app sul mio dispositivo?</span>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="faq-answer">Su iPhone/iPad: apri l'app in Safari, tocca il pulsante di condivisione (quadrato con freccia) e seleziona "Aggiungi alla schermata Home". Su Android: apri in Chrome, tocca il menu (tre puntini) e seleziona "Aggiungi a schermata Home" o "Installa app". Su desktop: cerca l'icona di installazione nella barra degli indirizzi del browser.</div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <span>Cosa succede se cancello i dati del browser?</span>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="faq-answer">Se cancelli i dati di navigazione o la cache del browser, tutti i biglietti e le impostazioni verranno eliminati permanentemente. I dati risiedono unicamente nel localStorage del browser e non possono essere recuperati. Ti consigliamo di scaricare le ricevute PDF prima di effettuare la pulizia dei dati.</div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <span>A cosa servono i dati di fatturazione?</span>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="faq-answer">I dati di fatturazione (nome, cognome, codice fiscale, indirizzo) vengono utilizzati per compilare automaticamente le ricevute fiscali associate ai tuoi acquisti. Sono obbligatori per generare un biglietto e vengono salvati localmente per non doverli reinserire ogni volta.</div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <span>Come scarico la ricevuta in PDF?</span>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="faq-answer">Vai in Profilo → Storico acquisti, seleziona l'ordine desiderato, tocca l'icona di download in alto a destra per aprire la ricevuta, poi tocca l'icona di condivisione per scaricarla come file PDF.</div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <span>Il pulsante "Elimina dati" cancella anche le ricevute?</span>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="faq-answer">No. La funzione "Elimina dati" nel profilo cancella biglietti, preferenze e dati di fatturazione, ma conserva lo storico acquisti e le ricevute. Questi dati vengono preservati per garantire la tracciabilità degli ordini anche dopo un reset dell'app.</div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <span>Come posso aggiornare l'app?</span>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="faq-answer">Vai in Profilo → Aggiorna e tocca "Controlla aggiornamenti". L'app verificherà se è disponibile una nuova versione confrontando l'ultimo commit del repository GitHub. Se disponibile, potrai aggiornare con un tocco. In alternativa, l'app controlla automaticamente gli aggiornamenti ad ogni avvio.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== SUB-SCREEN: Come funziona ====== -->
+    <div id="screen-come-funziona" class="sub-screen">
+        <div class="sub-screen-header">
+            <button class="sub-screen-back" onclick="closeSubScreen()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                <span class="sub-screen-back-label">Profilo</span>
+            </button>
+            <span class="sub-screen-title">Come funziona</span>
+        </div>
+        <div class="sub-screen-body">
+            <div class="tech-doc-container">
+                <div class="tech-section">
+                    <div class="tech-section-header">
+                        <svg class="tech-icon" viewBox="0 0 24 24" fill="none" stroke="#62A76C" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></svg>
+                        <h3>Come funziona l'app</h3>
+                    </div>
+                    <p class="tech-description">Trenord+ è una Progressive Web App (PWA) che ti permette di generare biglietti STIBM (Sistema Tariffario Integrato Bacino di Milano) direttamente dal tuo smartphone. Seleziona le zone, genera il biglietto e attivalo con Tap & Go quando sei pronto a viaggiare.</p>
+                    <p class="tech-note">⚠️ Questo è un progetto didattico. I biglietti generati non sono validi per viaggi reali su Trenord.</p>
+                </div>
+
+                <div class="tech-section">
+                    <div class="tech-section-header">
+                        <svg class="tech-icon" viewBox="0 0 24 24" fill="none" stroke="#585DA4" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <h3>Privacy e Dati</h3>
+                    </div>
+                    <p class="tech-description">Tutte le informazioni dell'utente (biglietti, dati di fatturazione, storico acquisti) <strong>non sono memorizzate online</strong> ma esclusivamente nella <strong>cache locale del tuo browser</strong>. Nessun dato viene inviato a server esterni. I tuoi dati restano sul tuo dispositivo.</p>
+                </div>
+
+                <div class="tech-section">
+                    <div class="tech-section-header">
+                        <svg class="tech-icon" viewBox="0 0 24 24" fill="none" stroke="#62A76C" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                        <h3>Sistema di Generazione QR</h3>
+                    </div>
+                    <p class="tech-description">L'app genera biglietti STIBM utilizzando un algoritmo di codifica basato su zone tariffarie, timestamp e checksum crittografico.</p>
+                </div>
+
+                <div class="tech-section">
+                    <div class="tech-section-header">
+                        <svg class="tech-icon" viewBox="0 0 24 24" fill="none" stroke="#585DA4" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                        <h3>Logica di Calcolo</h3>
+                    </div>
+                    <div class="formula-box">
+                        <div class="formula-item">
+                            <span class="formula-label">Prezzo:</span>
+                            <code>€0.80 + (numZone × €0.50)</code>
+                        </div>
+                        <div class="formula-item">
+                            <span class="formula-label">Durata:</span>
+                            <code>≤3 zone: 90 min · 4-5: +15/zona · 6+: +30/zona</code>
+                        </div>
+                        <div class="formula-item">
+                            <span class="formula-label">Zone:</span>
+                            <code>Mi1, Mi3, Mi4, Mi5, Mi6, Mi7, Mi8, Mi9</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tech-section">
+                    <div class="tech-section-header">
+                        <svg class="tech-icon" viewBox="0 0 24 24" fill="none" stroke="#E37603" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="1"/><rect x="7" y="7" width="3" height="3"/><rect x="7" y="14" width="3" height="3"/><rect x="14" y="7" width="3" height="3"/><rect x="14" y="14" width="3" height="3"/></svg>
+                        <h3>Struttura QR Code</h3>
+                    </div>
+                    <p class="tech-description">Il QR code è composto da tre componenti separati dal carattere <code>:</code></p>
+                    <div class="code-block">
+                        <div class="code-header">Formato QR</div>
+                        <pre><code>BASE64_JSON:CHECKSUM:UUID</code></pre>
+                    </div>
+                </div>
+
+                <div class="tech-section">
+                    <div class="tech-section-header">
+                        <svg class="tech-icon" viewBox="0 0 24 24" fill="none" stroke="#DDA165" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><path d="M8 11h6M11 8v6"/></svg>
+                        <h3>Ricerca Comuni</h3>
+                    </div>
+                    <p class="tech-description">L'app include un database di <code>190 comuni</code> mappati sulle zone tariffarie STIBM. La funzione "Da - A" permette di cercare per nome comune e calcolare automaticamente le zone necessarie.</p>
+                </div>
+
+                <div class="tech-section tech-credits">
+                    <div class="tech-section-header">
+                        <svg class="tech-icon" viewBox="0 0 24 24" fill="none" stroke="#1C1C1E" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                        <h3>Credits</h3>
+                    </div>
+                    <p class="credits-text">Sviluppato con ❤️ da <strong>@sjmvne</strong></p>
+                    <div class="credits-links">
+                        <a href="https://github.com/sjmvne" target="_blank" rel="noopener" class="credits-link">
+                            <svg viewBox="0 0 24 24" fill="#1C1C1E" width="20" height="20"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                            <span>GitHub</span>
+                        </a>
+                        <a href="https://instagram.com/sjmvne" target="_blank" rel="noopener" class="credits-link">
+                            <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><rect x="2" y="2" width="20" height="20" rx="5" stroke="#E4405F" stroke-width="2"/><circle cx="12" cy="12" r="5" stroke="#E4405F" stroke-width="2"/><circle cx="18" cy="6" r="1.5" fill="#E4405F"/></svg>
+                            <span>Instagram</span>
+                        </a>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <div class="tech-section">
-                <div class="tech-section-header">
-                    <svg class="tech-icon" viewBox="0 0 24 24" fill="none" stroke="#E37603" stroke-width="2">
-                        <rect x="4" y="4" width="16" height="16" rx="1"/>
-                        <rect x="7" y="7" width="3" height="3"/>
-                        <rect x="7" y="14" width="3" height="3"/>
-                        <rect x="14" y="7" width="3" height="3"/>
-                        <rect x="14" y="14" width="3" height="3"/>
-                    </svg>
-                    <h3>Struttura QR Code</h3>
+    <!-- ====== SUB-SCREEN: Aggiorna ====== -->
+    <div id="screen-aggiorna" class="sub-screen">
+        <div class="sub-screen-header">
+            <button class="sub-screen-back" onclick="closeSubScreen()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                <span class="sub-screen-back-label">Profilo</span>
+            </button>
+            <span class="sub-screen-title">Aggiorna</span>
+        </div>
+        <div class="sub-screen-body">
+            <div class="aggiorna-content">
+                <div class="aggiorna-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
                 </div>
-                <p class="tech-description">Il QR code è composto da tre componenti separati dal carattere <code>:</code></p>
-                <div class="code-block">
-                    <div class="code-header">Formato QR</div>
-                    <pre><code>BASE64_JSON:CHECKSUM:UUID</code></pre>
-                </div>
+                <div class="aggiorna-title">Trenord+</div>
+                <div class="aggiorna-version">Versione corrente: Build v40</div>
+                <div class="aggiorna-status" id="aggiorna-status">Premi per controllare aggiornamenti</div>
+                <button class="aggiorna-btn" id="btn-aggiorna-check" onclick="checkForUpdatesManual()">Controlla aggiornamenti</button>
             </div>
+        </div>
+    </div>
 
-            <div class="tech-section">
-                <div class="tech-section-header">
-                    <svg class="tech-icon" viewBox="0 0 24 24" fill="none" stroke="#A61D27" stroke-width="2">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                        <polyline points="14 2 14 8 20 8"/>
-                        <line x1="9" y1="15" x2="15" y2="15"/>
-                    </svg>
-                    <h3>Payload JSON</h3>
-                </div>
-                <div class="code-block">
-                    <div class="code-header">app.js - generateTicket()</div>
-                    <pre><code>{
-  "type": "STIBM",
-  "zones": ["Mi1", "Mi3", "Mi4"],
-  "from": "Mi1",
-  "to": "Mi4",
-  "price": "2.80",
-  "duration": 105,
-  "timestamp": 1709553600000,
-  "valid_until": 1709559000000,
-  "pnr": "ABC123DEF456"
-}</code></pre>
-                </div>
-                <p class="tech-note">Il JSON viene codificato in Base64 per garantire compatibilità con i lettori QR standard.</p>
-            </div>
-
-            <div class="tech-section">
-                <div class="tech-section-header">
-                    <svg class="tech-icon" viewBox="0 0 24 24" fill="none" stroke="#63A166" stroke-width="2">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                    </svg>
-                    <h3>Checksum di Sicurezza</h3>
-                </div>
-                <div class="code-block">
-                    <div class="code-header">Generazione SHA-256</div>
-                    <pre><code>const payload = JSON.stringify(ticketData);
-const base64 = btoa(payload);
-const checksum = await sha256(base64 + SECRET_SALT);
-const uuid = generateUUID();
-
-// Output finale
-const qrData = `${base64}:${checksum}:${uuid}`;</code></pre>
-                </div>
-                <p class="tech-note">Il checksum SHA-256 impedisce la manipolazione dei dati del biglietto. Ogni biglietto ha un UUID univoco per tracciabilità.</p>
-            </div>
-
-            <div class="tech-section">
-                <div class="tech-section-header">
-                    <svg class="tech-icon" viewBox="0 0 24 24" fill="none" stroke="#DDA165" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"/>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                        <path d="M8 11h6M11 8v6"/>
-                    </svg>
-                    <h3>Ricerca Comuni</h3>
-                </div>
-                <p class="tech-description">L'app include un database di <code>190 comuni</code> mappati sulle zone tariffarie STIBM, estratti dal documento ufficiale. La funzione "Da - A" permette di cercare per nome comune e calcolare automaticamente le zone necessarie.</p>
-                <div class="code-block">
-                    <div class="code-header">Mapping Comuni → Zone</div>
-                    <pre><code>COMUNI_STIBM = [
-  { nome: "MILANO",    zona: "Mi1" },
-  { nome: "MONZA",     zona: "Mi4" },
-  { nome: "LEGNANO",   zona: "Mi7" },
-  ...190 comuni totali
-];
-
-// Calcolo automatico zone
-fromZona = comunePartenza.zona; // "Mi1"
-toZona   = comuneArrivo.zona;   // "Mi7"
-// → Slider aggiornato: Mi1 | Mi7</code></pre>
-                </div>
-            </div>
-
-            <div class="tech-section tech-footer">
-                <div class="tech-version">
-                    <div class="tech-version-info">
-                        <span class="version-label">Build v39</span>
-                        <span class="version-date">Mar 2026</span>
+    <!-- ====== SUB-SCREEN: Notifiche (Changelog) ====== -->
+    <div id="screen-notifiche" class="sub-screen">
+        <div class="sub-screen-header">
+            <button class="sub-screen-back" onclick="closeSubScreen()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                <span class="sub-screen-back-label">Profilo</span>
+            </button>
+            <span class="sub-screen-title">Notifiche</span>
+        </div>
+        <div class="sub-screen-body">
+            <div class="changelog-body" style="padding-top:12px;">
+                <div class="changelog-list" id="notifiche-changelog-list">
+                    <div class="changelog-loading">
+                        <div class="spinner"></div>
+                        <p>Caricamento changelog...</p>
                     </div>
-                    <button class="btn-check-updates" id="btn-check-updates" aria-label="Controlla aggiornamenti">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
-                            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
-                        </svg>
-                    </button>
                 </div>
-                <p class="disclaimer-text">⚠️ Questo è un progetto didattico. I biglietti generati non sono validi per viaggi reali su Trenord+.</p>
             </div>
+        </div>
+    </div>
 
-            <div class="tech-section tech-credits">
-                <div class="tech-section-header">
-                    <svg class="tech-icon" viewBox="0 0 24 24" fill="none" stroke="#1C1C1E" stroke-width="2">
-                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                    </svg>
-                    <h3>Credits</h3>
+    <!-- ====== SUB-SCREEN: Dati Fatturazione ====== -->
+    <div id="screen-dati-fatturazione" class="sub-screen">
+        <div class="sub-screen-header">
+            <button class="sub-screen-back" onclick="closeSubScreen()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                <span class="sub-screen-back-label">Profilo</span>
+            </button>
+            <span class="sub-screen-title">Dati fatturazione</span>
+        </div>
+        <div class="sub-screen-body">
+            <div id="billing-view-container">
+                <!-- Populated by JS: shows saved data card or form -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== SUB-SCREEN: Modifica Fatturazione ====== -->
+    <div id="screen-billing-edit" class="sub-screen">
+        <div class="sub-screen-header">
+            <button class="sub-screen-back" onclick="closeSubScreen()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                <span class="sub-screen-back-label">Fatturazione</span>
+            </button>
+            <span class="sub-screen-title">Aggiungi Nuovo</span>
+        </div>
+        <div class="sub-screen-body">
+            <div class="billing-form" id="billing-form">
+                <div class="billing-field">
+                    <label class="billing-label">Nome *</label>
+                    <input type="text" class="billing-input" id="billing-nome" placeholder="es. Mario" autocomplete="given-name">
                 </div>
-                <p class="credits-text">Sviluppato con ❤️ da <strong>@sjmvne</strong></p>
-                <div class="credits-links">
-                    <a href="https://github.com/sjmvne" target="_blank" rel="noopener" class="credits-link">
-                        <svg viewBox="0 0 24 24" fill="#1C1C1E" width="20" height="20"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-                        <span>GitHub</span>
-                    </a>
-                    <a href="https://instagram.com/sjmvne" target="_blank" rel="noopener" class="credits-link">
-                        <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><rect x="2" y="2" width="20" height="20" rx="5" stroke="#E4405F" stroke-width="2"/><circle cx="12" cy="12" r="5" stroke="#E4405F" stroke-width="2"/><circle cx="18" cy="6" r="1.5" fill="#E4405F"/></svg>
-                        <span>Instagram</span>
-                    </a>
+                <div class="billing-field">
+                    <label class="billing-label">Cognome *</label>
+                    <input type="text" class="billing-input" id="billing-cognome" placeholder="es. Rossi" autocomplete="family-name">
                 </div>
+                <div class="billing-field">
+                    <label class="billing-label">Codice Fiscale *</label>
+                    <input type="text" class="billing-input" id="billing-cf" placeholder="es. RSSMRA75L01H501A" autocomplete="off" style="text-transform:uppercase;">
+                </div>
+                <div class="billing-field">
+                    <label class="billing-label">Via/Piazza *</label>
+                    <input type="text" class="billing-input" id="billing-via" placeholder="es. Via Torino" autocomplete="street-address">
+                </div>
+                <div class="billing-row-2col">
+                    <div class="billing-field">
+                        <label class="billing-label">Numero *</label>
+                        <input type="text" class="billing-input" id="billing-numero" placeholder="es. 1" autocomplete="off">
+                    </div>
+                    <div class="billing-field">
+                        <label class="billing-label">CAP *</label>
+                        <input type="text" class="billing-input" id="billing-cap" placeholder="es. 00100" autocomplete="postal-code" inputmode="numeric">
+                    </div>
+                </div>
+                <div class="billing-field">
+                    <label class="billing-label">Paese *</label>
+                    <input type="text" class="billing-input" id="billing-paese" placeholder="es. ITALIA" autocomplete="country-name">
+                </div>
+                <div class="billing-field">
+                    <label class="billing-label">Comune *</label>
+                    <input type="text" class="billing-input" id="billing-comune" placeholder="es. Roma" autocomplete="address-level2">
+                </div>
+                <div class="billing-field">
+                    <label class="billing-label">PEC</label>
+                    <input type="email" class="billing-input" id="billing-pec" placeholder="es. mariorossi@pec.it" autocomplete="email">
+                </div>
+                <button class="billing-submit" onclick="saveBillingData()">Conferma</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== SUB-SCREEN: Storico Acquisti ====== -->
+    <div id="screen-storico-acquisti" class="sub-screen">
+        <div class="sub-screen-header">
+            <button class="sub-screen-back" onclick="closeSubScreen()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                <span class="sub-screen-back-label">Profilo</span>
+            </button>
+            <span class="sub-screen-title">Storico Acquisti</span>
+        </div>
+        <div class="sub-screen-body">
+            <div class="storico-header">
+                <div class="storico-date-range" id="storico-date-range">
+                    <span id="storico-date-text"></span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+            </div>
+            <div class="storico-list" id="storico-list">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== SUB-SCREEN: Dettaglio Ordine ====== -->
+    <div id="screen-dettaglio-ordine" class="sub-screen">
+        <div class="sub-screen-header">
+            <button class="sub-screen-back" onclick="closeSubScreen()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                <span class="sub-screen-back-label">Indietro</span>
+            </button>
+            <span class="sub-screen-title">Dettaglio ordine</span>
+            <div class="sub-screen-header-right">
+                <button class="header-icon-btn" id="btn-view-receipt" aria-label="Scarica ricevuta">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </button>
+            </div>
+        </div>
+        <div class="sub-screen-body">
+            <div id="order-detail-content">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== SUB-SCREEN: Ricevuta ====== -->
+    <div id="screen-ricevuta" class="sub-screen">
+        <div class="sub-screen-header">
+            <button class="sub-screen-back" onclick="closeSubScreen()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                <span class="sub-screen-back-label">Dettaglio ordine</span>
+            </button>
+            <span class="sub-screen-title">Ricevuta</span>
+            <div class="sub-screen-header-right">
+                <button class="header-icon-btn" id="btn-share-receipt" onclick="shareReceipt()" aria-label="Condividi">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                </button>
+            </div>
+        </div>
+        <div class="sub-screen-body">
+            <div class="receipt-container" id="receipt-content">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== MODAL: Billing Required ====== -->
+    <div id="billing-required-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-title">⚠️ Dati di fatturazione</div>
+            <div class="modal-body">
+                <p>Per generare il biglietto è necessario inserire i dati di fatturazione. Vuoi inserirli ora?</p>
+            </div>
+            <div class="modal-actions" style="display:flex;">
+                <button class="modal-btn" style="color:#8E8E93; border-right:0.5px solid #C6C6C8;" onclick="closeModal('billing-required-modal')">Annulla</button>
+                <button class="modal-btn" style="color:#2C7F44; font-weight:700;" onclick="goToBillingFromModal()">Inserisci</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== MODAL: Elimina Dati ====== -->
+    <div id="delete-data-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-title">🗑️ Elimina dati</div>
+            <div class="modal-body">
+                <p>Verranno eliminati tutti i biglietti, i dati di fatturazione e le impostazioni. <strong class="delete-data-warning">Le ricevute e lo storico acquisti saranno preservati.</strong></p>
+                <p>Sei sicuro?</p>
+            </div>
+            <div class="modal-actions" style="display:flex;">
+                <button class="modal-btn" style="color:#8E8E93; border-right:0.5px solid #C6C6C8;" onclick="closeModal('delete-data-modal')">Annulla</button>
+                <button class="modal-btn" style="color:#D32F2F; font-weight:700;" onclick="executeDeleteData()">Elimina</button>
             </div>
         </div>
     </div>
@@ -791,6 +1123,8 @@ toZona   = comuneArrivo.zona;   // "Mi7"
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
