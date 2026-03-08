@@ -191,7 +191,7 @@
                         <div class="form-card">
                             <div class="form-row">
                                 <div class="form-row-icon-wrap">
-                                    <svg class="form-row-icon" viewBox="0 0 24 24" fill="#62A76C" stroke="none"><circle cx="12" cy="7" r="4"/><path d="M5.5 21v-2a7.5 7.5 0 0 1 13 0v2z"/></svg>
+                                    <svg class="form-row-icon" viewBox="0 0 45 44"><path fill="#62A76C" d="M19.4,26.65c8.85-.84,23.05.4,19.89,12.89l-32.31.25c-2.61-9.96,4.07-12.34,12.43-13.14Z"/><path fill="#62A76C" d="M21.37,4.12c12.77-2.07,14.55,17.92,2.83,19.34-12.24,1.49-13.95-17.54-2.83-19.34Z"/><path fill="#fff" d="M36.5,37H9.5c-1.12-8.67,14.12-7.91,19.68-6.93,4.24.74,7.86,1.73,7.32,6.93Z"/><path fill="#fff" d="M21.88,7.11c8.73-1.42,9.63,12.63,1.81,13.37s-9.05-12.19-1.81-13.37Z"/></svg>
                                     <span id="ticket-count-text">1 Biglietto</span>
                                 </div>
                                 <div class="counter-btns">
@@ -352,13 +352,13 @@
         </div>
         <div class="profilo-body">
             <!-- User Card -->
-            <div class="profilo-user-card">
+            <div class="profilo-user-card" onclick="openSubScreen('screen-profilo-utente')">
                 <div class="profilo-user-avatar">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#62A76C" stroke-width="1.5"><circle cx="12" cy="7" r="4"/><path d="M4 21v-2a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v2"/></svg>
+                    <svg viewBox="0 0 45 44"><path fill="#62A76C" d="M19.4,26.65c8.85-.84,23.05.4,19.89,12.89l-32.31.25c-2.61-9.96,4.07-12.34,12.43-13.14Z"/><path fill="#62A76C" d="M21.37,4.12c12.77-2.07,14.55,17.92,2.83,19.34-12.24,1.49-13.95-17.54-2.83-19.34Z"/><path fill="#fff" d="M36.5,37H9.5c-1.12-8.67,14.12-7.91,19.68-6.93,4.24.74,7.86,1.73,7.32,6.93Z"/><path fill="#fff" d="M21.88,7.11c8.73-1.42,9.63,12.63,1.81,13.37s-9.05-12.19-1.81-13.37Z"/></svg>
                 </div>
                 <div class="profilo-user-info">
                     <div class="profilo-user-greeting">Ciao,</div>
-                    <div class="profilo-user-name">Utente Trenord+</div>
+                    <div class="profilo-user-name" id="profilo-display-name">Utente Trenord+</div>
                 </div>
                 <div class="profilo-user-chevron">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="9 18 15 12 9 6"/></svg>
@@ -369,28 +369,28 @@
             <div class="profilo-section-title">Informazioni</div>
             <div class="profilo-group">
                 <div class="profilo-item" onclick="openSubScreen('screen-come-funziona')">
-                    <div class="profilo-item-icon icon-green">
+                    <div class="profilo-item-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></svg>
                     </div>
                     <span class="profilo-item-label">Come funziona</span>
                     <div class="profilo-item-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
                 </div>
                 <div class="profilo-item" onclick="openSubScreen('screen-aggiorna')">
-                    <div class="profilo-item-icon icon-blue">
+                    <div class="profilo-item-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
                     </div>
                     <span class="profilo-item-label">Aggiorna</span>
                     <div class="profilo-item-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
                 </div>
                 <div class="profilo-item" onclick="openSubScreen('screen-notifiche')">
-                    <div class="profilo-item-icon icon-orange">
+                    <div class="profilo-item-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                     </div>
                     <span class="profilo-item-label">Notifiche</span>
                     <div class="profilo-item-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
                 </div>
                 <div class="profilo-item" onclick="openSubScreen('screen-faq')">
-                    <div class="profilo-item-icon icon-indigo">
+                    <div class="profilo-item-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/></svg>
                     </div>
                     <span class="profilo-item-label">FAQ</span>
@@ -402,14 +402,14 @@
             <div class="profilo-section-title">Fatturazione</div>
             <div class="profilo-group">
                 <div class="profilo-item" onclick="openSubScreen('screen-dati-fatturazione')">
-                    <div class="profilo-item-icon icon-teal">
+                    <div class="profilo-item-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                     </div>
-                    <span class="profilo-item-label">Dati fatturazione</span>
+                    <span class="profilo-item-label">Fatturazione</span>
                     <div class="profilo-item-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
                 </div>
                 <div class="profilo-item" onclick="openSubScreen('screen-storico-acquisti')">
-                    <div class="profilo-item-icon icon-purple">
+                    <div class="profilo-item-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
                     </div>
                     <span class="profilo-item-label">Storico acquisti</span>
@@ -421,7 +421,7 @@
             <div class="profilo-section-title">Altro</div>
             <div class="profilo-group">
                 <div class="profilo-item" onclick="confirmDeleteData()">
-                    <div class="profilo-item-icon icon-red">
+                    <div class="profilo-item-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                     </div>
                     <span class="profilo-item-label text-red">Elimina dati</span>
@@ -433,6 +433,37 @@
             <div class="profilo-footer">
                 <div class="profilo-footer-version">Build v40 · Mar 2026</div>
                 <div class="profilo-footer-credits">Sviluppato con ❤️ da <a href="https://github.com/sjmvne" target="_blank" rel="noopener">@sjmvne</a></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== SUB-SCREEN: Profilo Utente ====== -->
+    <div id="screen-profilo-utente" class="sub-screen">
+        <div class="sub-screen-header">
+            <button class="sub-screen-back" onclick="closeSubScreen()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                <span class="sub-screen-back-label">Profilo</span>
+            </button>
+            <span class="sub-screen-title">Il mio profilo</span>
+        </div>
+        <div class="sub-screen-body">
+            <div class="profilo-utente-content">
+                <div class="profilo-utente-avatar-wrap">
+                    <div class="profilo-utente-avatar-big">
+                        <svg viewBox="0 0 45 44"><path fill="#62A76C" d="M19.4,26.65c8.85-.84,23.05.4,19.89,12.89l-32.31.25c-2.61-9.96,4.07-12.34,12.43-13.14Z"/><path fill="#62A76C" d="M21.37,4.12c12.77-2.07,14.55,17.92,2.83,19.34-12.24,1.49-13.95-17.54-2.83-19.34Z"/><path fill="#fff" d="M36.5,37H9.5c-1.12-8.67,14.12-7.91,19.68-6.93,4.24.74,7.86,1.73,7.32,6.93Z"/><path fill="#fff" d="M21.88,7.11c8.73-1.42,9.63,12.63,1.81,13.37s-9.05-12.19-1.81-13.37Z"/></svg>
+                    </div>
+                </div>
+                <div class="profilo-utente-fields">
+                    <div class="profilo-utente-field">
+                        <label class="profilo-utente-label">Nome</label>
+                        <div class="profilo-utente-value" id="profilo-utente-nome">—</div>
+                    </div>
+                    <div class="profilo-utente-field">
+                        <label class="profilo-utente-label">Email</label>
+                        <input type="email" class="billing-input" id="profilo-utente-email" placeholder="Inserisci email" oninput="saveProfiloEmail(this.value)">
+                    </div>
+                </div>
+                <button class="profilo-delete-account-btn" onclick="confirmDeleteAccount()">Elimina account</button>
             </div>
         </div>
     </div>
@@ -689,11 +720,15 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
                 <span class="sub-screen-back-label">Profilo</span>
             </button>
-            <span class="sub-screen-title">Dati fatturazione</span>
+            <span class="sub-screen-title">Fatturazione</span>
+        </div>
+        <div class="billing-header-tabs">
+            <button class="billing-header-tab active">Privato</button>
+            <button class="billing-header-tab">Azienda</button>
         </div>
         <div class="sub-screen-body">
             <div id="billing-view-container">
-                <!-- Populated by JS: shows saved data card or form -->
+                <!-- Populated by JS -->
             </div>
         </div>
     </div>
@@ -735,13 +770,15 @@
                         <input type="text" class="billing-input" id="billing-cap" placeholder="es. 00100" autocomplete="postal-code" inputmode="numeric">
                     </div>
                 </div>
-                <div class="billing-field">
+                <div class="billing-field billing-autocomplete-field">
                     <label class="billing-label">Paese *</label>
-                    <input type="text" class="billing-input" id="billing-paese" placeholder="es. ITALIA" autocomplete="country-name">
+                    <input type="text" class="billing-input" id="billing-paese" placeholder="Cerca paese..." autocomplete="off" oninput="onPaeseInput(this.value)" onfocus="onPaeseInput(this.value)">
+                    <div class="billing-autocomplete-dropdown" id="paese-dropdown"></div>
                 </div>
-                <div class="billing-field">
+                <div class="billing-field billing-autocomplete-field">
                     <label class="billing-label">Comune *</label>
-                    <input type="text" class="billing-input" id="billing-comune" placeholder="es. Roma" autocomplete="address-level2">
+                    <input type="text" class="billing-input" id="billing-comune" placeholder="Cerca comune..." autocomplete="off" oninput="onComuneInput(this.value)">
+                    <div class="billing-autocomplete-dropdown" id="comune-dropdown"></div>
                 </div>
                 <div class="billing-field">
                     <label class="billing-label">PEC</label>
@@ -761,13 +798,16 @@
             </button>
             <span class="sub-screen-title">Storico Acquisti</span>
         </div>
-        <div class="sub-screen-body">
-            <div class="storico-header">
-                <div class="storico-date-range" id="storico-date-range">
-                    <span id="storico-date-text"></span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-                </div>
+        <div class="storico-header-bar">
+            <div class="storico-date-range" onclick="openDateFilter()">
+                <span id="storico-date-text"></span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
             </div>
+            <button class="storico-filter-icon" onclick="openDateFilter()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            </button>
+        </div>
+        <div class="sub-screen-body">
             <div class="storico-list" id="storico-list">
                 <!-- Populated by JS -->
             </div>
@@ -845,26 +885,58 @@
         </div>
     </div>
 
+    <!-- ====== MODAL: Delete Account ====== -->
+    <div id="delete-account-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-title">⚠️ Elimina account</div>
+            <div class="modal-body">
+                <p>Sei sicuro di voler eliminare il tuo account? <strong class="delete-data-warning">Tutti i dati verranno eliminati permanentemente</strong>, inclusi biglietti, fatturazione e storico acquisti.</p>
+            </div>
+            <div class="modal-actions" style="display:flex;">
+                <button class="modal-btn" style="color:#8E8E93; border-right:0.5px solid #C6C6C8;" onclick="closeModal('delete-account-modal')">Annulla</button>
+                <button class="modal-btn" style="color:#D32F2F; font-weight:700;" onclick="executeDeleteAccount()">Elimina</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== MODAL: Date Filter ====== -->
+    <div id="date-filter-modal" class="modal-overlay" onclick="closeDateFilter()">
+        <div class="modal-card modal-card-bottom" onclick="event.stopPropagation()">
+            <div class="date-filter-title">Seleziona periodo</div>
+            <div class="date-filter-row">
+                <div class="date-filter-field">
+                    <label class="date-filter-label">Dal</label>
+                    <input type="date" id="date-filter-from" class="billing-input">
+                </div>
+                <div class="date-filter-field">
+                    <label class="date-filter-label">Al</label>
+                    <input type="date" id="date-filter-to" class="billing-input">
+                </div>
+            </div>
+            <button class="billing-submit" style="margin:0 16px 20px; width:calc(100% - 32px);" onclick="applyDateFilter()">Conferma</button>
+        </div>
+    </div>
+
     <!-- ====== GLOBAL BOTTOM TAB BAR ====== -->
     <div class="bottom-tabbar" id="global-tabbar">
         <div class="tabbar-item active" data-tab="home">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1h-6v-6h-4v6H4a1 1 0 0 1-1-1V10.5z"/></svg>
+            <svg viewBox="0 0 35.83 33.04" fill="currentColor"><path d="M31.41,16.04v16.25c0,.05-.7.75-.75.75h-10.5c-1.48,0-.21-6.89-1.04-7.01h-2.72c-.14,1.18.51,7.01-.75,7.01H5.16c-.05,0-.75-.7-.75-.75v-16.25c-1.91,2.27-5.61,3.33-4.03-.79C3.29,13.7,15.9.19,17.69.01c.58-.06,1.08.1,1.5.5l16.26,14.74c1.57,4.12-2.12,3.06-4.03.79ZM28.41,30.04V13.29c0-.72-9.39-8.52-10.68-9.71-1.04,1.53-10.32,9.01-10.32,9.71v16.75h6c.24-1.42-.54-6.08.47-6.78h8.06c1.01.7.23,5.34.47,6.78h6Z"/></svg>
             <span>Home</span>
         </div>
         <div class="tabbar-item" data-tab="acquista">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/><path d="M3 3h2l.4 2M7 13h10l3-8H5.4M7 13L5.4 5M7 13l-1.5 5h12"/></svg>
+            <svg viewBox="0 0 34.5 36.21"><path fill="currentColor" d="M33.8,7.67c.24.07.61.55.69.83.26.83-2.7,16.45-3.41,16.95H8.01S4.97,4,4.97,4C4.38,2.1-.3,4.58.01,1.42.2-.45,6.41-.1,7.08.39c1.05.76.34,6.3,1.72,7.28h25ZM31.05,10.67H8.55l1.97,11.78,18.53.21,2-12Z"/><path fill="currentColor" d="M9.41,27.27c6.11-1.35,7.71,7.61,2.28,8.81-6.11,1.35-7.71-7.61-2.28-8.81ZM9.85,30.22c-1.92.61-.45,4.26,1.73,2.73,1.23-.86.44-3.42-1.73-2.73Z"/><path fill="currentColor" d="M27.41,27.27c6.11-1.35,7.71,7.61,2.28,8.81-6.11,1.35-7.71-7.61-2.28-8.81ZM27.85,30.22c-1.92.61-.45,4.26,1.73,2.73,1.23-.86.44-3.42-1.73-2.73Z"/><path fill="#fff" d="M9.85,30.22c2.16-.69,2.95,1.87,1.73,2.73-2.17,1.52-3.65-2.12-1.73-2.73Z"/><path fill="#fff" d="M27.85,30.22c2.16-.69,2.95,1.87,1.73,2.73-2.17,1.52-3.65-2.12-1.73-2.73Z"/></svg>
             <span>Acquista</span>
         </div>
         <div class="tabbar-item" data-tab="wallet">
-            <svg class="tabbar-icon-wallet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/><circle cx="17" cy="14" r="1.5"/></svg>
+            <svg viewBox="0 0 44 44"><path fill="currentColor" d="M4.75,7.5h34.5c.05,0,.75.7.75.75v9c0,.92-4.29.37-4.49,3.54-.22,3.58,4.49,3.04,4.49,3.96v9c0,.05-.7.75-.75.75H4.75c-.05,0-.75-.7-.75-.75v-9c0-.92,4.29-.37,4.49-3.54.22-3.58-4.49-3.04-4.49-3.96v-9c0-.14.59-.5.75-.75Z"/><path fill="#fff" d="M37,10.5c-.25,1.31.34,3.59.03,4.69-.14.48-1.25.35-1.78.79-3.72,3.05-3.73,6.98,0,10.04.54.44,1.65.31,1.78.79.31,1.1-.28,3.38-.03,4.69H7c.25-1.31-.34-3.59-.03-4.69.14-.48,1.25-.35,1.78-.79,3.72-3.05,3.73-6.98,0-10.04-.54-.44-1.65-.31-1.78-.79-.31-1.1.28-3.38.03-4.69h30Z"/><path fill="currentColor" d="M15.25,16.5h13.5c.99,0,.99,3,0,3h-13.5c-.82,0-1.2-2.51,0-3Z"/><path fill="currentColor" d="M15.25,22.5h13.5c.99,0,.99,3,0,3h-13.5c-.82,0-1.2-2.51,0-3Z"/></svg>
             <span>Wallet</span>
         </div>
         <div class="tabbar-item" data-tab="gite">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 20l5-10 4 6 3-4 6 8H3z"/><circle cx="17" cy="6" r="2"/></svg>
+            <svg viewBox="0 0 33.1 30.2" fill="currentColor"><path d="M15.87,3.1c.67-.22,1.46-.14,1.93.44l15.25,24.78-.49,1.5c-3.73-.12-31.37,1.07-32.31-.24-.42-.58-.28-1.41.05-2.02C2.75,24.98,14.49,3.55,15.87,3.1ZM20.05,13.54c-.61-.96-2.68-5.75-3.74-5.49-.5.12-2.78,4.64-3.26,5.49,3.19,1.55,3.81,1.55,7,0ZM4.55,27.04h24l-6.55-10.97c-1-.69-4.76,3.58-5.63,3.43-.81-.14-3.7-3.59-5.04-3.49l-6.78,11.03Z"/><path d="M26.4.15c5.61-1.27,9.33,5.93,4.39,9.4C23.74,14.5,18.84,1.86,26.4.15ZM26.9,3.13c-2,.59-1.89,4.11.43,4.43,3.96.55,3.55-5.6-.43-4.43Z"/></svg>
             <span>Gite in Treno</span>
         </div>
         <div class="tabbar-item" data-tab="profilo">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="7" r="4"/><path d="M4 21v-2a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v2"/></svg>
+            <svg viewBox="0 0 45 44"><path fill="currentColor" d="M19.4,26.65c8.85-.84,23.05.4,19.89,12.89l-32.31.25c-2.61-9.96,4.07-12.34,12.43-13.14Z"/><path fill="currentColor" d="M21.37,4.12c12.77-2.07,14.55,17.92,2.83,19.34-12.24,1.49-13.95-17.54-2.83-19.34Z"/><path fill="#fff" d="M36.5,37H9.5c-1.12-8.67,14.12-7.91,19.68-6.93,4.24.74,7.86,1.73,7.32,6.93Z"/><path fill="#fff" d="M21.88,7.11c8.73-1.42,9.63,12.63,1.81,13.37s-9.05-12.19-1.81-13.37Z"/></svg>
             <span>Profilo</span>
         </div>
     </div>

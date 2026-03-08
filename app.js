@@ -185,6 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
     bindEvents();
     registerSW();
     checkForUpdates();
+    updateProfiloDisplayName();
 });
 
 function initDefaults() {
@@ -546,7 +547,7 @@ function createTicketCard(ticket, isExpired) {
         <div class="ticket-card swipe-content ${isExpired ? 'ticket-expired' : ''}">
             <div class="ticket-card-header">
                 <div class="ticket-type-with-icon">
-                    <svg class="ticket-type-icon" viewBox="0 0 24 24" fill="none" stroke="#62A76C" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/><circle cx="17" cy="14" r="1.5"/></svg>
+                    <svg class="ticket-type-icon" viewBox="0 0 44 44"><path fill="#62A76C" d="M4.75,7.5h34.5c.05,0,.75.7.75.75v9c0,.92-4.29.37-4.49,3.54-.22,3.58,4.49,3.04,4.49,3.96v9c0,.05-.7.75-.75.75H4.75c-.05,0-.75-.7-.75-.75v-9c0-.92,4.29-.37,4.49-3.54.22-3.58-4.49-3.04-4.49-3.96v-9c0-.14.59-.5.75-.75Z"/><path fill="#fff" d="M37,10.5c-.25,1.31.34,3.59.03,4.69-.14.48-1.25.35-1.78.79-3.72,3.05-3.73,6.98,0,10.04.54.44,1.65.31,1.78.79.31,1.1-.28,3.38-.03,4.69H7c.25-1.31-.34-3.59-.03-4.69.14-.48,1.25-.35,1.78-.79,3.72-3.05,3.73-6.98,0-10.04-.54-.44-1.65-.31-1.78-.79-.31-1.1.28-3.38.03-4.69h30Z"/><path fill="#62A76C" d="M15.25,16.5h13.5c.99,0,.99,3,0,3h-13.5c-.82,0-1.2-2.51,0-3Z"/><path fill="#62A76C" d="M15.25,22.5h13.5c.99,0,.99,3,0,3h-13.5c-.82,0-1.2-2.51,0-3Z"/></svg>
                     <span class="ticket-type-label">Ordinario</span>
                 </div>
                 <button class="info-icon-gray btn-ticket-info" aria-label="Info">
@@ -2024,6 +2025,8 @@ function openSubScreen(screenId) {
         fetchNotificheChangelog();
     } else if (screenId === 'screen-billing-edit') {
         loadBillingDataIntoForm();
+    } else if (screenId === 'screen-profilo-utente') {
+        renderProfiloUtente();
     }
 }
 
@@ -2137,10 +2140,6 @@ function renderBillingView() {
     if (!billing) {
         // No data yet - show empty state with add button
         container.innerHTML = `
-            <div class="billing-tabs">
-                <button class="billing-tab active">Privato</button>
-                <button class="billing-tab">Azienda</button>
-            </div>
             <div style="text-align:center; padding:60px 20px; color:#8E8E93;">
                 <p style="font-size:15px; margin-bottom:20px;">Nessun dato di fatturazione inserito</p>
             </div>
@@ -2151,10 +2150,6 @@ function renderBillingView() {
     } else {
         const fullAddress = billing.via + ' ' + billing.numero + ', ' + billing.cap + ', ' + billing.comune + (billing.paese ? ' (' + billing.paese.substring(0,2).toUpperCase() + ')' : '') + ', Italia';
         container.innerHTML = `
-            <div class="billing-tabs">
-                <button class="billing-tab active">Privato</button>
-                <button class="billing-tab">Azienda</button>
-            </div>
             <div class="billing-saved-card">
                 <div class="billing-saved-header">
                     <span class="billing-saved-label">INTESTATARIO</span>
@@ -2257,16 +2252,27 @@ function createOrder(generatedTickets, purchaseDate) {
     saveOrders(orders);
 }
 
+let _storicoFilterFrom = null;
+let _storicoFilterTo = null;
+
 function renderStoricoAcquisti() {
-    const orders = getOrders();
+    let orders = getOrders();
     const listEl = document.getElementById('storico-list');
     const dateTextEl = document.getElementById('storico-date-text');
 
     // Set date range text
     const now = new Date();
-    const oneYearAgo = new Date(now);
-    oneYearAgo.setFullYear(now.getFullYear() - 1);
-    dateTextEl.textContent = formatDateCompact(oneYearAgo) + ' - ' + formatDateCompact(now);
+    if (_storicoFilterFrom && _storicoFilterTo) {
+        dateTextEl.textContent = formatDateCompact(_storicoFilterFrom) + ' - ' + formatDateCompact(_storicoFilterTo);
+        orders = orders.filter(o => {
+            const d = new Date(o.date);
+            return d >= _storicoFilterFrom && d <= _storicoFilterTo;
+        });
+    } else {
+        const oneYearAgo = new Date(now);
+        oneYearAgo.setFullYear(now.getFullYear() - 1);
+        dateTextEl.textContent = formatDateCompact(oneYearAgo) + ' - ' + formatDateCompact(now);
+    }
 
     if (orders.length === 0) {
         listEl.innerHTML = '<div class="storico-empty">Nessun acquisto trovato</div>';
@@ -2284,7 +2290,7 @@ function renderStoricoAcquisti() {
         html += `
             <div class="order-card" onclick="openOrderDetail('${order.orderId}')">
                 <div class="order-card-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/><circle cx="17" cy="14" r="1.5"/></svg>
+                    <svg viewBox="0 0 44 44"><path fill="#62A76C" d="M4.75,7.5h34.5c.05,0,.75.7.75.75v9c0,.92-4.29.37-4.49,3.54-.22,3.58,4.49,3.04,4.49,3.96v9c0,.05-.7.75-.75.75H4.75c-.05,0-.75-.7-.75-.75v-9c0-.92,4.29-.37,4.49-3.54.22-3.58-4.49-3.04-4.49-3.96v-9c0-.14.59-.5.75-.75Z"/><path fill="#fff" d="M37,10.5c-.25,1.31.34,3.59.03,4.69-.14.48-1.25.35-1.78.79-3.72,3.05-3.73,6.98,0,10.04.54.44,1.65.31,1.78.79.31,1.1-.28,3.38-.03,4.69H7c.25-1.31-.34-3.59-.03-4.69.14-.48,1.25-.35,1.78-.79,3.72-3.05,3.73-6.98,0-10.04-.54-.44-1.65-.31-1.78-.79-.31-1.1.28-3.38.03-4.69h30Z"/><path fill="#62A76C" d="M15.25,16.5h13.5c.99,0,.99,3,0,3h-13.5c-.82,0-1.2-2.51,0-3Z"/><path fill="#62A76C" d="M15.25,22.5h13.5c.99,0,.99,3,0,3h-13.5c-.82,0-1.2-2.51,0-3Z"/></svg>
                 </div>
                 <div class="order-card-info">
                     <div class="order-card-id">${escapeHtml(order.orderId)}</div>
@@ -2636,6 +2642,160 @@ function fetchNotificheChangelog() {
     .catch(function(err) {
         list.innerHTML = '<div class="changelog-error">⚠️ Errore nel caricamento del changelog</div>';
     });
+}
+
+// ============================================
+// PROFILO UTENTE (sub-screen)
+// ============================================
+
+function renderProfiloUtente() {
+    const billing = getBillingData();
+    const nome = billing ? (billing.nome + ' ' + billing.cognome) : 'Utente';
+    const email = localStorage.getItem('trenord_email') || '';
+
+    const nomeEl = document.getElementById('profilo-utente-nome');
+    const emailEl = document.getElementById('profilo-utente-email');
+    if (nomeEl) nomeEl.textContent = nome;
+    if (emailEl) emailEl.value = email;
+}
+
+function saveProfiloEmail(value) {
+    localStorage.setItem('trenord_email', value);
+}
+
+function updateProfiloDisplayName() {
+    const billing = getBillingData();
+    const el = document.getElementById('profilo-display-name');
+    if (el && billing && billing.nome) {
+        el.textContent = billing.nome + ' ' + billing.cognome;
+    }
+}
+
+// ============================================
+// ELIMINA ACCOUNT (full reset)
+// ============================================
+
+function confirmDeleteAccount() {
+    openModal('delete-account-modal');
+}
+
+function executeDeleteAccount() {
+    closeModal('delete-account-modal');
+    localStorage.clear();
+    setTimeout(function() {
+        window.location.reload(true);
+    }, 300);
+}
+
+// ============================================
+// AUTOCOMPLETE – PAESE & COMUNE
+// ============================================
+
+const PAESI_LIST = ['Italia','Germania','Francia','Spagna','Regno Unito','Svizzera','Austria','Belgio','Paesi Bassi','Portogallo','Svezia','Norvegia','Danimarca','Finlandia','Irlanda','Polonia','Grecia','Romania','Ungheria','Repubblica Ceca','Croazia','Slovenia','Slovacchia','Bulgaria','Lussemburgo','Estonia','Lettonia','Lituania','Malta','Cipro'];
+let _comuniCache = null;
+
+function onPaeseInput(value) {
+    const dropdown = document.getElementById('paese-dropdown');
+    if (!value || value.length < 1) {
+        dropdown.classList.remove('open');
+        dropdown.innerHTML = '';
+        return;
+    }
+    const query = value.toLowerCase();
+    const matches = PAESI_LIST.filter(p => p.toLowerCase().includes(query)).slice(0, 8);
+    if (matches.length === 0) {
+        dropdown.classList.remove('open');
+        dropdown.innerHTML = '';
+        return;
+    }
+    dropdown.innerHTML = matches.map(p => {
+        const idx = p.toLowerCase().indexOf(query);
+        const highlighted = p.substring(0, idx) + '<span class="ac-highlight">' + p.substring(idx, idx + query.length) + '</span>' + p.substring(idx + query.length);
+        return '<div class="billing-ac-item" onclick="selectSuggestion(\'billing-paese\',\'' + p + '\',\'paese-dropdown\')">' + highlighted + '</div>';
+    }).join('');
+    dropdown.classList.add('open');
+}
+
+function onComuneInput(value) {
+    const dropdown = document.getElementById('comune-dropdown');
+    if (!value || value.length < 2) {
+        dropdown.classList.remove('open');
+        dropdown.innerHTML = '';
+        return;
+    }
+    fetchComuniList().then(function(comuni) {
+        const query = value.toLowerCase();
+        const matches = comuni.filter(c => c.nome.toLowerCase().includes(query)).slice(0, 10);
+        if (matches.length === 0) {
+            dropdown.classList.remove('open');
+            dropdown.innerHTML = '';
+            return;
+        }
+        dropdown.innerHTML = matches.map(c => {
+            const idx = c.nome.toLowerCase().indexOf(query);
+            const highlighted = c.nome.substring(0, idx) + '<span class="ac-highlight">' + c.nome.substring(idx, idx + query.length) + '</span>' + c.nome.substring(idx + query.length);
+            const label = highlighted + ' <span style="color:#8E8E93; font-size:13px;">(' + c.sigla + ')</span>';
+            return '<div class="billing-ac-item" onclick="selectSuggestion(\'billing-comune\',\'' + c.nome.replace(/'/g, "\\'") + '\',\'comune-dropdown\')">' + label + '</div>';
+        }).join('');
+        dropdown.classList.add('open');
+    });
+}
+
+function fetchComuniList() {
+    if (_comuniCache) return Promise.resolve(_comuniCache);
+    return fetch('https://raw.githubusercontent.com/matteocontrini/comuni-json/master/comuni.json')
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            _comuniCache = data;
+            return data;
+        })
+        .catch(function() {
+            return [];
+        });
+}
+
+function selectSuggestion(inputId, value, dropdownId) {
+    document.getElementById(inputId).value = value;
+    const dropdown = document.getElementById(dropdownId);
+    dropdown.classList.remove('open');
+    dropdown.innerHTML = '';
+}
+
+// Close autocomplete dropdowns when clicking outside
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.billing-autocomplete-field')) {
+        document.querySelectorAll('.billing-autocomplete-dropdown').forEach(function(dd) {
+            dd.classList.remove('open');
+            dd.innerHTML = '';
+        });
+    }
+});
+
+// ============================================
+// DATE FILTER MODAL (Storico)
+// ============================================
+
+function openDateFilter() {
+    openModal('date-filter-modal');
+}
+
+function closeDateFilter() {
+    closeModal('date-filter-modal');
+}
+
+function applyDateFilter() {
+    const fromVal = document.getElementById('date-filter-from').value;
+    const toVal = document.getElementById('date-filter-to').value;
+    if (fromVal && toVal) {
+        _storicoFilterFrom = new Date(fromVal);
+        _storicoFilterTo = new Date(toVal);
+        _storicoFilterTo.setHours(23, 59, 59, 999);
+    } else {
+        _storicoFilterFrom = null;
+        _storicoFilterTo = null;
+    }
+    closeDateFilter();
+    renderStoricoAcquisti();
 }
 
 // ============================================

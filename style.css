@@ -1130,11 +1130,8 @@ html, body {
 .tabbar-item.active {
     color: var(--green-dark);
 }
-/* Wallet ticket icon: fill verde quando attivo */
-.tabbar-item.active .tabbar-icon-wallet {
-    fill: var(--green-dark);
-    stroke: var(--green-dark);
-}
+/* Icone filled: i path con fill="#fff" rimangono bianchi,
+   quelli con fill="currentColor" ereditano il colore dal parent */
 
 /* Badge */
 .tabbar-item.has-badge::after {
@@ -3656,26 +3653,23 @@ body.qr-brightness-mode .screen.active {
 }
 
 .profilo-item-icon {
-    width: 30px;
-    height: 30px;
-    border-radius: 7px;
+    width: 24px;
+    height: 24px;
+    border-radius: 0;
+    background: none;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    color: #8E8E93;
 }
 
 .profilo-item-icon svg {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
 }
 
-.profilo-item-icon.icon-green { background: #E8F5E9; color: #2C7F44; }
-.profilo-item-icon.icon-blue { background: #E3F2FD; color: #1976D2; }
-.profilo-item-icon.icon-orange { background: #FFF3E0; color: #E37603; }
-.profilo-item-icon.icon-red { background: #FFEBEE; color: #D32F2F; }
-.profilo-item-icon.icon-purple { background: #F3E5F5; color: #7B1FA2; }
-.profilo-item-icon.icon-teal { background: #E0F2F1; color: #00897B; }
+/* Icons are now all plain grey — color classes removed */
 
 .profilo-item-label {
     flex: 1;
@@ -3915,12 +3909,13 @@ body.qr-brightness-mode .screen.active {
    STORICO ACQUISTI
    ============================================ */
 
-.storico-header {
+.storico-header-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 16px;
-    background: var(--gray-bg);
+    padding: 10px 16px;
+    background: var(--green-dark);
+    flex-shrink: 0;
 }
 
 .storico-date-range {
@@ -3929,36 +3924,41 @@ body.qr-brightness-mode .screen.active {
     gap: 6px;
     font-size: 15px;
     font-weight: 500;
-    color: #1C1C1E;
+    color: #fff;
     cursor: pointer;
 }
 
 .storico-date-range svg {
     width: 16px;
     height: 16px;
-    color: #8E8E93;
+    color: rgba(255,255,255,0.7);
 }
 
-.storico-filter-btn {
-    width: 40px;
-    height: 40px;
-    background: #fff;
-    border: 1px solid #E5E5EA;
-    border-radius: 10px;
+.storico-filter-icon {
+    width: 36px;
+    height: 36px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    color: #fff;
 }
 
-.storico-filter-btn svg {
-    width: 20px;
-    height: 20px;
-    color: #1C1C1E;
+.storico-filter-icon:active {
+    background: rgba(255,255,255,0.25);
+}
+
+.storico-filter-icon svg {
+    width: 18px;
+    height: 18px;
 }
 
 .storico-list {
-    padding: 0 16px;
+    padding: 0;
+    background: #fff;
 }
 
 .storico-empty {
@@ -3970,16 +3970,17 @@ body.qr-brightness-mode .screen.active {
 
 .order-card {
     background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    border-radius: 0;
+    box-shadow: none;
     padding: 16px;
-    margin-bottom: 12px;
+    margin-bottom: 0;
     display: flex;
     align-items: center;
     gap: 14px;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     transition: background 0.15s;
+    border-bottom: 0.5px solid #E5E5EA;
 }
 
 .order-card:active {
@@ -4032,7 +4033,7 @@ body.qr-brightness-mode .screen.active {
 
 .order-card-status {
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 400;
     color: #2C7F44;
 }
 
@@ -4047,7 +4048,7 @@ body.qr-brightness-mode .screen.active {
 .order-card-price {
     font-size: 17px;
     font-weight: 700;
-    color: #1C1C1E;
+    color: #62A76C;
 }
 
 .order-card-chevron {
@@ -4187,14 +4188,16 @@ body.qr-brightness-mode .screen.active {
    ============================================ */
 
 .receipt-container {
-    padding: 16px;
+    padding: 20px 16px;
+    background: #F2F2F7;
+    min-height: 100%;
 }
 
 .receipt-paper {
     background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-    padding: 32px 24px;
+    border-radius: 0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    padding: 32px 20px;
     margin-bottom: 20px;
 }
 
@@ -4541,18 +4544,220 @@ body.qr-brightness-mode .screen.active {
     transition: background 0.2s, color 0.2s;
 }
 
-.billing-tab.active {
-    background: #2C7F44;
-    color: #fff;
+/* old billing-tab / icon-indigo removed */
+
+/* ============================================
+   BILLING HEADER TABS (green bar)
+   ============================================ */
+
+.billing-header-tabs {
+    display: flex;
+    gap: 0;
+    padding: 0 16px 12px;
+    background: var(--green-dark);
+    flex-shrink: 0;
+}
+
+.billing-header-tab {
+    flex: 1;
+    padding: 9px 0;
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    background: rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.billing-header-tab:first-child {
+    border-radius: 8px 0 0 8px;
+}
+
+.billing-header-tab:last-child {
+    border-radius: 0 8px 8px 0;
+}
+
+.billing-header-tab.active {
+    background: #fff;
+    color: #2C7F44;
+    font-weight: 600;
 }
 
 /* ============================================
-   ICON COLOR: INDIGO
+   AUTOCOMPLETE DROPDOWN
    ============================================ */
 
-.profilo-item-icon.icon-indigo {
-    background: #E8EAF6;
-    color: #3F51B5;
+.billing-autocomplete-field {
+    position: relative;
+}
+
+.billing-autocomplete-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: #fff;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    max-height: 200px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.billing-autocomplete-dropdown.open {
+    display: block;
+}
+
+.billing-ac-item {
+    padding: 12px 16px;
+    font-size: 15px;
+    color: #1C1C1E;
+    cursor: pointer;
+    border-bottom: 0.5px solid #F2F2F7;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.billing-ac-item:active {
+    background: #F2F2F7;
+}
+
+.billing-ac-item:last-child {
+    border-bottom: none;
+}
+
+.billing-ac-item .ac-highlight {
+    font-weight: 700;
+    color: #2C7F44;
+}
+
+/* ============================================
+   PROFILO UTENTE (sub-screen)
+   ============================================ */
+
+.profilo-utente-content {
+    padding: 30px 16px;
+}
+
+.profilo-utente-avatar-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.profilo-utente-avatar-big {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: #E8F5E9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profilo-utente-avatar-big svg {
+    width: 50px;
+    height: 50px;
+}
+
+.profilo-utente-fields {
+    margin-bottom: 40px;
+}
+
+.profilo-utente-field {
+    margin-bottom: 20px;
+}
+
+.profilo-utente-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #8E8E93;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.profilo-utente-value {
+    padding: 14px 16px;
+    background: #F2F2F7;
+    border-radius: 10px;
+    font-family: var(--font);
+    font-size: 16px;
+    color: #1C1C1E;
+}
+
+.profilo-delete-account-btn {
+    width: 100%;
+    padding: 16px;
+    background: none;
+    border: 1.5px solid #D32F2F;
+    border-radius: 12px;
+    font-family: var(--font);
+    font-size: 17px;
+    font-weight: 600;
+    color: #D32F2F;
+    cursor: pointer;
+    -webkit-appearance: none;
+    transition: opacity 0.15s;
+}
+
+.profilo-delete-account-btn:active {
+    opacity: 0.7;
+    background: #FFF5F5;
+}
+
+/* ============================================
+   DATE FILTER MODAL
+   ============================================ */
+
+.modal-card-bottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-radius: 16px 16px 0 0;
+    padding: 20px 0;
+    max-height: 80vh;
+    overflow-y: auto;
+    animation: slideUpModal 0.3s ease;
+}
+
+@keyframes slideUpModal {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+.date-filter-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: #1C1C1E;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.date-filter-row {
+    display: flex;
+    gap: 12px;
+    padding: 0 16px 16px;
+}
+
+.date-filter-field {
+    flex: 1;
+}
+
+.date-filter-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #8E8E93;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    display: block;
 }
 
 /* ============================================
