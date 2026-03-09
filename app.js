@@ -582,25 +582,12 @@ function createTicketCard(ticket, isExpired) {
         </div>
         <div class="ticket-card swipe-content ${isExpired ? 'ticket-expired' : ''}">
             <div class="ticket-card-header">
-                <div class="ticket-type-with-icon">
-                    <svg class="ticket-type-icon" viewBox="0 0 44 44"><path fill="#62A76C" d="M4.75,7.5h34.5c.05,0,.75.7.75.75v9c0,.92-4.29.37-4.49,3.54-.22,3.58,4.49,3.04,4.49,3.96v9c0,.05-.7.75-.75.75H4.75c-.05,0-.75-.7-.75-.75v-9c0-.92,4.29-.37,4.49-3.54.22-3.58-4.49-3.04-4.49-3.96v-9c0-.14.59-.5.75-.75Z"/><path fill="#fff" d="M37,10.5c-.25,1.31.34,3.59.03,4.69-.14.48-1.25.35-1.78.79-3.72,3.05-3.73,6.98,0,10.04.54.44,1.65.31,1.78.79.31,1.1-.28,3.38-.03,4.69H7c.25-1.31-.34-3.59-.03-4.69.14-.48,1.25-.35,1.78-.79,3.72-3.05,3.73-6.98,0-10.04-.54-.44-1.65-.31-1.78-.79-.31-1.1.28-3.38.03-4.69h30Z"/><path fill="#62A76C" d="M15.25,16.5h13.5c.99,0,.99,3,0,3h-13.5c-.82,0-1.2-2.51,0-3Z"/><path fill="#62A76C" d="M15.25,22.5h13.5c.99,0,.99,3,0,3h-13.5c-.82,0-1.2-2.51,0-3Z"/></svg>
-                    <span class="ticket-type-label">Ordinario</span>
-                </div>
+                <span class="ticket-type-label">Ordinario</span>
                 <button class="info-icon-gray btn-ticket-info" aria-label="Info">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></svg>
                 </button>
             </div>
             ${validitaHTML}
-            <div class="ticket-row-2col">
-                <div class="ticket-field">
-                    <span class="ticket-label">PNR</span>
-                    <span class="ticket-value">${ticket.pnr}</span>
-                </div>
-                <div class="ticket-field">
-                    <span class="ticket-label">CLASSE</span>
-                    <span class="ticket-value">${ticket.classe}</span>
-                </div>
-            </div>
             <div class="ticket-field">
                 <span class="ticket-label">VIAGGIO</span>
                 <span class="ticket-value ticket-value-bold">${ticket.viaggio}</span>
@@ -1954,10 +1941,6 @@ function fetchChangelog() {
             html += '      <span class="changelog-item-title">' + escapeHtml(title) + '</span>';
             html += '      <div class="changelog-item-meta">';
             html += '        <span class="changelog-sha">' + sha + '</span>';
-            html += '        <span class="changelog-dot">•</span>';
-            html += '        <span class="changelog-author">' + escapeHtml(author) + '</span>';
-            html += '        <span class="changelog-dot">•</span>';
-            html += '        <span class="changelog-date">' + dateStr + '</span>';
             html += '      </div>';
             html += '    </div>';
             html += '  </div>';
@@ -2660,10 +2643,6 @@ function fetchNotificheChangelog() {
             html += '      <span class="changelog-item-title">' + escapeHtml(title) + '</span>';
             html += '      <div class="changelog-item-meta">';
             html += '        <span class="changelog-sha">' + sha + '</span>';
-            html += '        <span class="changelog-dot">•</span>';
-            html += '        <span class="changelog-author">' + escapeHtml(author) + '</span>';
-            html += '        <span class="changelog-dot">•</span>';
-            html += '        <span class="changelog-date">' + dateStr + '</span>';
             html += '      </div>';
             html += '    </div>';
             html += '  </div>';

@@ -722,14 +722,14 @@ body::after {
     justify-content: center;
     gap: 8px;
     width: 100%;
-    padding: 14px 20px;
-    background: #6CAC6A;
+    padding: 13px 20px;
+    background: #2C7F44;
     color: #fff;
     font-family: var(--font);
     font-size: 17px;
     font-weight: 600;
     border: none;
-    border-radius: 12px;
+    border-radius: 5px;
     cursor: pointer;
     margin-top: 32px;
     -webkit-appearance: none;
@@ -919,8 +919,7 @@ body::after {
     margin-bottom: 16px;
 }
 .ticket-type-label {
-    font-size: 17px;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--green-text);
 }
 
@@ -946,7 +945,7 @@ body::after {
 }
 .ticket-label {
     display: block;
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 600;
     color: var(--gray-label);
     text-transform: uppercase;
@@ -955,10 +954,10 @@ body::after {
 }
 .ticket-value {
     font-size: 15px;
-    color: var(--text-primary);
+    color: var(--text-secondary);
 }
 .ticket-value-bold {
-    font-weight: 700;
+    font-weight: 500;
 }
 
 .ticket-validita {
@@ -989,7 +988,7 @@ body::after {
     font-size: 12px;
     font-weight: 700;
     padding: 4px 12px;
-    border-radius: 5px;
+    border-radius: 100px;
     margin-top: 4px;
     margin-bottom: 16px;
     letter-spacing: 0.5px;
@@ -1635,7 +1634,6 @@ body.qr-brightness-mode .screen.active {
 
 .modal-title {
     font-size: 17px;
-    font-weight: 700;
     text-align: center;
     padding: 20px 20px 8px;
 }
@@ -1988,6 +1986,7 @@ body.qr-brightness-mode .screen.active {
 .changelog-author,
 .changelog-date {
     color: #8E8E93;
+    visibility: hidden;
 }
 
 .changelog-item-description {
