@@ -14,6 +14,9 @@ const ZONES = [
     { label: 'Mi9', number: 9, color: '#A61D27', pattern: 'striped-red' }
 ];
 
+const APP_BUILD_VERSION = 'v43';
+const APP_BUILD_LABEL = 'Build ' + APP_BUILD_VERSION;
+
 // ── Comuni STIBM ──
 const COMUNI_STIBM = [
     {nome:"ABBIATEGRASSO",zona:"Mi7"},{nome:"AGRATE BRIANZA",zona:"Mi5"},{nome:"AICURZIO",zona:"Mi7"},
@@ -186,7 +189,40 @@ document.addEventListener('DOMContentLoaded', () => {
     registerSW();
     checkForUpdates();
     updateProfiloDisplayName();
+    syncBuildLabels();
+    initIOSViewportFix();
 });
+
+function syncBuildLabels() {
+    const footerVersionEl = document.querySelector('.profilo-footer-version');
+    if (footerVersionEl) {
+        footerVersionEl.textContent = footerVersionEl.textContent.replace(/Build\s+v\d+/i, APP_BUILD_LABEL);
+    }
+
+    const aggiornaVersionEl = document.querySelector('.aggiorna-version');
+    if (aggiornaVersionEl) {
+        aggiornaVersionEl.textContent = 'Versione corrente: ' + APP_BUILD_LABEL;
+    }
+}
+
+function initIOSViewportFix() {
+    function updateIOSBottomGap() {
+        const vv = window.visualViewport;
+        if (!vv) return;
+        const rawGap = window.innerHeight - vv.height - vv.offsetTop;
+        const gap = Math.max(0, Math.round(rawGap));
+        document.documentElement.style.setProperty('--ios-bottom-gap', gap + 'px');
+    }
+
+    updateIOSBottomGap();
+
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', updateIOSBottomGap);
+        window.visualViewport.addEventListener('scroll', updateIOSBottomGap);
+    }
+    window.addEventListener('resize', updateIOSBottomGap);
+    window.addEventListener('orientationchange', updateIOSBottomGap);
+}
 
 function initDefaults() {
     // No date defaults needed — dates calculated at activation
@@ -1748,10 +1784,8 @@ function showEpicUpdateScreen() {
     const particlesContainer = document.getElementById('update-particles');
 
     // Set version badge
-    const verLabel = document.querySelector('.version-label');
-    const currentBuild = verLabel ? verLabel.textContent.replace('Build ', '') : '?';
-    document.getElementById('update-ver-old').textContent = currentBuild;
-    document.getElementById('update-ver-new').textContent = 'new';
+    document.getElementById('update-ver-old').textContent = APP_BUILD_VERSION;
+    document.getElementById('update-ver-new').textContent = 'New';
 
     // Reset
     fillBar.style.width = '0%';
@@ -2772,11 +2806,114 @@ document.addEventListener('click', function(e) {
 });
 
 // ============================================
-// DATE FILTER MODAL (Storico)
+// DATE FILTER MODAL (Storico) – Drum Picker
 // ============================================
 
+var DRUM_H = 44;
+var _drumTab = 'dal';
+var _drumDal = { day: 1, month: 0, year: 2025 };
+var _drumAl  = { day: 1, month: 0, year: 2026 };
+var MESI_IT = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno',
+    'Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+
 function openDateFilter() {
+    var now = new Date();
+    if (_storicoFilterFrom) {
+        _drumDal = { day: _storicoFilterFrom.getDate(), month: _storicoFilterFrom.getMonth(), year: _storicoFilterFrom.getFullYear() };
+    } else {
+        _drumDal = { day: now.getDate(), month: now.getMonth(), year: now.getFullYear() };
+    }
+    if (_storicoFilterTo) {
+        _drumAl = { day: _storicoFilterTo.getDate(), month: _storicoFilterTo.getMonth(), year: _storicoFilterTo.getFullYear() };
+    } else {
+        var ny = new Date(now);
+        ny.setFullYear(ny.getFullYear() + 1);
+        _drumAl = { day: ny.getDate(), month: ny.getMonth(), year: ny.getFullYear() };
+    }
+    _drumTab = 'dal';
     openModal('date-filter-modal');
+    setTimeout(function() {
+        document.getElementById('drum-tab-dal').classList.add('active');
+        document.getElementById('drum-tab-al').classList.remove('active');
+        buildDrumPicker();
+        updateDrumTabs();
+    }, 60);
+}
+
+function buildDrumPicker() {
+    var d = _drumTab === 'dal' ? _drumDal : _drumAl;
+    _buildDrumCol('drum-day', 1, 31, d.day, function(v) {
+        if (_drumTab === 'dal') _drumDal.day = v; else _drumAl.day = v;
+        updateDrumTabs();
+    });
+    _buildDrumMonths('drum-month', d.month, function(v) {
+        if (_drumTab === 'dal') _drumDal.month = v; else _drumAl.month = v;
+        updateDrumTabs();
+    });
+    _buildDrumCol('drum-year', 2020, 2030, d.year, function(v) {
+        if (_drumTab === 'dal') _drumDal.year = v; else _drumAl.year = v;
+        updateDrumTabs();
+    });
+}
+
+function _buildDrumCol(id, min, max, sel, cb) {
+    var col = document.getElementById(id);
+    col.innerHTML = '';
+    for (var i = min; i <= max; i++) {
+        var el = document.createElement('div');
+        el.className = 'drum-item';
+        el.textContent = i;
+        col.appendChild(el);
+    }
+    requestAnimationFrame(function() {
+        col.scrollTop = (sel - min) * DRUM_H;
+    });
+    var t = null;
+    col.onscroll = function() {
+        clearTimeout(t);
+        t = setTimeout(function() {
+            var si = Math.round(col.scrollTop / DRUM_H);
+            si = Math.max(0, Math.min(si, max - min));
+            cb(min + si);
+        }, 120);
+    };
+}
+
+function _buildDrumMonths(id, sel, cb) {
+    var col = document.getElementById(id);
+    col.innerHTML = '';
+    for (var i = 0; i < 12; i++) {
+        var el = document.createElement('div');
+        el.className = 'drum-item';
+        el.textContent = MESI_IT[i];
+        col.appendChild(el);
+    }
+    requestAnimationFrame(function() {
+        col.scrollTop = sel * DRUM_H;
+    });
+    var t = null;
+    col.onscroll = function() {
+        clearTimeout(t);
+        t = setTimeout(function() {
+            var si = Math.round(col.scrollTop / DRUM_H);
+            si = Math.max(0, Math.min(si, 11));
+            cb(si);
+        }, 120);
+    };
+}
+
+function switchDrumTab(tab) {
+    _drumTab = tab;
+    document.getElementById('drum-tab-dal').classList.toggle('active', tab === 'dal');
+    document.getElementById('drum-tab-al').classList.toggle('active', tab === 'al');
+    buildDrumPicker();
+}
+
+function updateDrumTabs() {
+    var df = String(_drumDal.day).padStart(2,'0') + '/' + String(_drumDal.month + 1).padStart(2,'0') + '/' + String(_drumDal.year).slice(-2);
+    var af = String(_drumAl.day).padStart(2,'0') + '/' + String(_drumAl.month + 1).padStart(2,'0') + '/' + String(_drumAl.year).slice(-2);
+    document.getElementById('drum-tab-dal').textContent = 'Dal ' + df;
+    document.getElementById('drum-tab-al').textContent = 'Al ' + af;
 }
 
 function closeDateFilter() {
@@ -2784,16 +2921,8 @@ function closeDateFilter() {
 }
 
 function applyDateFilter() {
-    const fromVal = document.getElementById('date-filter-from').value;
-    const toVal = document.getElementById('date-filter-to').value;
-    if (fromVal && toVal) {
-        _storicoFilterFrom = new Date(fromVal);
-        _storicoFilterTo = new Date(toVal);
-        _storicoFilterTo.setHours(23, 59, 59, 999);
-    } else {
-        _storicoFilterFrom = null;
-        _storicoFilterTo = null;
-    }
+    _storicoFilterFrom = new Date(_drumDal.year, _drumDal.month, _drumDal.day);
+    _storicoFilterTo = new Date(_drumAl.year, _drumAl.month, _drumAl.day, 23, 59, 59, 999);
     closeDateFilter();
     renderStoricoAcquisti();
 }

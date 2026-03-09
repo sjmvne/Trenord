@@ -19,6 +19,7 @@
     --font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --ios-bottom-gap: 0px;
 }
 
 * {
@@ -41,6 +42,25 @@ html, body {
     /* Fix iOS standalone: estende il bg fino al bordo inferiore */
     min-height: 100vh;
     min-height: -webkit-fill-available;
+}
+
+@supports (height: 100dvh) {
+    html, body {
+        min-height: 100dvh;
+        height: 100dvh;
+    }
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: max(var(--safe-bottom), var(--ios-bottom-gap));
+    background: #fff;
+    pointer-events: none;
+    z-index: 99;
 }
 
 /* Fix iOS standalone PWA — rimuove gap sotto la tabbar */
@@ -1102,7 +1122,7 @@ html, body {
     background: #fff;
     border-top: 0.5px solid #D1D1D6;
     padding: 6px 0;
-    padding-bottom: calc(6px + var(--safe-bottom));
+    padding-bottom: calc(6px + max(var(--safe-bottom), var(--ios-bottom-gap)));
     z-index: 100;
     /* Fix iOS standalone: garantisce che il bg copra tutta l'area sotto */
     -webkit-transform: translate3d(0,0,0);
@@ -1122,6 +1142,12 @@ html, body {
 .tabbar-item svg {
     width: 26px;
     height: 26px;
+    transform-origin: center;
+}
+
+/* Bilanciamento ottico: il wallet usa un viewBox piu ampio e appare piu piccolo. */
+.tabbar-item[data-tab="wallet"] svg {
+    transform: scale(1.14);
 }
 .tabbar-item span {
     font-size: 10px;
@@ -3490,7 +3516,7 @@ body.qr-brightness-mode .screen.active {
     left: 4px;
     display: flex;
     align-items: center;
-    gap: 2px;
+    gap: 0;
     background: none;
     border: none;
     color: #fff;
@@ -4723,6 +4749,7 @@ body.qr-brightness-mode .screen.active {
     border-radius: 16px 16px 0 0;
     padding: 20px 0;
     max-height: 80vh;
+    max-width: 100% !important;
     overflow-y: auto;
     animation: slideUpModal 0.3s ease;
 }
@@ -4740,24 +4767,105 @@ body.qr-brightness-mode .screen.active {
     margin-bottom: 20px;
 }
 
-.date-filter-row {
+/* Drum Picker Tabs */
+.drum-tabs {
     display: flex;
-    gap: 12px;
-    padding: 0 16px 16px;
+    margin: 0 16px 16px;
+    background: #E8E8ED;
+    border-radius: 9px;
+    padding: 2px;
 }
 
-.date-filter-field {
+.drum-tab {
     flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 600;
+    color: #8E8E93;
+    padding: 8px 0;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
 }
 
-.date-filter-label {
-    font-size: 12px;
-    font-weight: 700;
-    color: #8E8E93;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 6px;
-    display: block;
+.drum-tab.active {
+    background: var(--green-dark);
+    color: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+/* Drum Picker Container */
+.drum-picker {
+    position: relative;
+    display: flex;
+    height: 220px;
+    margin: 0 16px 20px;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.drum-highlight {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(50% - 22px);
+    height: 44px;
+    background: rgba(44, 127, 68, 0.12);
+    border-radius: 10px;
+    pointer-events: none;
+}
+
+.drum-fade-top,
+.drum-fade-bottom {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 70px;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.drum-fade-top {
+    top: 0;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 100%);
+}
+
+.drum-fade-bottom {
+    bottom: 0;
+    background: linear-gradient(to top, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 100%);
+}
+
+.drum-col {
+    flex: 1;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-top: 88px;
+    padding-bottom: 88px;
+    position: relative;
+    z-index: 1;
+}
+
+.drum-col::-webkit-scrollbar {
+    display: none;
+}
+
+.drum-item {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 500;
+    color: #1C1C1E;
+    scroll-snap-align: center;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 /* ============================================
