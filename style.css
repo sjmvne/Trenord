@@ -3672,10 +3672,6 @@ body.qr-brightness-mode .screen.active {
     pointer-events: none;
 }
 
-#profilo-screen {
-    position: relative;
-}
-
 .profilo-body {
     flex: 1;
     overflow-y: auto;
