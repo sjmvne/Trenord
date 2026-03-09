@@ -584,7 +584,7 @@ function createTicketCard(ticket, isExpired) {
             <div class="ticket-card-header">
                 <span class="ticket-type-label">Ordinario</span>
                 <button class="info-icon-gray btn-ticket-info" aria-label="Info">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></svg>
+                    <img class="info-icon-img info-icon-img-green" src="SVG Icons/Info.svg" alt="Info">
                 </button>
             </div>
             ${validitaHTML}
@@ -2307,7 +2307,7 @@ function renderStoricoAcquisti() {
         html += `
             <div class="order-card" onclick="openOrderDetail('${order.orderId}')">
                 <div class="order-card-icon">
-                    <svg viewBox="0 0 44 44"><path fill="#62A76C" d="M4.75,7.5h34.5c.05,0,.75.7.75.75v9c0,.92-4.29.37-4.49,3.54-.22,3.58,4.49,3.04,4.49,3.96v9c0,.05-.7.75-.75.75H4.75c-.05,0-.75-.7-.75-.75v-9c0-.92,4.29-.37,4.49-3.54.22-3.58-4.49-3.04-4.49-3.96v-9c0-.14.59-.5.75-.75Z"/><path fill="#fff" d="M37,10.5c-.25,1.31.34,3.59.03,4.69-.14.48-1.25.35-1.78.79-3.72,3.05-3.73,6.98,0,10.04.54.44,1.65.31,1.78.79.31,1.1-.28,3.38-.03,4.69H7c.25-1.31-.34-3.59-.03-4.69.14-.48,1.25-.35,1.78-.79,3.72-3.05,3.73-6.98,0-10.04-.54-.44-1.65-.31-1.78-.79-.31-1.1.28-3.38.03-4.69h30Z"/><path fill="#62A76C" d="M15.25,16.5h13.5c.99,0,.99,3,0,3h-13.5c-.82,0-1.2-2.51,0-3Z"/><path fill="#62A76C" d="M15.25,22.5h13.5c.99,0,.99,3,0,3h-13.5c-.82,0-1.2-2.51,0-3Z"/></svg>
+                    <svg class="order-card-ticket-icon" viewBox="0 0 44 44" aria-hidden="true"><path fill="#5C5C5C" d="M4.75,7.5h34.5c.05,0,.75.7.75.75v9c0,.92-4.29.37-4.49,3.54-.22,3.58,4.49,3.04,4.49,3.96v9c0,.05-.7.75-.75.75H4.75c-.05,0-.75-.7-.75-.75v-9c0-.92,4.29-.37,4.49-3.54.22-3.58-4.49-3.04-4.49-3.96v-9c0-.14.59-.5.75-.75Z"/><path fill="#fff" d="M37,10.5c-.25,1.31.34,3.59.03,4.69-.14.48-1.25.35-1.78.79-3.72,3.05-3.73,6.98,0,10.04.54.44,1.65.31,1.78.79.31,1.1-.28,3.38-.03,4.69H7c.25-1.31-.34-3.59-.03-4.69.14-.48,1.25-.35,1.78-.79,3.72-3.05,3.73-6.98,0-10.04-.54-.44-1.65-.31-1.78-.79-.31-1.1.28-3.38.03-4.69h30Z"/><path fill="#5C5C5C" d="M15.25,16.5h13.5c.99,0,.99,3,0,3h-13.5c-.82,0-1.2-2.51,0-3Z"/><path fill="#5C5C5C" d="M15.25,22.5h13.5c.99,0,.99,3,0,3h-13.5c-.82,0-1.2-2.51,0-3Z"/></svg>
                 </div>
                 <div class="order-card-info">
                     <div class="order-card-id">${escapeHtml(order.orderId)}</div>
@@ -2374,87 +2374,106 @@ function openReceipt(orderId) {
     if (!order) return;
 
     const d = new Date(order.date);
-    const dateStr = formatDateCompact(d);
+    const dateStr = formatDateFull(d);
     const timeStr = formatTimeShort(d);
     const billing = order.billingSnapshot || getBillingData() || {};
 
-    let itemsRows = '';
-    order.tickets.forEach((t, idx) => {
-        itemsRows += `
-            <tr>
-                <td>8501</td>
-                <td>Ordinario - STIBM ${t.fromZone}-${t.toZone}</td>
-                <td class="text-right">1</td>
-                <td class="text-right">€${t.prezzo.toFixed(2)}</td>
-                <td class="text-right">€${t.prezzo.toFixed(2)}</td>
-            </tr>
-        `;
+    function fmtEuro(v) {
+        return '\u20ac' + Number(v || 0).toFixed(2);
+    }
+
+    // Group identical tickets
+    const itemMap = new Map();
+    order.tickets.forEach(t => {
+        const desc = 'Ordinario - STIBM ' + (t.fromZone || '') + '-' + (t.toZone || '');
+        const price = Number(t.prezzo || 0);
+        const key = desc + '|' + price.toFixed(2);
+        if (!itemMap.has(key)) {
+            itemMap.set(key, { code: '8501', desc, qty: 0, price });
+        }
+        itemMap.get(key).qty += 1;
     });
 
-    const receiptEl = document.getElementById('receipt-content');
-    receiptEl.innerHTML = `
-        <div class="receipt-paper" id="receipt-paper">
-            <div class="receipt-header">
-                <div class="receipt-logo">
-                    <div class="receipt-logo-title">⁞TRENORD</div>
-                    <div class="receipt-logo-sub">e-Store</div>
-                </div>
-                <div class="receipt-company-info">
-                    Trenord S.r.l<br>
-                    Piazzale Cadorna, 14 -20123 Milano - Italia<br>
-                    Tel. +39 02.85111 Fax. +39 02.85114708<br>
-                    PEC trenord@legalmail.it
-                </div>
-            </div>
+    let itemsHTML = '';
+    Array.from(itemMap.values()).forEach(it => {
+        const tot = it.price * it.qty;
+        itemsHTML += '<tr>'
+            + '<td>' + it.code + '</td>'
+            + '<td>' + escapeHtml(it.desc) + '</td>'
+            + '<td class="text-right">' + it.qty + '</td>'
+            + '<td class="text-right">' + fmtEuro(it.price) + '</td>'
+            + '<td class="text-right">' + fmtEuro(tot) + '</td>'
+            + '</tr>';
+    });
 
-            <div class="receipt-intestatario">
-                <div class="receipt-intestatario-label">Intestatario Documento</div>
-                <div class="receipt-intestatario-name">${escapeHtml((billing.nome || '') + ' ' + (billing.cognome || '')).toUpperCase()}</div>
-            </div>
+    const nome = (billing.nome || '').trim().toUpperCase();
+    const cognome = (billing.cognome || '').trim().toUpperCase();
+    const billingName = (nome + ' ' + cognome).trim() || 'N.D.';
+    const cf = (billing.codiceFiscale || '').trim().toUpperCase() || 'N.D.';
 
-            <table class="receipt-meta-table">
-                <tr>
-                    <th>Data</th>
-                    <th>Tipo Documento</th>
-                    <th>Numero Ordine</th>
-                    <th>Numero Documento</th>
-                    <th>Codice Fiscale</th>
-                </tr>
-                <tr>
-                    <td>${d.toLocaleDateString('it-IT')}</td>
-                    <td>Ricevuta fiscale</td>
-                    <td>${escapeHtml(order.orderId)}</td>
-                    <td>${order.docNumber}</td>
-                    <td>${escapeHtml(billing.codiceFiscale || 'N.D.')}</td>
-                </tr>
-                <tr>
-                    <th>Modalità di Inoltro</th>
-                    <th colspan="2">Modalità di pagamento</th>
-                    <th colspan="2"></th>
-                </tr>
-                <tr>
-                    <td>Via email.<br>Documento generato il<br>${dateStr} alle ${timeStr}</td>
-                    <td colspan="2">Carta di credito:<br>${formatPrice(order.total)}</td>
-                    <td colspan="2"></td>
-                </tr>
-            </table>
+    document.getElementById('receipt-content').innerHTML = ''
+        + '<div class="receipt-paper" id="receipt-paper">'
 
-            <table class="receipt-items-table">
-                <tr>
-                    <th>Codice Articolo</th>
-                    <th>Descrizione</th>
-                    <th class="text-right">Quantità</th>
-                    <th class="text-right">Prezzo Unitario</th>
-                    <th class="text-right">Totale Lordo</th>
-                </tr>
-                ${itemsRows}
-                <tr class="receipt-total-row">
-                    <td colspan="4" class="text-right"><strong>Totale</strong></td>
-                    <td class="text-right">€${order.total.toFixed(2)}</td>
-                </tr>
-            </table>
-        </div>
-    `;
+        // Header: logo + company info
+        + '<div class="receipt-header">'
+        +   '<img src="img/Trenord Store.png" alt="Trenord e-Store" class="receipt-logo-image">'
+        +   '<div class="receipt-company-info">'
+        +     'Trenord S.r.l<br>'
+        +     'Piazzale Cadorna, 14 -20123 Milano - Italia<br>'
+        +     'Tel. +39 02.85111 Fax. +39 02.85114708<br>'
+        +     'PEC trenord@legalmail.it'
+        +   '</div>'
+        + '</div>'
+
+        // Unified main table: 5 columns
+        + '<table class="receipt-main-table">'
+        +   '<colgroup><col><col><col><col><col></colgroup>'
+
+        // Row 1: 4 invisible cells + intestatario
+        +   '<tr>'
+        +     '<td class="r-invis"></td>'
+        +     '<td class="r-invis"></td>'
+        +     '<td class="r-invis"></td>'
+        +     '<td class="r-invis"></td>'
+        +     '<td><strong>Intestatario Documento</strong>' + escapeHtml(billingName) + '</td>'
+        +   '</tr>'
+
+        // Row 2: meta info, title+value in same cell
+        +   '<tr>'
+        +     '<td><strong>Data</strong>' + d.toLocaleDateString('it-IT') + '</td>'
+        +     '<td><strong>Tipo Documento</strong>Ricevuta fiscale</td>'
+        +     '<td><strong>Numero Ordine</strong>' + escapeHtml(order.orderId) + '</td>'
+        +     '<td><strong>Numero Documento</strong>' + order.docNumber + '</td>'
+        +     '<td><strong>Codice Fiscale</strong>' + escapeHtml(cf) + '</td>'
+        +   '</tr>'
+
+        // Row 3: inoltro colspan=2, pagamento, 2 empty
+        +   '<tr>'
+        +     '<td colspan="2"><strong>Modalit\u00e0 di Inoltro</strong>Via email.<br>Documento generato il ' + dateStr + ' alle ' + timeStr + '</td>'
+        +     '<td><strong>Modalit\u00e0 di pagamento</strong>Carta di credito: ' + Number(order.total || 0).toFixed(2) + ' \u20ac</td>'
+        +     '<td></td>'
+        +     '<td></td>'
+        +   '</tr>'
+        + '</table>'
+
+        // Items table
+        + '<table class="receipt-items-table">'
+        +   '<tr>'
+        +     '<th>Codice Articolo</th>'
+        +     '<th>Descrizione</th>'
+        +     '<th class="text-right">Quantit\u00e0</th>'
+        +     '<th class="text-right">Prezzo Unitario</th>'
+        +     '<th class="text-right">Totale Lordo</th>'
+        +   '</tr>'
+        +   itemsHTML
+        +   '<tr class="receipt-total-row">'
+        +     '<td colspan="2" class="total-empty"></td>'
+        +     '<td colspan="2" class="total-label"><strong>Totale</strong></td>'
+        +     '<td class="total-amount">' + fmtEuro(order.total) + '</td>'
+        +   '</tr>'
+        + '</table>'
+
+        + '</div>';
 
     openSubScreen('screen-ricevuta');
 }
@@ -2481,10 +2500,22 @@ async function shareReceipt() {
         const pdf = new jsPDF('p', 'mm', 'a4');
         const imgData = canvas.toDataURL('image/png');
 
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const margin = 8;
+        const maxWidth = pageWidth - margin * 2;
+        const maxHeight = pageHeight - margin * 2;
 
-        pdf.addImage(imgData, 'PNG', 0, 10, pdfWidth, pdfHeight);
+        const widthRatio = maxWidth / canvas.width;
+        const heightRatio = maxHeight / canvas.height;
+        const scale = Math.min(widthRatio, heightRatio);
+
+        const imgWidth = canvas.width * scale;
+        const imgHeight = canvas.height * scale;
+        const offsetX = (pageWidth - imgWidth) / 2;
+        const offsetY = (pageHeight - imgHeight) / 2;
+
+        pdf.addImage(imgData, 'PNG', offsetX, offsetY, imgWidth, imgHeight);
         pdf.save('ricevuta-trenord.pdf');
 
         btn.innerHTML = originalHTML;
