@@ -3661,13 +3661,8 @@ body.qr-brightness-mode .screen.active {
 
 /* Green header background that extends behind user card */
 .profilo-header-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 180px;
+    height: calc(180px + var(--safe-top));
     background: linear-gradient(180deg, var(--green-dark) 0%, var(--green-header) 100%);
-    z-index: 0;
     flex-shrink: 0;
     pointer-events: none;
 }
@@ -3677,9 +3672,6 @@ body.qr-brightness-mode .screen.active {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     padding: 0 0 calc(80px + var(--safe-bottom) + 40px);
-    position: relative;
-    z-index: 1;
-    padding-top: calc(var(--safe-top) + 26px);
     min-height: 0;
     overscroll-behavior: contain;
 }
@@ -3695,7 +3687,8 @@ body.qr-brightness-mode .screen.active {
 
 .profilo-user-card {
     background: #fff;
-    margin: 60px 16px 0;
+    margin: -60px 16px 0;
+    position: relative;
     border-radius: 14px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.1);
     padding: 18px;
