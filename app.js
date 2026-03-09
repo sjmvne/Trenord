@@ -191,6 +191,11 @@ document.addEventListener('DOMContentLoaded', () => {
     updateProfiloDisplayName();
     syncBuildLabels();
     initIOSViewportFix();
+    initDevConsole();
+    requestNotificationPermission();
+    initGuideDemos();
+    // Check ticket expiry every 30 seconds
+    setInterval(checkTicketExpiryNotifications, 30000);
 });
 
 function syncBuildLabels() {
@@ -2049,6 +2054,12 @@ function openSubScreen(screenId) {
         renderProfiloUtente();
     } else if (screenId === 'screen-developer') {
         renderDevStorage();
+        renderDeviceInfo();
+        renderDevPerformance();
+    } else if (screenId === 'screen-statistiche') {
+        renderStats();
+    } else if (screenId === 'screen-disclaimer') {
+        // Static content, no init needed
     }
 }
 
@@ -3031,6 +3042,407 @@ function renderDevStorage() {
 
 function refreshDevStorage() {
     renderDevStorage();
+}
+
+// ============================================
+// DEVELOPER OPTIONS — Accordion Toggle
+// ============================================
+
+function toggleDevSection(sectionId) {
+    var section = document.getElementById(sectionId);
+    if (!section) return;
+    section.classList.toggle('open');
+}
+
+// ============================================
+// DEVELOPER OPTIONS — Device Info
+// ============================================
+
+function renderDeviceInfo() {
+    var container = document.getElementById('dev-device-info');
+    if (!container) return;
+    var ua = navigator.userAgent || 'N/A';
+    var platform = navigator.platform || 'N/A';
+    var lang = navigator.language || 'N/A';
+    var viewport = window.innerWidth + ' × ' + window.innerHeight;
+    var screen = window.screen.width + ' × ' + window.screen.height;
+    var dpr = window.devicePixelRatio || 1;
+    var online = navigator.onLine ? 'Online' : 'Offline';
+    var standalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || (window.navigator.standalone === true);
+    var swStatus = 'Non supportato';
+    if ('serviceWorker' in navigator) {
+        swStatus = navigator.serviceWorker.controller ? 'Attivo' : 'Registrato (nessun controller)';
+    }
+    var rows = [
+        { label: 'User Agent', value: ua },
+        { label: 'Piattaforma', value: platform },
+        { label: 'Lingua', value: lang },
+        { label: 'Viewport', value: viewport },
+        { label: 'Schermo', value: screen },
+        { label: 'DPR', value: dpr.toFixed(1) },
+        { label: 'Connessione', value: online },
+        { label: 'Modalità PWA', value: standalone ? 'Standalone' : 'Browser' },
+        { label: 'Service Worker', value: swStatus }
+    ];
+    container.innerHTML = rows.map(function(r) {
+        return '<div class="dev-info-row"><span class="dev-info-label">' +
+            r.label + '</span><span class="dev-info-value">' +
+            r.value.replace(/</g, '&lt;') + '</span></div>';
+    }).join('');
+}
+
+// ============================================
+// DEVELOPER OPTIONS — Performance
+// ============================================
+
+function renderDevPerformance() {
+    var container = document.getElementById('dev-perf-info');
+    if (!container) return;
+    var rows = [];
+    if (window.performance && performance.timing) {
+        var t = performance.timing;
+        var loadTime = t.loadEventEnd - t.navigationStart;
+        if (loadTime > 0) rows.push({ label: 'Caricamento pagina', value: loadTime + ' ms' });
+        var domReady = t.domContentLoadedEventEnd - t.navigationStart;
+        if (domReady > 0) rows.push({ label: 'DOM Ready', value: domReady + ' ms' });
+    }
+    rows.push({ label: 'Nodi DOM', value: document.querySelectorAll('*').length.toString() });
+    var totalSize = 0;
+    for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        totalSize += new Blob([localStorage.getItem(k) || '']).size;
+    }
+    var sizeLabel = totalSize > 1024 ? (totalSize / 1024).toFixed(1) + ' KB' : totalSize + ' B';
+    rows.push({ label: 'localStorage usato', value: sizeLabel });
+    if (performance.memory) {
+        var mem = performance.memory;
+        rows.push({ label: 'Heap usato', value: (mem.usedJSHeapSize / 1048576).toFixed(1) + ' MB' });
+        rows.push({ label: 'Heap totale', value: (mem.totalJSHeapSize / 1048576).toFixed(1) + ' MB' });
+    }
+    container.innerHTML = rows.map(function(r) {
+        return '<div class="dev-info-row"><span class="dev-info-label">' +
+            r.label + '</span><span class="dev-info-value">' + r.value + '</span></div>';
+    }).join('');
+}
+
+// ============================================
+// DEVELOPER OPTIONS — In-App Console
+// ============================================
+
+var _devConsoleLogs = [];
+var _devConsoleInited = false;
+
+function initDevConsole() {
+    if (_devConsoleInited) return;
+    _devConsoleInited = true;
+    var origLog = console.log;
+    var origWarn = console.warn;
+    var origError = console.error;
+    function addLine(type, args) {
+        var now = new Date();
+        var time = now.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        var text = Array.prototype.map.call(args, function(a) {
+            if (typeof a === 'object') {
+                try { return JSON.stringify(a); } catch(e) { return String(a); }
+            }
+            return String(a);
+        }).join(' ');
+        _devConsoleLogs.push({ type: type, time: time, text: text });
+        if (_devConsoleLogs.length > 200) _devConsoleLogs.shift();
+        renderDevConsole();
+    }
+    console.log = function() { origLog.apply(console, arguments); addLine('log', arguments); };
+    console.warn = function() { origWarn.apply(console, arguments); addLine('warn', arguments); };
+    console.error = function() { origError.apply(console, arguments); addLine('error', arguments); };
+}
+
+function renderDevConsole() {
+    var output = document.getElementById('dev-console-output');
+    var countEl = document.getElementById('dev-console-count');
+    if (!output) return;
+    if (countEl) countEl.textContent = _devConsoleLogs.length;
+    output.innerHTML = _devConsoleLogs.map(function(l) {
+        var cls = l.type === 'warn' ? ' warn' : l.type === 'error' ? ' error' : '';
+        return '<div class="dev-console-line' + cls + '"><span class="dev-console-time">' +
+            l.time + '</span>' + l.text.replace(/</g, '&lt;') + '</div>';
+    }).join('');
+    output.scrollTop = output.scrollHeight;
+}
+
+function clearDevConsole() {
+    _devConsoleLogs = [];
+    renderDevConsole();
+}
+
+// ============================================
+// DEVELOPER OPTIONS — Export / Import
+// ============================================
+
+function devExportData() {
+    var data = {};
+    for (var i = 0; i < localStorage.length; i++) {
+        var key = localStorage.key(i);
+        data[key] = localStorage.getItem(key);
+    }
+    var json = JSON.stringify(data, null, 2);
+    var blob = new Blob([json], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'trenord_backup_' + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function devImportData(event) {
+    var file = event.target.files && event.target.files[0];
+    if (!file) return;
+    if (!file.name.endsWith('.json')) {
+        alert('Seleziona un file .json valido');
+        return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            var data = JSON.parse(e.target.result);
+            if (typeof data !== 'object' || data === null || Array.isArray(data)) {
+                alert('Formato JSON non valido');
+                return;
+            }
+            var count = 0;
+            for (var key in data) {
+                if (Object.prototype.hasOwnProperty.call(data, key) && typeof data[key] === 'string') {
+                    localStorage.setItem(key, data[key]);
+                    count++;
+                }
+            }
+            alert('Importati ' + count + ' elementi. L\'app verrà ricaricata.');
+            location.reload();
+        } catch (err) {
+            alert('Errore nel parsing del file JSON');
+        }
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+}
+
+// ============================================
+// DEVELOPER OPTIONS — Reset App
+// ============================================
+
+function devResetApp() {
+    if (!confirm('Sei sicuro? Tutti i dati verranno eliminati permanentemente.')) return;
+    localStorage.clear();
+    location.reload();
+}
+
+// ============================================
+// STATISTICHE VIAGGIO
+// ============================================
+
+function renderStats() {
+    var container = document.getElementById('stats-container');
+    if (!container) return;
+
+    var orders = [];
+    try { orders = JSON.parse(localStorage.getItem('trenord_orders') || '[]'); } catch(e) {}
+
+    if (!Array.isArray(orders) || orders.length === 0) {
+        container.innerHTML =
+            '<div class="stats-empty">' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>' +
+                '<p>Nessun dato disponibile.<br>Acquista un biglietto per visualizzare le statistiche.</p>' +
+            '</div>';
+        return;
+    }
+
+    var totalTickets = 0;
+    var totalSpent = 0;
+    var zoneCounts = {};
+    var allZones = ['Mi1', 'Mi3', 'Mi4', 'Mi5', 'Mi6', 'Mi7', 'Mi8', 'Mi9'];
+
+    orders.forEach(function(order) {
+        var items = order.items || [];
+        items.forEach(function(item) {
+            totalTickets++;
+            totalSpent += (item.prezzo || 0);
+            var viaggio = item.viaggio || '';
+            var parts = viaggio.split(' | ');
+            parts.forEach(function(z) {
+                var zone = z.trim();
+                if (zone) zoneCounts[zone] = (zoneCounts[zone] || 0) + 1;
+            });
+        });
+    });
+
+    // Estimated km (rough: ~5km per zone boundary crossed)
+    var estimatedKm = 0;
+    orders.forEach(function(order) {
+        (order.items || []).forEach(function(item) {
+            var v = item.viaggio || '';
+            var p = v.split(' | ');
+            if (p.length === 2) {
+                var fromIdx = allZones.indexOf(p[0].trim());
+                var toIdx = allZones.indexOf(p[1].trim());
+                if (fromIdx >= 0 && toIdx >= 0) estimatedKm += Math.abs(toIdx - fromIdx) * 5;
+            }
+        });
+    });
+
+    // Savings vs car (~0.40€/km avg cost of driving)
+    var carCost = estimatedKm * 0.40;
+    var savings = Math.max(0, carCost - totalSpent);
+
+    var maxZoneCount = Math.max.apply(null, Object.values(zoneCounts).concat([1]));
+
+    var html = '';
+    html += '<div class="stats-header">';
+    html += '<div class="stats-header-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#2C7F44" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg></div>';
+    html += '<h2>Le tue statistiche</h2>';
+    html += '<p>Riepilogo dei tuoi viaggi</p>';
+    html += '</div>';
+
+    html += '<div class="stats-cards">';
+    html += '<div class="stats-card"><div class="stats-card-value">' + totalTickets + '</div><div class="stats-card-label">Biglietti acquistati</div></div>';
+    html += '<div class="stats-card"><div class="stats-card-value">' + totalSpent.toFixed(2) + ' €</div><div class="stats-card-label">Spesa totale</div></div>';
+    html += '<div class="stats-card"><div class="stats-card-value">~' + estimatedKm + ' km</div><div class="stats-card-label">Km stimati</div></div>';
+    html += '<div class="stats-card"><div class="stats-card-value">' + savings.toFixed(2) + ' €</div><div class="stats-card-label">Risparmio vs auto</div></div>';
+    html += '</div>';
+
+    // Zone breakdown
+    var zoneKeys = Object.keys(zoneCounts).sort();
+    if (zoneKeys.length > 0) {
+        html += '<div class="stats-section-title">Zone più utilizzate</div>';
+        zoneKeys.forEach(function(zone) {
+            var count = zoneCounts[zone];
+            var pct = (count / maxZoneCount * 100).toFixed(0);
+            html += '<div class="stats-zone-bar"><div class="stats-zone-row">' +
+                '<span class="stats-zone-label">' + zone + '</span>' +
+                '<div class="stats-zone-track"><div class="stats-zone-fill" style="width:' + pct + '%"></div></div>' +
+                '<span class="stats-zone-count">' + count + '</span>' +
+                '</div></div>';
+        });
+    }
+
+    container.innerHTML = html;
+}
+
+// ============================================
+// NOTIFICA SCADENZA BIGLIETTO
+// ============================================
+
+var _expiryNotifiedTickets = {};
+
+function checkTicketExpiryNotifications() {
+    var now = Date.now();
+    tickets.forEach(function(t) {
+        if (t.status !== 'active' || !t.endDate) return;
+        var end = new Date(t.endDate).getTime();
+        var remaining = end - now;
+        // Notify when 10 minutes or less remain, but ticket is still valid
+        if (remaining > 0 && remaining <= 600000 && !_expiryNotifiedTickets[t.id]) {
+            _expiryNotifiedTickets[t.id] = true;
+            var mins = Math.ceil(remaining / 60000);
+            showExpiryNotification(t, mins);
+        }
+    });
+}
+
+function showExpiryNotification(ticket, mins) {
+    // Try native notification first
+    if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('Biglietto in scadenza', {
+            body: ticket.viaggio + ' — scade tra ' + mins + ' minut' + (mins === 1 ? 'o' : 'i'),
+            icon: 'icon.png',
+            tag: 'expiry-' + ticket.id
+        });
+    }
+    // Always show in-app banner
+    showExpiryBanner(ticket, mins);
+}
+
+function showExpiryBanner(ticket, mins) {
+    // Remove existing banners for this ticket
+    var existing = document.getElementById('expiry-banner-' + ticket.id);
+    if (existing) existing.remove();
+
+    var banner = document.createElement('div');
+    banner.id = 'expiry-banner-' + ticket.id;
+    banner.className = 'expiry-banner';
+    banner.innerHTML =
+        '<div class="expiry-banner-icon">⏰</div>' +
+        '<div class="expiry-banner-text">' +
+            '<strong>' + ticket.viaggio + '</strong><br>' +
+            'Scade tra ' + mins + ' minut' + (mins === 1 ? 'o' : 'i') + '!' +
+        '</div>' +
+        '<button class="expiry-banner-close" onclick="this.parentElement.remove()">✕</button>';
+    document.body.appendChild(banner);
+    // Auto-dismiss after 15 seconds
+    setTimeout(function() {
+        if (banner.parentElement) banner.remove();
+    }, 15000);
+}
+
+// Request notification permission proactively
+function requestNotificationPermission() {
+    if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission();
+    }
+}
+
+// ============================================
+// GUIDE STEP DEMOS — Animations
+// ============================================
+
+function initGuideDemos() {
+    var demos = document.querySelectorAll('.home-step-demo');
+    if (!demos.length) return;
+
+    // Populate typing text in demo-type elements
+    demos.forEach(function(demo) {
+        demo.querySelectorAll('.demo-type').forEach(function(el) {
+            el.textContent = el.getAttribute('data-text') || '';
+        });
+    });
+
+    // QR grid: fill with mini pattern
+    demos.forEach(function(demo) {
+        var grid = demo.querySelector('.demo-qr-grid');
+        if (grid && !grid.children.length) {
+            // CSS handles the pattern via repeating-conic-gradient
+        }
+    });
+
+    // IntersectionObserver to trigger animations on scroll
+    if ('IntersectionObserver' in window) {
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.3 });
+
+        demos.forEach(function(demo) {
+            observer.observe(demo);
+        });
+    } else {
+        // Fallback: show all demos immediately
+        demos.forEach(function(demo) {
+            demo.classList.add('visible');
+        });
+    }
+}
+
+function replayDemo(btn) {
+    var demo = btn.closest('.home-step-demo');
+    if (!demo) return;
+    demo.classList.remove('visible');
+    // Force reflow to restart animations
+    void demo.offsetWidth;
+    demo.classList.add('visible');
 }
 
 // ============================================

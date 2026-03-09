@@ -138,12 +138,44 @@
                         <p class="home-step-text">Prima di tutto, vai in <strong>Profilo → Fatturazione</strong> e compila i tuoi dati (nome, cognome, codice fiscale, indirizzo). Sono necessari per generare le ricevute.</p>
                     </div>
                 </div>
+                <!-- Mini Demo: Form auto-fill -->
+                <div class="home-step-demo" data-demo="billing">
+                    <div class="demo-phone">
+                        <div class="demo-form">
+                            <div class="demo-field"><span class="demo-label">Nome</span><span class="demo-value demo-type" data-text="Mario"></span></div>
+                            <div class="demo-field"><span class="demo-label">Cognome</span><span class="demo-value demo-type" data-text="Rossi"></span></div>
+                            <div class="demo-field"><span class="demo-label">Codice Fiscale</span><span class="demo-value demo-type" data-text="RSSMRA90A01F205X"></span></div>
+                        </div>
+                        <div class="demo-btn demo-btn-confirm demo-pulse">Conferma ✓</div>
+                    </div>
+                    <button class="demo-replay" onclick="replayDemo(this)">↻ Ripeti</button>
+                </div>
                 <div class="home-step-card">
                     <div class="home-step-number">2</div>
                     <div class="home-step-content">
                         <h3 class="home-step-title">Scegli le zone</h3>
                         <p class="home-step-text">Vai nella sezione <strong>Acquista</strong> e seleziona le zone con lo slider (es. <strong>Mi1 → Mi3</strong>) oppure usa la ricerca "Da - A" per trovare i comuni.<br><em>Esempio: "MILANO" → "MONZA" calcolerà automaticamente Mi1 – Mi4.</em></p>
                     </div>
+                </div>
+                <!-- Mini Demo: Zone slider -->
+                <div class="home-step-demo" data-demo="zones">
+                    <div class="demo-phone">
+                        <div class="demo-zones">
+                            <div class="demo-zone-badges" id="demo-zone-badges">
+                                <span class="demo-zone-badge active">Mi1</span>
+                                <span class="demo-zone-badge">Mi3</span>
+                                <span class="demo-zone-badge">Mi4</span>
+                                <span class="demo-zone-badge">Mi5</span>
+                            </div>
+                            <div class="demo-slider-track">
+                                <div class="demo-slider-fill"></div>
+                                <div class="demo-slider-thumb demo-slider-thumb-left"></div>
+                                <div class="demo-slider-thumb demo-slider-thumb-right"></div>
+                            </div>
+                            <div class="demo-zone-labels"><span>Mi1</span><span>Mi9</span></div>
+                        </div>
+                    </div>
+                    <button class="demo-replay" onclick="replayDemo(this)">↻ Ripeti</button>
                 </div>
                 <div class="home-step-card">
                     <div class="home-step-number">3</div>
@@ -158,6 +190,20 @@
                         <h3 class="home-step-title">Genera il biglietto</h3>
                         <p class="home-step-text">Premi il pulsante verde con il prezzo (es. <strong>"Mi1 | Mi3 2,20 €"</strong>). Il biglietto verrà creato e salvato nel tuo Wallet.</p>
                     </div>
+                </div>
+                <!-- Mini Demo: Generate button -->
+                <div class="home-step-demo" data-demo="generate">
+                    <div class="demo-phone">
+                        <div class="demo-generate">
+                            <div class="demo-ticket-preview">
+                                <span class="demo-tp-zone">Mi1 | Mi3</span>
+                                <span class="demo-tp-price">2,20 €</span>
+                            </div>
+                            <div class="demo-btn demo-btn-generate demo-press">Mi1 | Mi3 2,20 €</div>
+                            <div class="demo-success-check">✓</div>
+                        </div>
+                    </div>
+                    <button class="demo-replay" onclick="replayDemo(this)">↻ Ripeti</button>
                 </div>
             </div>
 
@@ -177,6 +223,23 @@
                         <h3 class="home-step-title">Premi "Tap & Go"</h3>
                         <p class="home-step-text">Tocca il pulsante <strong>Tap & Go</strong> sul biglietto. Apparirà una conferma: premi <strong>"Utilizza"</strong> quando sei pronto a salire a bordo.<br><em>⚠️ Una volta attivato, il timer di validità inizia a scorrere!</em></p>
                     </div>
+                </div>
+                <!-- Mini Demo: Tap & Go swipe -->
+                <div class="home-step-demo" data-demo="tapgo">
+                    <div class="demo-phone">
+                        <div class="demo-tapgo">
+                            <div class="demo-ticket-mini">
+                                <div class="demo-tm-status">DA UTILIZZARE</div>
+                                <div class="demo-tm-zone">Mi1 | Mi3</div>
+                                <div class="demo-btn demo-btn-tapgo demo-tap-anim">Tap & Go</div>
+                            </div>
+                            <div class="demo-tapgo-confirm">
+                                <span>Sei pronto?</span>
+                                <div class="demo-btn demo-btn-use demo-pulse-delay">Utilizza</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="demo-replay" onclick="replayDemo(this)">↻ Ripeti</button>
                 </div>
                 <div class="home-step-card">
                     <div class="home-step-number">3</div>
@@ -198,6 +261,17 @@
                         <h3 class="home-step-title">Mostra QR Code</h3>
                         <p class="home-step-text">Dopo l'attivazione, premi <strong>"Mostra QR Code"</strong> per aprire il biglietto a schermo intero. Lo schermo si illuminerà al massimo per facilitare la scansione al controllore.</p>
                     </div>
+                </div>
+                <!-- Mini Demo: QR code mini -->
+                <div class="home-step-demo" data-demo="qr">
+                    <div class="demo-phone">
+                        <div class="demo-qr">
+                            <div class="demo-qr-grid"></div>
+                            <div class="demo-qr-label">STIBM — Mi1 | Mi3</div>
+                            <div class="demo-qr-timer">89:45</div>
+                        </div>
+                    </div>
+                    <button class="demo-replay" onclick="replayDemo(this)">↻ Ripeti</button>
                 </div>
                 <div class="home-step-card">
                     <div class="home-step-icon-wrap home-step-icon-orange">
@@ -540,14 +614,14 @@
             <div class="profilo-list-flat">
                 <div class="profilo-item-flat" onclick="openSubScreen('screen-dati-fatturazione')">
                     <div class="profilo-item-icon-flat">
-                        <img src="SVG Icons/Dati fatturazione.svg" alt="Dati fatturazione" style="width:22px;height:22px;display:block;">
+                        <img src="SVG Icons/Dati fatturazione.svg" alt="Dati fatturazione" style="width:28px;height:28px;display:block;">
                     </div>
                     <span class="profilo-item-label-flat">Dati fatturazione</span>
                     <div class="profilo-item-chevron-flat"><svg viewBox="0 0 24 24" fill="none" stroke="#C7C7CC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
                 </div>
                 <div class="profilo-item-flat" onclick="openSubScreen('screen-storico-acquisti')">
                     <div class="profilo-item-icon-flat">
-                        <img src="SVG Icons/Euro.svg" alt="Storico acquisti" style="width:22px;height:22px;display:block;">
+                        <img src="SVG Icons/Euro.svg" alt="Storico acquisti" style="width:28px;height:28px;display:block;">
                     </div>
                     <span class="profilo-item-label-flat">Storico acquisti</span>
                     <div class="profilo-item-chevron-flat"><svg viewBox="0 0 24 24" fill="none" stroke="#C7C7CC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
@@ -571,6 +645,20 @@
                     <span class="profilo-item-label-flat">Aggiorna</span>
                     <div class="profilo-item-chevron-flat"><svg viewBox="0 0 24 24" fill="none" stroke="#C7C7CC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
                 </div>
+                <div class="profilo-item-flat" onclick="openSubScreen('screen-statistiche')">
+                    <div class="profilo-item-icon-flat">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+                    </div>
+                    <span class="profilo-item-label-flat">Statistiche viaggio</span>
+                    <div class="profilo-item-chevron-flat"><svg viewBox="0 0 24 24" fill="none" stroke="#C7C7CC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+                </div>
+                <div class="profilo-item-flat" onclick="openSubScreen('screen-disclaimer')">
+                    <div class="profilo-item-icon-flat">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <span class="profilo-item-label-flat">Disclaimer e note legali</span>
+                    <div class="profilo-item-chevron-flat"><svg viewBox="0 0 24 24" fill="none" stroke="#C7C7CC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+                </div>
                 <div class="profilo-item-flat" onclick="openSubScreen('screen-developer')">
                     <div class="profilo-item-icon-flat">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
@@ -590,7 +678,11 @@
             <!-- Footer -->
             <div class="profilo-footer">
                 <div class="profilo-footer-version">Build v42 · Mar 2026</div>
-                <div class="profilo-footer-credits">Sviluppato con ❤️ da <a href="https://github.com/sjmvne" target="_blank" rel="noopener">@sjmvne</a></div>
+                <div class="profilo-footer-credits">Sviluppato da un pendolare stanco dei ritardi e dei treni soppressi.</div>
+                <a class="profilo-footer-repo" href="https://github.com/sjmvne/Trenord" target="_blank" rel="noopener">
+                    <svg viewBox="0 0 24 24" fill="#8E8E93" width="16" height="16"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                    <span>Repository del progetto</span>
+                </a>
             </div>
         </div>
     </div>
@@ -807,17 +899,13 @@
                 <div class="tech-section tech-credits">
                     <div class="tech-section-header">
                         <svg class="tech-icon" viewBox="0 0 24 24" fill="none" stroke="#1C1C1E" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                        <h3>Credits</h3>
+                        <h3>Riconoscimenti</h3>
                     </div>
-                    <p class="credits-text">Sviluppato con ❤️ da <strong>@sjmvne</strong></p>
+                    <p class="credits-text">Sviluppato da un pendolare stanco dei ritardi e dei treni soppressi.</p>
                     <div class="credits-links">
-                        <a href="https://github.com/sjmvne" target="_blank" rel="noopener" class="credits-link">
+                        <a href="https://github.com/sjmvne/Trenord" target="_blank" rel="noopener" class="credits-link">
                             <svg viewBox="0 0 24 24" fill="#1C1C1E" width="20" height="20"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-                            <span>GitHub</span>
-                        </a>
-                        <a href="https://instagram.com/sjmvne" target="_blank" rel="noopener" class="credits-link">
-                            <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><rect x="2" y="2" width="20" height="20" rx="5" stroke="#E4405F" stroke-width="2"/><circle cx="12" cy="12" r="5" stroke="#E4405F" stroke-width="2"/><circle cx="18" cy="6" r="1.5" fill="#E4405F"/></svg>
-                            <span>Instagram</span>
+                            <span>Repository del progetto</span>
                         </a>
                     </div>
                 </div>
@@ -863,14 +951,168 @@
         </div>
         <div class="sub-screen-body">
             <div class="dev-container">
-                <div class="dev-section-header">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#62A76C" stroke-width="2" width="20" height="20"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-                    <span>Local Storage</span>
-                    <span class="dev-badge" id="dev-storage-count">0 chiavi</span>
+                <!-- Local Storage -->
+                <div class="dev-section" id="dev-section-storage">
+                    <div class="dev-section-header" onclick="toggleDevSection('dev-section-storage')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#62A76C" stroke-width="2" width="20" height="20"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                        <span>Local Storage</span>
+                        <span class="dev-badge" id="dev-storage-count">0 chiavi</span>
+                        <svg class="dev-chevron" viewBox="0 0 24 24" fill="none" stroke="#C7C7CC" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="dev-section-body open">
+                        <div class="dev-storage-list" id="dev-storage-list"></div>
+                    </div>
                 </div>
-                <div class="dev-storage-list" id="dev-storage-list">
-                    <!-- Populated by JS -->
+
+                <!-- Info Dispositivo -->
+                <div class="dev-section" id="dev-section-device">
+                    <div class="dev-section-header" onclick="toggleDevSection('dev-section-device')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#585DA4" stroke-width="2" width="20" height="20"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>
+                        <span>Info dispositivo</span>
+                        <svg class="dev-chevron" viewBox="0 0 24 24" fill="none" stroke="#C7C7CC" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="dev-section-body">
+                        <div class="dev-info-list" id="dev-device-info"></div>
+                    </div>
                 </div>
+
+                <!-- Performance -->
+                <div class="dev-section" id="dev-section-perf">
+                    <div class="dev-section-header" onclick="toggleDevSection('dev-section-perf')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#E37603" stroke-width="2" width="20" height="20"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                        <span>Performance</span>
+                        <svg class="dev-chevron" viewBox="0 0 24 24" fill="none" stroke="#C7C7CC" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="dev-section-body">
+                        <div class="dev-info-list" id="dev-perf-info"></div>
+                    </div>
+                </div>
+
+                <!-- Console In-App -->
+                <div class="dev-section" id="dev-section-console">
+                    <div class="dev-section-header" onclick="toggleDevSection('dev-section-console')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#D32F2F" stroke-width="2" width="20" height="20"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+                        <span>Console</span>
+                        <span class="dev-badge dev-badge-red" id="dev-console-count">0</span>
+                        <svg class="dev-chevron" viewBox="0 0 24 24" fill="none" stroke="#C7C7CC" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="dev-section-body">
+                        <div class="dev-console" id="dev-console-output"></div>
+                        <button class="dev-action-btn" onclick="clearDevConsole()">Pulisci console</button>
+                    </div>
+                </div>
+
+                <!-- Esporta / Importa -->
+                <div class="dev-section" id="dev-section-export">
+                    <div class="dev-section-header" onclick="toggleDevSection('dev-section-export')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#00897B" stroke-width="2" width="20" height="20"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        <span>Esporta / Importa</span>
+                        <svg class="dev-chevron" viewBox="0 0 24 24" fill="none" stroke="#C7C7CC" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="dev-section-body">
+                        <button class="dev-action-btn dev-action-green" onclick="devExportData()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            Esporta dati (JSON)
+                        </button>
+                        <div class="dev-import-area">
+                            <label class="dev-action-btn dev-action-blue">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                Importa dati (JSON)
+                                <input type="file" accept=".json" onchange="devImportData(event)" style="display:none;">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reset App -->
+                <div class="dev-section" id="dev-section-reset">
+                    <div class="dev-section-header" onclick="toggleDevSection('dev-section-reset')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#D32F2F" stroke-width="2" width="20" height="20"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                        <span>Reset app</span>
+                        <svg class="dev-chevron" viewBox="0 0 24 24" fill="none" stroke="#C7C7CC" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="dev-section-body">
+                        <p class="dev-reset-warning">Cancella tutto il localStorage e ricarica l'app. Questa azione è irreversibile.</p>
+                        <button class="dev-action-btn dev-action-red" onclick="devResetApp()">Reset completo</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== SUB-SCREEN: Disclaimer ====== -->
+    <div id="screen-disclaimer" class="sub-screen">
+        <div class="sub-screen-header">
+            <button class="sub-screen-back" onclick="closeSubScreen()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <span class="sub-screen-title">Disclaimer</span>
+        </div>
+        <div class="sub-screen-body">
+            <div class="disclaimer-container">
+                <div class="disclaimer-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#E37603" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                </div>
+                <h2 class="disclaimer-title">Avviso legale</h2>
+
+                <div class="disclaimer-section">
+                    <h3>Scopo del progetto</h3>
+                    <p>Trenord+ è un progetto realizzato a <strong>scopo esclusivamente didattico, dimostrativo e di ricerca personale</strong>. L'applicazione è stata sviluppata per esplorare le tecnologie web moderne (PWA, Service Worker, localStorage) e non ha alcuna finalità commerciale, lucrativa o di sostituzione di servizi esistenti.</p>
+                </div>
+
+                <div class="disclaimer-section">
+                    <h3>Nessuna validità dei biglietti</h3>
+                    <p>I biglietti generati dall'applicazione <strong>non hanno alcuna validità legale, contrattuale o commerciale</strong> e <strong>non possono in alcun modo essere utilizzati come titolo di viaggio</strong> su mezzi di trasporto pubblico o privato. Qualsiasi tentativo di utilizzare i contenuti generati a fini diversi da quelli dimostrativi è sotto la piena ed esclusiva responsabilità dell'utente.</p>
+                </div>
+
+                <div class="disclaimer-section">
+                    <h3>Animazione di generazione</h3>
+                    <p>L'animazione di "creazione biglietto" presente nell'applicazione è <strong>puramente estetica e simulata</strong>. Non viene effettuata <strong>nessuna connessione, richiesta o comunicazione</strong> verso i server di Trenord S.r.l., del Trasporto Pubblico Locale (TPL) della Lombardia, di ATM S.p.A. o di qualsiasi altro servizio affiliato o correlato.</p>
+                </div>
+
+                <div class="disclaimer-section">
+                    <h3>Trattamento dei dati</h3>
+                    <p><strong>Nessun dato personale</strong> inserito nell'applicazione viene trasmesso, inviato, raccolto o archiviato su server esterni. Tutti i dati (biglietti, dati di fatturazione, storico acquisti, preferenze) risiedono <strong>esclusivamente nel localStorage del browser</strong> dell'utente e non lasciano mai il dispositivo. L'applicazione non utilizza cookie di profilazione, sistemi di tracciamento, analytics o servizi di terze parti per la raccolta dati.</p>
+                </div>
+
+                <div class="disclaimer-section">
+                    <h3>Assenza di affiliazione</h3>
+                    <p>Questo progetto <strong>non è affiliato, sponsorizzato, approvato o in alcun modo connesso</strong> a Trenord S.r.l., Ferrovienord S.p.A., FNM S.p.A., ATM S.p.A., Regione Lombardia, Agenzia del TPL di Milano, Monza e Brianza, Lodi e Pavia, o qualsiasi altro ente, azienda o organizzazione del trasporto pubblico.</p>
+                </div>
+
+                <div class="disclaimer-section">
+                    <h3>Proprietà intellettuale</h3>
+                    <p>I marchi "Trenord", "STIBM", "Sistema Tariffario Integrato del Bacino di Mobilità" e tutti i loghi, nomi e segni distintivi correlati sono <strong>proprietà esclusiva dei rispettivi titolari</strong>. Il loro utilizzo in questo contesto è finalizzato unicamente all'identificazione del sistema tariffario simulato a scopo didattico, ai sensi dell'uso descrittivo consentito.</p>
+                </div>
+
+                <div class="disclaimer-section">
+                    <h3>Limitazione di responsabilità</h3>
+                    <p>L'autore del progetto <strong>declina ogni e qualsiasi responsabilità</strong> per danni diretti, indiretti, incidentali, consequenziali o speciali derivanti dall'utilizzo, dall'impossibilità di utilizzo o da usi impropri dell'applicazione, inclusi ma non limitati a: sanzioni amministrative, perdite economiche, disagi nei trasporti o qualsiasi altra conseguenza derivante dall'affidamento sui contenuti generati.</p>
+                </div>
+
+                <div class="disclaimer-section">
+                    <h3>Accettazione dei termini</h3>
+                    <p>L'utilizzo dell'applicazione implica la <strong>piena e incondizionata accettazione</strong> di tutte le condizioni sopra indicate. L'utente riconosce di essere stato adeguatamente informato sulla natura didattica e dimostrativa del progetto.</p>
+                </div>
+
+                <div class="disclaimer-footer">
+                    <p>Ultimo aggiornamento: Marzo 2026</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== SUB-SCREEN: Statistiche Viaggio ====== -->
+    <div id="screen-statistiche" class="sub-screen">
+        <div class="sub-screen-header">
+            <button class="sub-screen-back" onclick="closeSubScreen()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <span class="sub-screen-title">Statistiche</span>
+        </div>
+        <div class="sub-screen-body">
+            <div class="stats-container" id="stats-container">
+                <!-- Populated by JS -->
             </div>
         </div>
     </div>

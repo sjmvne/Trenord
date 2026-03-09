@@ -1,114 +1,116 @@
-# 🚆 Trenord — Biglietto Digitale STIBM
+# Trenord+ — Biglietto Digitale STIBM
 
-> Progressive Web App che simula la generazione e gestione di biglietti digitali STIBM (Sistema Tariffario Integrato del Bacino di Mobilità) per il sistema di trasporto pubblico lombardo.
+Progressive Web App che simula la generazione e gestione di biglietti digitali STIBM (Sistema Tariffario Integrato del Bacino di Mobilità) per il sistema di trasporto pubblico lombardo.
 
-⚠️ **Disclaimer**: Questo è un progetto **didattico/dimostrativo**. I biglietti generati **non sono validi** per viaggi reali su Trenord o altre reti di trasporto.
-
----
-
-## ✨ Funzionalità
-
-### 🏠 Home
-- Schermata di benvenuto con accesso rapido alle sezioni principali
-
-### 🛒 Acquista
-- **Ricerca Comuni**: database di **190 comuni** dell'area STIBM con ricerca in tempo reale e autocompletamento
-- **Selezione per Comune (Da → A)**: inserimento partenza e arrivo con calcolo automatico delle zone tariffarie
-- **Selezione per Zone STIBM**: slider interattivo a doppio cursore (Mi1, Mi3–Mi9) con mappa visuale delle zone
-- **Mappa zone**: rappresentazione grafica con pinch-to-zoom delle 8 zone tariffarie concentriche
-- **Calcolo tariffa**: tabella tariffaria non lineare con distinzione percorsi Mi1 vs non-Mi1
-- **Selezione passeggeri**: configurazione quantità biglietti (1–9)
-- **Scelta data/ora**: impostazione partenza con calcolo automatico validità
-
-### 💳 Wallet
-- **Lista biglietti attivi**: card con design nativo iOS (gradient verde Trenord `#006B32`)
-- **Dettaglio biglietto**: espansione con animazione per visualizzare QR Code, PNR, dati di viaggio
-- **Generazione QR Code**: animazione "Epic Assembly" con griglia 21×21, finder patterns 7×7, simulazione terminale e progress bar
-- **Aggiornamento**: pulsante per forzare il reload con pulizia cache del Service Worker
-
-### 📍 Gite
-- Mappa interattiva delle zone STIBM con legenda cromatica e pinch-to-zoom
-
-### 👤 Profilo
-- Dati utente (demo)
-- **Documentazione tecnica**: sezione accordion con dettagli su architettura, gestione zone, tariffe e logica QR
-- **Credits** con link GitHub e Instagram
+> **Disclaimer**: Questo è un progetto **esclusivamente didattico e dimostrativo**. I biglietti generati **non hanno alcuna validità legale** e **non possono essere utilizzati come titolo di viaggio**. Per viaggiare è necessario acquistare biglietti validi tramite i canali ufficiali Trenord o ATM. L'applicazione non è affiliata, sponsorizzata o connessa a Trenord S.r.l., ATM S.p.A. o qualsiasi ente del trasporto pubblico. I marchi citati sono proprietà dei rispettivi titolari.
 
 ---
 
-## 🛠️ Stack Tecnologico
+## Funzionalità
+
+### Home — Guida completa
+- Panoramica delle sezioni con icone animate
+- Guide passo-passo per acquisto, attivazione e verifica QR
+- **Demo interattive** con animazioni IntersectionObserver (form auto-fill, slider zone, generazione biglietto, Tap & Go, assemblaggio QR)
+- Consigli utili per installazione PWA, eliminazione biglietti e ricevute PDF
+
+### Acquista
+- **Ricerca comuni** Da → A con autocompletamento su database di 190 comuni STIBM
+- **Slider zone** interattivo doppio cursore (Mi1, Mi3-Mi9) con mappa visuale
+- Calcolo tariffa automatico con formula non lineare
+- Selezione quantità biglietti (1-10), carnet e abbonamenti
+- Sezione MXP dedicata per biglietti aeroportuali
+
+### Wallet
+- Card biglietti con design nativo iOS e swipe-to-delete
+- **Tap & Go**: attivazione biglietto con countdown validità
+- **QR Code** con animazione di assemblaggio (griglia 21×21, finder patterns, progress bar)
+- Protezione anti-screenshot (blur on tap)
+- Visualizzazione dati QR raw (base64 + JSON payload + checksum + UUID)
+- Sezioni separate per biglietti, carnet e abbonamenti
+
+### Changelog
+- Cronologia aggiornamenti dal repository GitHub (via GitHub API)
+
+### Profilo
+- **Profilo utente** con email e gestione account
+- **Dati fatturazione** (privato/azienda) con autocompletamento comuni e paesi
+- **Storico acquisti** con filtro date drum picker e ricevute PDF scaricabili
+- **Statistiche viaggio** — contatore biglietti, spesa totale, km stimati, risparmio vs auto, zone più utilizzate
+- **Disclaimer e note legali** — 8 sezioni complete (scopo, validità, animazione, dati, affiliazione, IP, responsabilità, accettazione)
+- **Opzioni sviluppatore** — Local Storage viewer, info dispositivo, performance, console in-app, esporta/importa dati JSON, reset app
+- **Notifiche scadenza** — avviso in-app e notifica nativa 10 minuti prima della scadenza del biglietto
+- FAQ con 11 domande e risposte
+- Come funziona — documentazione tecnica con formule di calcolo e struttura QR
+- Aggiornamento app con verifica via GitHub API
+
+---
+
+## Stack tecnologico
 
 | Tecnologia | Utilizzo |
-|------------|----------|
-| **HTML5** | Struttura semantica, 5 schermate + modali |
-| **CSS3** | Design system iOS-native, animazioni keyframe, dark gradients |
-| **Vanilla JavaScript** | Logica applicativa (~1500 righe), nessun framework |
-| **Service Worker** | Cache offline, strategia cache-first |
-| **Web App Manifest** | Installazione PWA, standalone mode |
-| **qrcodejs** | Generazione QR Code via CDN |
-| **GitHub API** | Controllo versione con popup di aggiornamento |
-| **localStorage** | Persistenza biglietti e versione app |
+|---|---|
+| HTML5 | Struttura semantica, schermate multiple + sub-screen + modali |
+| CSS3 | Design iOS-native, animazioni keyframe, safe area support |
+| Vanilla JavaScript | Logica applicativa completa, nessun framework |
+| Service Worker | Cache offline, strategia cache-first |
+| Web App Manifest | Installazione PWA, standalone mode |
+| qrcodejs | Generazione QR Code (CDN) |
+| html2canvas + jsPDF | Generazione ricevute PDF |
+| GitHub API | Changelog e controllo aggiornamenti |
+| localStorage | Persistenza completa lato client |
 
 ---
 
-## 📂 Struttura del Progetto
+## Struttura del progetto
 
 ```
 Trenord/
-├── index.html          # App shell — 5 schermate, modali, tab bar
-├── style.css           # Design system completo (~2350 righe)
-├── app.js              # Logica applicativa (~1500 righe)
+├── index.html          # App shell — schermate, sub-screen, modali, tab bar
+├── style.css           # Design system completo
+├── app.js              # Logica applicativa
 ├── sw.js               # Service Worker con cache management
-├── manifest.json       # Web App Manifest per PWA
+├── manifest.json       # Web App Manifest
 ├── icon.png            # Icona app 512×512
-└── README.md           # Questo file
+├── README.md           # Documentazione
+├── STIBM Areas/        # Immagini mappe zone tariffarie
+└── SVG Icons/          # Icone SVG personalizzate
 ```
 
 ---
 
-## 🚀 Avvio Rapido
+## Avvio locale
 
-### Utilizzo diretto (GitHub Pages)
-L'app è accessibile come PWA e può essere aggiunta alla home screen del dispositivo:
-
-1. Apri il link GitHub Pages nel browser mobile
-2. **iOS**: Safari → Condividi → "Aggiungi a Home"
-3. **Android**: Chrome → Menu → "Installa app"
-
-### Sviluppo locale
 ```bash
 # Clona il repository
 git clone https://github.com/sjmvne/Trenord.git
 cd Trenord
 
-# Avvia un server locale (necessario per Service Worker)
+# Avvia un server locale (necessario per Service Worker e fetch)
 npx serve .
 # oppure
 python -m http.server 8000
 ```
 
-> ⚠️ Il Service Worker richiede HTTPS o `localhost` per funzionare.
+Il Service Worker richiede HTTPS o `localhost` per funzionare. Aprire i file con `file://` causerà errori CORS.
+
+Su mobile è possibile installare l'app come PWA:
+- **iOS**: Safari → Condividi → "Aggiungi alla schermata Home"
+- **Android**: Chrome → Menu → "Installa app"
 
 ---
 
-## 🎨 Design
+## Privacy
 
-L'interfaccia replica fedelmente il design nativo iOS con:
-
-- **Colore primario**: Verde Trenord `#006B32`
-- **Tipografia**: `-apple-system, BlinkMacSystemFont, 'SF Pro'`
-- **Componenti**: Card con bordi arrotondati, accordion con chevron animato, bottom tab bar con 5 sezioni
-- **Animazioni**: transizioni fluide cubic-bezier, animazione QR "Epic Assembly" con terminale simulato (~20s)
-- **Safe area**: supporto notch con `env(safe-area-inset-*)`
+Tutti i dati restano nel `localStorage` del browser. Nessuna informazione viene trasmessa a server esterni. L'app non usa cookie, analytics o sistemi di tracciamento.
 
 ---
 
-## 🗺️ Zone STIBM
+## Licenza
 
-L'app gestisce le 8 zone tariffarie del sistema STIBM:
+Progetto didattico. I marchi Trenord, STIBM e correlati sono proprietà dei rispettivi titolari.
 
-| Zona | Colore | Hex |
-|------|--------|-----|
+Sviluppato da un pendolare stanco dei ritardi e dei treni soppressi.
 | Mi1 | Viola rigato | `#BDA3C8` |
 | Mi3 | Viola | `#BDA3C8` |
 | Mi4 | Blu | `#585DA4` |
