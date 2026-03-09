@@ -4310,11 +4310,13 @@ body.qr-brightness-mode .screen.active {
 /* Unified main table (intestatario + meta + inoltro) */
 .receipt-main-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     margin-bottom: 22px;
     table-layout: fixed;
     font-size: 12px;
     margin-top: 20px;
+    border: 0;
 }
 
 .receipt-main-table td {
@@ -4324,7 +4326,17 @@ body.qr-brightness-mode .screen.active {
     vertical-align: top;
     font-size: 12px;
     line-height: 1.4;
-    border: 1px solid #e3e3e3;
+    border: 0;
+    border-top: 1px solid #e3e3e3;
+    border-left: 1px solid #e3e3e3;
+}
+
+.receipt-main-table td:last-child {
+    border-right: 1px solid #e3e3e3;
+}
+
+.receipt-main-table tr:last-child td {
+    border-bottom: 1px solid #e3e3e3;
 }
 
 .receipt-main-table td.r-invis {
@@ -4341,9 +4353,11 @@ body.qr-brightness-mode .screen.active {
 /* Items table */
 .receipt-items-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     table-layout: fixed;
     font-size: 12px;
+    border: 0;
 }
 
 .receipt-items-table th,
@@ -4351,10 +4365,32 @@ body.qr-brightness-mode .screen.active {
     padding: 6px 8px;
     text-align: left;
     color: #111;
-    border: 1px solid #e3e3e3;
+    border: 0;
+    border-top: 1px solid #e3e3e3;
+    border-left: 1px solid #e3e3e3;
     vertical-align: top;
     font-size: 12px;
     line-height: 1.4;
+}
+
+.receipt-items-table tr > *:last-child {
+    border-right: 1px solid #e3e3e3;
+}
+
+.receipt-items-table tr:last-child > * {
+    border-bottom: 1px solid #e3e3e3;
+}
+
+/* Merge effect for first two columns across last item row + total row */
+.receipt-items-table tr:nth-last-child(2) td:nth-child(-n+2) {
+    border-bottom: 0;
+}
+
+.receipt-items-table .receipt-total-row td.total-empty {
+    border-top: 1px solid #e3e3e3;
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 0;
 }
 
 .receipt-items-table th {
@@ -4363,10 +4399,6 @@ body.qr-brightness-mode .screen.active {
 
 .receipt-items-table .text-right {
     text-align: center;
-}
-
-.receipt-total-row td.total-empty {
-    border: none;
 }
 
 .receipt-total-row td.total-label,
