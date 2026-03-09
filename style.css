@@ -3575,7 +3575,7 @@ body.qr-brightness-mode .screen.active {
 
 .sub-screen-title {
     color: #fff;
-    font-size: 17px;
+    font-size: 15px;
     font-weight: 600;
     letter-spacing: -0.2px;
 }
@@ -4303,7 +4303,7 @@ body.qr-brightness-mode .screen.active {
 .receipt-company-info {
     font-size: 11px;
     line-height: 1;
-    color: var(--gray-label);
+    color: var(--text-secondary);
     text-align: left;
 }
 
@@ -4314,6 +4314,7 @@ body.qr-brightness-mode .screen.active {
     margin-bottom: 22px;
     table-layout: fixed;
     font-size: 12px;
+    margin-top: 20px;
 }
 
 .receipt-main-table td {
@@ -4416,7 +4417,7 @@ body.qr-brightness-mode .screen.active {
     .receipt-main-table td,
     .receipt-items-table th,
     .receipt-items-table td {
-        font-size: 8px;
+        font-size: 7px;
         padding: 4px 3px;
     }
 
