@@ -1761,7 +1761,7 @@ body.qr-brightness-mode .screen.active {
 .home-body {
     flex: 1;
     overflow-y: auto;
-    padding: 24px 0;
+    padding: 8px 0 calc(80px + var(--safe-bottom) + 40px);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1770,9 +1770,14 @@ body.qr-brightness-mode .screen.active {
 
 .home-guide-header {
     text-align: center;
-    padding: 0 20px;
-    margin-bottom: 16px;
+    padding: 16px 20px 0;
+    margin-bottom: 8px;
     width: 100%;
+}
+
+.home-guide-emoji {
+    font-size: 48px;
+    margin-bottom: 8px;
 }
 
 .home-guide-title {
@@ -1786,6 +1791,17 @@ body.qr-brightness-mode .screen.active {
     font-size: 15px;
     color: #8E8E93;
     line-height: 1.4;
+}
+
+.home-section-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #8E8E93;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 20px 20px 6px;
+    width: 100%;
+    max-width: 500px;
 }
 
 .home-guide-steps {
@@ -1821,6 +1837,27 @@ body.qr-brightness-mode .screen.active {
     flex-shrink: 0;
     margin-top: 2px;
 }
+
+.home-step-icon-wrap {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+.home-step-icon-wrap svg {
+    width: 20px;
+    height: 20px;
+}
+.home-step-icon-green  { background: linear-gradient(135deg, #2C7F44, #62A76C); }
+.home-step-icon-blue   { background: linear-gradient(135deg, #3478F6, #5AC8FA); }
+.home-step-icon-orange { background: linear-gradient(135deg, #E37603, #FFB74D); }
+.home-step-icon-purple { background: linear-gradient(135deg, #585DA4, #9C27B0); }
+.home-step-icon-teal   { background: linear-gradient(135deg, #00897B, #4DB6AC); }
+.home-step-icon-red    { background: linear-gradient(135deg, #D32F2F, #EF5350); }
 
 .home-step-content {
     flex: 1;
@@ -1861,6 +1898,21 @@ body.qr-brightness-mode .screen.active {
 .home-step-text strong {
     color: #2C7F44;
     font-weight: 600;
+}
+
+.home-tip-card {
+    background: #FFFDE7;
+    border: 1px solid #FFF9C4;
+}
+
+.home-tip-emoji {
+    font-size: 24px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 .home-welcome-text strong {
@@ -3607,11 +3659,30 @@ body.qr-brightness-mode .screen.active {
    PROFILO SCREEN (Redesigned)
    ============================================ */
 
+/* Green header background that extends behind user card */
+.profilo-header-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 180px;
+    background: linear-gradient(180deg, var(--green-dark) 0%, var(--green-header) 100%);
+    z-index: 0;
+    flex-shrink: 0;
+}
+
+#profilo-screen {
+    position: relative;
+}
+
 .profilo-body {
     flex: 1;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     padding: 0 0 calc(80px + var(--safe-bottom) + 40px);
+    position: relative;
+    z-index: 1;
+    padding-top: calc(var(--safe-top) + 26px);
 }
 
 .profilo-body::-webkit-scrollbar {
@@ -3625,9 +3696,9 @@ body.qr-brightness-mode .screen.active {
 
 .profilo-user-card {
     background: #fff;
-    margin: 16px;
+    margin: 60px 16px 0;
     border-radius: 14px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
     padding: 18px;
     display: flex;
     align-items: center;
@@ -3657,13 +3728,20 @@ body.qr-brightness-mode .screen.active {
 .profilo-user-greeting {
     font-size: 14px;
     color: #8E8E93;
-    margin-bottom: 2px;
+    margin-bottom: 1px;
 }
 
 .profilo-user-name {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
     color: #1C1C1E;
+    line-height: 1.2;
+}
+
+.profilo-user-email {
+    font-size: 13px;
+    color: #AEAEB2;
+    margin-top: 2px;
 }
 
 .profilo-user-chevron {
@@ -3671,15 +3749,83 @@ body.qr-brightness-mode .screen.active {
     flex-shrink: 0;
 }
 
+/* Section titles — flat style like Trenord app */
 .profilo-section-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: #8E8E93;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 20px 32px 8px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #1C1C1E;
+    text-transform: none;
+    letter-spacing: 0;
+    padding: 24px 20px 10px;
 }
 
+/* Flat list without card wrappers — like Trenord screenshot */
+.profilo-list-flat {
+    margin: 0;
+    padding: 0;
+}
+
+.profilo-item-flat {
+    display: flex;
+    align-items: center;
+    padding: 14px 20px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s;
+    gap: 14px;
+    background: transparent;
+    border-bottom: 0.5px solid #E5E5EA;
+}
+
+.profilo-item-flat:last-child {
+    border-bottom: none;
+}
+
+.profilo-item-flat:active {
+    background: rgba(0,0,0,0.04);
+}
+
+.profilo-item-icon-flat {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #8E8E93;
+}
+
+.profilo-item-icon-flat svg {
+    width: 20px;
+    height: 20px;
+}
+
+.profilo-icon-red {
+    color: #D32F2F;
+}
+
+.profilo-item-label-flat {
+    flex: 1;
+    font-size: 16px;
+    font-weight: 400;
+    color: #1C1C1E;
+}
+
+.profilo-item-label-flat.text-red {
+    color: #D32F2F;
+}
+
+.profilo-item-chevron-flat {
+    color: #C7C7CC;
+    flex-shrink: 0;
+}
+
+.profilo-item-chevron-flat svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Keep old profilo-group/profilo-item for backward compat if needed */
 .profilo-group {
     background: #fff;
     margin: 0 16px 0;
@@ -5055,4 +5201,99 @@ body.qr-brightness-mode .screen.active {
 .faq-item.open .faq-answer {
     max-height: 500px;
     padding: 0 16px 16px;
+}
+
+/* ============================================
+   DEVELOPER OPTIONS
+   ============================================ */
+
+.dev-container {
+    padding: 16px;
+}
+
+.dev-section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0 12px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1C1C1E;
+}
+
+.dev-badge {
+    background: #E8F5E9;
+    color: #2C7F44;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: auto;
+}
+
+.dev-storage-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.dev-storage-item {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    overflow: hidden;
+}
+
+.dev-storage-key {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.dev-storage-key-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #585DA4;
+    font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+    word-break: break-all;
+}
+
+.dev-storage-key-size {
+    font-size: 11px;
+    color: #AEAEB2;
+    flex-shrink: 0;
+    margin-left: 8px;
+}
+
+.dev-storage-value {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.dev-storage-item.open .dev-storage-value {
+    max-height: 600px;
+}
+
+.dev-storage-value-inner {
+    padding: 0 14px 12px;
+    overflow-x: auto;
+}
+
+.dev-storage-value pre {
+    font-size: 11px;
+    font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+    color: #3C3C43;
+    background: #F2F2F7;
+    border-radius: 8px;
+    padding: 10px 12px;
+    white-space: pre-wrap;
+    word-break: break-all;
+    margin: 0;
+    max-height: 300px;
+    overflow-y: auto;
+    line-height: 1.5;
 }

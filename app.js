@@ -2044,6 +2044,8 @@ function openSubScreen(screenId) {
         loadBillingDataIntoForm();
     } else if (screenId === 'screen-profilo-utente') {
         renderProfiloUtente();
+    } else if (screenId === 'screen-developer') {
+        renderDevStorage();
     }
 }
 
@@ -2713,6 +2715,7 @@ function updateProfiloDisplayName() {
     if (el && billing && billing.nome) {
         el.textContent = billing.nome + ' ' + billing.cognome;
     }
+    updateProfiloEmail();
 }
 
 // ============================================
@@ -2977,5 +2980,63 @@ function toggleFaq(el) {
     // Toggle current
     if (!isOpen) {
         el.classList.add('open');
+    }
+}
+
+// ============================================
+// DEVELOPER OPTIONS — Local Storage Viewer
+// ============================================
+
+function renderDevStorage() {
+    const list = document.getElementById('dev-storage-list');
+    const countEl = document.getElementById('dev-storage-count');
+    if (!list) return;
+
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        keys.push(localStorage.key(i));
+    }
+    keys.sort();
+
+    if (countEl) countEl.textContent = keys.length + ' chav' + (keys.length === 1 ? 'e' : 'i');
+
+    if (keys.length === 0) {
+        list.innerHTML = '<div style="text-align:center;padding:40px 16px;color:#8E8E93;font-size:14px;">Nessun dato nel Local Storage</div>';
+        return;
+    }
+
+    list.innerHTML = keys.map(function(key) {
+        var raw = localStorage.getItem(key) || '';
+        var size = new Blob([raw]).size;
+        var sizeLabel = size > 1024 ? (size / 1024).toFixed(1) + ' KB' : size + ' B';
+        var formatted = raw;
+        try {
+            var parsed = JSON.parse(raw);
+            formatted = JSON.stringify(parsed, null, 2);
+        } catch(e) {}
+        // Sanitize output to prevent XSS
+        formatted = formatted.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return '<div class="dev-storage-item" onclick="this.classList.toggle(\'open\')">' +
+            '<div class="dev-storage-key">' +
+                '<span class="dev-storage-key-name">' + key.replace(/</g, '&lt;') + '</span>' +
+                '<span class="dev-storage-key-size">' + sizeLabel + '</span>' +
+            '</div>' +
+            '<div class="dev-storage-value"><div class="dev-storage-value-inner"><pre>' + formatted + '</pre></div></div>' +
+        '</div>';
+    }).join('');
+}
+
+function refreshDevStorage() {
+    renderDevStorage();
+}
+
+// ============================================
+// PROFILO — Update email display
+// ============================================
+
+function updateProfiloEmail() {
+    var el = document.getElementById('profilo-display-email');
+    if (el) {
+        el.textContent = localStorage.getItem('trenord_email') || '';
     }
 }
