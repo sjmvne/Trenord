@@ -3669,10 +3669,12 @@ body.qr-brightness-mode .screen.active {
     background: linear-gradient(180deg, var(--green-dark) 0%, var(--green-header) 100%);
     z-index: 0;
     flex-shrink: 0;
+    pointer-events: none;
 }
 
 #profilo-screen {
     position: relative;
+    overflow: hidden;
 }
 
 .profilo-body {
@@ -3683,6 +3685,10 @@ body.qr-brightness-mode .screen.active {
     position: relative;
     z-index: 1;
     padding-top: calc(var(--safe-top) + 26px);
+    min-height: 0;
+    height: 100%;
+    touch-action: pan-y;
+    overscroll-behavior: contain;
 }
 
 .profilo-body::-webkit-scrollbar {
