@@ -980,6 +980,9 @@ function buildQRContent(ticket) {
 // ── Tab Navigation ──
 
 function switchTab(tabName) {
+    // Defensive reset: if a modal flow left the body locked, restore page scroll.
+    document.body.style.overflow = '';
+
     // Hide all tab screens
     Object.values(SCREEN_MAP).forEach(id => {
         document.getElementById(id).classList.remove('active');

@@ -3674,7 +3674,6 @@ body.qr-brightness-mode .screen.active {
 
 #profilo-screen {
     position: relative;
-    overflow: hidden;
 }
 
 .profilo-body {
@@ -3686,8 +3685,6 @@ body.qr-brightness-mode .screen.active {
     z-index: 1;
     padding-top: calc(var(--safe-top) + 26px);
     min-height: 0;
-    height: 100%;
-    touch-action: pan-y;
     overscroll-behavior: contain;
 }
 
