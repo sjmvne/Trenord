@@ -1590,6 +1590,127 @@ body.qr-brightness-mode .screen.active {
     flex-shrink: 0;
 }
 
+.detail-receipt-link {
+    margin-top: 0;
+    border-top: none;
+}
+
+/* ===== DISCLAIMER OBBLIGATORIO ===== */
+
+.disclaimer-mandatory-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99998;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.disclaimer-mandatory-overlay.active {
+    display: flex;
+    animation: disclaimerFadeIn 0.4s ease forwards;
+}
+
+.disclaimer-mandatory-overlay.dismiss {
+    animation: disclaimerFadeOut 0.5s ease forwards;
+}
+
+@keyframes disclaimerFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes disclaimerFadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+.disclaimer-mandatory-card {
+    background: #fff;
+    border-radius: 20px;
+    max-width: 380px;
+    width: 100%;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: disclaimerCardIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes disclaimerCardIn {
+    from { opacity: 0; transform: scale(0.9) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.disclaimer-mandatory-icon {
+    text-align: center;
+    padding: 24px 0 8px;
+}
+
+.disclaimer-mandatory-icon svg {
+    width: 40px;
+    height: 40px;
+}
+
+.disclaimer-mandatory-title {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;
+    color: #1C1C1E;
+    margin: 0 0 4px;
+}
+
+.disclaimer-mandatory-body {
+    padding: 12px 24px 16px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    max-height: 40vh;
+    font-size: 14px;
+    color: #3C3C43;
+    line-height: 1.55;
+}
+
+.disclaimer-mandatory-body p {
+    margin: 0 0 10px;
+}
+
+.disclaimer-mandatory-body p:last-child {
+    margin-bottom: 0;
+}
+
+.disclaimer-mandatory-scroll-hint {
+    text-align: center;
+    font-size: 12px;
+    color: #AEAEB2;
+    padding: 4px 0;
+}
+
+.disclaimer-mandatory-btn {
+    display: block;
+    width: calc(100% - 32px);
+    margin: 8px 16px 16px;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    background: #585DA4;
+    color: #fff;
+    transition: opacity 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.disclaimer-mandatory-btn:disabled {
+    background: #C7C7CC;
+    cursor: not-allowed;
+}
+
 /* ============================================
    MODAL OVERLAYS (iOS Style Alerts)
    ============================================ */
@@ -2459,6 +2580,47 @@ body.qr-brightness-mode .screen.active {
     flex-shrink: 0;
 }
 
+/* ===== FLY TO WALLET ANIMATION ===== */
+
+.fly-ticket {
+    position: fixed;
+    z-index: 10001;
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    pointer-events: none;
+}
+
+.fly-ticket-inner {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px 28px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    text-align: center;
+    min-width: 140px;
+}
+
+.fly-ticket-zone {
+    font-size: 14px;
+    font-weight: 700;
+    color: #585DA4;
+    margin-bottom: 4px;
+}
+
+.fly-ticket-price {
+    font-size: 18px;
+    font-weight: 800;
+    color: #1C1C1E;
+}
+
+.wallet-pulse {
+    animation: walletPulse 0.5s ease;
+}
+
+@keyframes walletPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.25); }
+}
+
 /* ===== QR ASSEMBLY ANIMATION ===== */
 
 .qr-assembly-modal {
@@ -2853,6 +3015,55 @@ body.qr-brightness-mode .screen.active {
     max-height: 200px;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+}
+
+.qr-data-info {
+    font-size: 13px;
+    color: #3C3C43;
+    line-height: 1.5;
+}
+
+.qr-data-info strong {
+    color: #1C1C1E;
+}
+
+.qr-data-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 10px;
+    border: 1px solid #E5E5EA;
+}
+
+.qr-data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.qr-data-table th {
+    background: #F2F2F7;
+    padding: 8px 10px;
+    text-align: left;
+    font-weight: 600;
+    color: #8E8E93;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.qr-data-table td {
+    padding: 8px 10px;
+    border-top: 0.5px solid #E5E5EA;
+    color: #1C1C1E;
+}
+
+.qr-data-table code {
+    background: #F2F2F7;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-family: 'SF Mono', 'Menlo', monospace;
+    font-size: 11px;
+    color: #585DA4;
 }
 
 /* ============================================
@@ -3661,7 +3872,7 @@ body.qr-brightness-mode .screen.active {
 
 /* Green header background that extends behind user card */
 .profilo-header-bg {
-    height: calc(180px + var(--safe-top));
+    height: calc(110px + var(--safe-top));
     background: linear-gradient(180deg, var(--green-dark) 0%, var(--green-header) 100%);
     flex-shrink: 0;
     pointer-events: none;
@@ -3687,7 +3898,7 @@ body.qr-brightness-mode .screen.active {
 
 .profilo-user-card {
     background: #fff;
-    margin: -60px 16px 0;
+    margin: -30px 16px 0;
     position: relative;
     border-radius: 14px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.1);
@@ -5406,7 +5617,7 @@ body.qr-brightness-mode .screen.active {
     justify-content: center;
     gap: 8px;
     width: calc(100% - 32px);
-    margin: 10px 16px 0;
+    margin: 10px 16px 10px;
     padding: 12px 16px;
     border: none;
     border-radius: 10px;
@@ -5653,6 +5864,129 @@ body.qr-brightness-mode .screen.active {
     margin: 0;
 }
 
+/* Stats eco cards */
+.stats-eco-card {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    padding: 4px 0;
+    margin-bottom: 10px;
+}
+
+.stats-eco-row {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 10px;
+    border-bottom: 0.5px solid #F2F2F7;
+}
+
+.stats-eco-row:last-child {
+    border-bottom: none;
+}
+
+.stats-eco-icon {
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.stats-eco-label {
+    flex: 1;
+    font-size: 14px;
+    color: #1C1C1E;
+}
+
+.stats-eco-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1C1C1E;
+    flex-shrink: 0;
+}
+
+.stats-eco-green {
+    color: #2C7F44;
+}
+
+.stats-eco-highlight {
+    background: #E8F5E9;
+    border-radius: 0 0 14px 14px;
+    border-bottom: none;
+}
+
+.stats-info-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 16px 4px;
+    font-size: 11px;
+    color: #AEAEB2;
+    line-height: 1.5;
+}
+
+.stats-info-note svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.stats-settings-btn {
+    display: block;
+    width: 100%;
+    background: #F2F2F7;
+    border: none;
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #585DA4;
+    cursor: pointer;
+    margin-top: 8px;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.stats-settings-form {
+    padding: 4px 0 0;
+}
+
+.stats-settings-desc {
+    font-size: 13px;
+    color: #8E8E93;
+    margin: 0 0 16px;
+    line-height: 1.4;
+}
+
+.stats-settings-field {
+    margin-bottom: 14px;
+}
+
+.stats-settings-field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1C1C1E;
+    margin-bottom: 4px;
+}
+
+.stats-settings-hint {
+    font-size: 11px;
+    color: #AEAEB2;
+    margin-bottom: 6px;
+    line-height: 1.4;
+}
+
+.stats-settings-field input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #E5E5EA;
+    border-radius: 10px;
+    font-size: 15px;
+    color: #1C1C1E;
+    background: #F9F9F9;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+}
+
 /* Footer repo link */
 .profilo-footer-repo {
     display: inline-flex;
@@ -5830,29 +6164,22 @@ body.qr-brightness-mode .screen.active {
     border-radius: 10px;
 }
 
-/* Typing animation */
+/* Typing animation — JS-driven typewriter */
 .demo-type {
     min-width: 20px;
-    border-right: 2px solid #2C7F44;
     overflow: hidden;
     white-space: nowrap;
+    border-right: 2px solid transparent;
+    transition: border-color 0.2s;
 }
 
-.home-step-demo.visible .demo-type {
-    animation: demo-typing 1.5s steps(16) forwards, demo-blink-caret 0.6s step-end 3;
+.demo-type.typing-active {
+    border-right-color: #2C7F44;
+    animation: demo-blink-caret 0.6s step-end infinite;
 }
 
-.home-step-demo.visible .demo-field:nth-child(2) .demo-type {
-    animation-delay: 1.5s;
-}
-
-.home-step-demo.visible .demo-field:nth-child(3) .demo-type {
-    animation-delay: 3s;
-}
-
-@keyframes demo-typing {
-    from { width: 0; }
-    to { width: 100%; border-right-color: transparent; }
+.demo-type.typing-done {
+    border-right-color: transparent;
 }
 
 @keyframes demo-blink-caret {
@@ -6108,4 +6435,83 @@ body.qr-brightness-mode .screen.active {
     color: #1C1C1E;
     margin-top: 4px;
     font-variant-numeric: tabular-nums;
+}
+
+/* ===== FLIP CARD 3D DEMO ===== */
+
+.demo-flip-card {
+    perspective: 600px;
+    width: 100%;
+}
+
+.demo-flip-inner {
+    position: relative;
+    width: 100%;
+    min-height: 180px;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+}
+
+.home-step-demo.visible .demo-flip-inner {
+    transform: rotateY(180deg);
+    transition-delay: 1s;
+}
+
+.demo-flip-front,
+.demo-flip-back {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    box-sizing: border-box;
+}
+
+.demo-flip-front {
+    background: linear-gradient(135deg, #585DA4 0%, #7B80C9 100%);
+    color: #fff;
+}
+
+.demo-flip-back {
+    background: #fff;
+    transform: rotateY(180deg);
+    text-align: center;
+}
+
+.demo-flip-status {
+    font-size: 11px;
+    font-weight: 700;
+    color: #6BF09C;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.demo-flip-route {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 2px;
+}
+
+.demo-flip-type {
+    font-size: 12px;
+    opacity: 0.8;
+    margin-bottom: 6px;
+}
+
+.demo-flip-price {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.demo-flip-hint {
+    font-size: 10px;
+    opacity: 0.6;
+    margin-top: 12px;
 }

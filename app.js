@@ -14,8 +14,8 @@ const ZONES = [
     { label: 'Mi9', number: 9, color: '#A61D27', pattern: 'striped-red' }
 ];
 
-const APP_BUILD_VERSION = 'v43';
-const APP_BUILD_LABEL = 'Build ' + APP_BUILD_VERSION;
+const APP_BUILD_VERSION = '1.0';
+const APP_BUILD_LABEL = 'v' + APP_BUILD_VERSION;
 
 // ── Comuni STIBM ──
 const COMUNI_STIBM = [
@@ -181,6 +181,7 @@ const btnGeneraText = document.getElementById('btn-genera-text');
 // ── Initialization ──
 document.addEventListener('DOMContentLoaded', () => {
     initSplashScreen();
+    checkDisclaimerAccepted();
     loadTickets();
     initDefaults();
     initSliderLabels();
@@ -201,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function syncBuildLabels() {
     const footerVersionEl = document.querySelector('.profilo-footer-version');
     if (footerVersionEl) {
-        footerVersionEl.textContent = footerVersionEl.textContent.replace(/Build\s+v\d+/i, APP_BUILD_LABEL);
+        footerVersionEl.textContent = APP_BUILD_LABEL + ' · Mar 2026';
     }
 
     const aggiornaVersionEl = document.querySelector('.aggiorna-version');
@@ -260,7 +261,7 @@ function bindEvents() {
         item.addEventListener('click', () => {
             switchTab(item.dataset.tab);
             if (item.dataset.tab === 'gite') {
-                fetchChangelog();
+                renderStats();
             }
         });
     });
@@ -475,7 +476,11 @@ function generateTickets() {
         createOrder(generatedTickets, purchaseDate);
 
         renderWalletTickets();
-        switchTab('wallet');
+
+        // Fly-to-wallet animation
+        flyToWallet(info, () => {
+            switchTab('wallet');
+        });
     });
 }
 
@@ -547,16 +552,10 @@ function createTicketCard(ticket, isExpired) {
                 <span class="ticket-value">${duration} min</span>
             </div>`;
     } else {
-        const startDate = new Date(ticket.startDate);
-        const endDate = new Date(ticket.endDate);
         validitaHTML = `
             <div class="ticket-field">
                 <span class="ticket-label">VALIDITÀ</span>
-                <div class="ticket-validita">
-                    <span>${formatDateShort(startDate)}</span>
-                    <span class="validita-sep">|</span>
-                    <span>${formatDateShort(endDate)}</span>
-                </div>
+                <span class="ticket-value">${duration} min</span>
             </div>`;
     }
 
@@ -742,10 +741,17 @@ function activateTicket() {
     ticket.endDate = endDate.toISOString();
     ticket.status = 'active';
 
+    const activatedId = pendingActivationTicketId;
+
     saveTickets();
     closeModal('tapgo-modal');
     pendingActivationTicketId = null;
     renderWalletTickets();
+
+    // Auto-open ticket detail after activation
+    setTimeout(function() {
+        openDetail(activatedId);
+    }, 400);
 }
 
 function cancelActivation() {
@@ -814,9 +820,10 @@ function showQRData() {
 
     // Decode base64 to JSON
     let decodedJSON = '';
+    let parsed = null;
     try {
         const jsonStr = decodeURIComponent(escape(atob(base64Part)));
-        const parsed = JSON.parse(jsonStr);
+        parsed = JSON.parse(jsonStr);
         decodedJSON = JSON.stringify(parsed, null, 2);
     } catch(e) {
         decodedJSON = 'Errore nella decodifica';
@@ -825,11 +832,56 @@ function showQRData() {
     const section = document.getElementById('qr-data-section');
     const rawEl = document.getElementById('qr-data-raw');
     const decodedEl = document.getElementById('qr-data-decoded');
+    const fieldsEl = document.getElementById('qr-data-fields');
 
     rawEl.textContent = qrContent;
     decodedEl.textContent = decodedJSON;
 
+    // Populate fields table
+    if (parsed && fieldsEl) {
+        const fieldDescriptions = {
+            k0: 'Tipo documento',
+            k1: 'Codice PNR',
+            k2: 'Codice operatore',
+            k3: 'Classe',
+            k4: 'Data attivazione',
+            k5: 'Data scadenza',
+            k6: 'Data acquisto',
+            k7: 'Zona partenza',
+            k8: 'Zona arrivo',
+            k10: 'UUID biglietto'
+        };
+        let rows = '';
+        for (const key of Object.keys(fieldDescriptions)) {
+            const val = parsed[key];
+            const display = typeof val === 'object' ? JSON.stringify(val) : String(val || '—');
+            rows += '<tr><td><code>' + key + '</code></td><td>' + fieldDescriptions[key] + '</td><td>' + display + '</td></tr>';
+        }
+        fieldsEl.innerHTML = rows;
+    }
+
     section.style.display = section.style.display === 'block' ? 'none' : 'block';
+}
+
+// ── Go to Receipt from Detail ──
+
+function openReceiptFromDetail() {
+    if (!currentDetailTicket) return;
+    const orders = getOrders();
+    const ticket = currentDetailTicket;
+    // Match order by purchaseDate
+    const order = orders.find(o => o.date === ticket.purchaseDate);
+    if (!order) return;
+    closeDetail();
+    setTimeout(() => {
+        switchTab('profilo');
+        openSubScreen('screen-storico-acquisti');
+        renderStoricoAcquisti();
+        setTimeout(() => {
+            openOrderDetail(order.orderId);
+            setTimeout(() => openReceipt(order.orderId), 400);
+        }, 400);
+    }, 400);
 }
 
 // ── QR Code Generation ──
@@ -1004,6 +1056,9 @@ function switchTab(tabName) {
     // If wallet, render tickets
     if (tabName === 'wallet') {
         renderWalletTickets();
+    }
+    if (tabName === 'gite') {
+        renderStats();
     }
 }
 
@@ -1416,6 +1471,47 @@ function capitalizeComune(str) {
         }
         return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
     }).join(' ');
+}
+
+// ── Fly to Wallet Animation ──
+
+function flyToWallet(info, callback) {
+    const walletTab = document.querySelector('#global-tabbar .tabbar-item[data-tab="wallet"]');
+    if (!walletTab) { callback(); return; }
+
+    const walletRect = walletTab.getBoundingClientRect();
+    const walletX = walletRect.left + walletRect.width / 2;
+    const walletY = walletRect.top + walletRect.height / 2;
+
+    const el = document.createElement('div');
+    el.className = 'fly-ticket';
+    el.innerHTML = `
+        <div class="fly-ticket-inner">
+            <div class="fly-ticket-zone">${info.label}</div>
+            <div class="fly-ticket-price">${info.price.toFixed(2)} €</div>
+        </div>`;
+    document.body.appendChild(el);
+
+    const startX = window.innerWidth / 2;
+    const startY = window.innerHeight / 2;
+    el.style.left = startX + 'px';
+    el.style.top = startY + 'px';
+
+    requestAnimationFrame(() => {
+        el.style.transition = 'all 0.7s cubic-bezier(0.4, 0, 0.2, 1)';
+        el.style.left = walletX + 'px';
+        el.style.top = walletY + 'px';
+        el.style.transform = 'translate(-50%, -50%) scale(0.15)';
+        el.style.opacity = '0.3';
+    });
+
+    setTimeout(() => {
+        // Pulse wallet icon
+        walletTab.classList.add('wallet-pulse');
+        setTimeout(() => walletTab.classList.remove('wallet-pulse'), 500);
+        el.remove();
+        callback();
+    }, 750);
 }
 
 // ── QR Assembly Animation (Epic) ──
@@ -2028,6 +2124,52 @@ function initSplashScreen() {
 }
 
 // ============================================
+// DISCLAIMER OBBLIGATORIO (primo avvio)
+// ============================================
+
+function checkDisclaimerAccepted() {
+    if (localStorage.getItem('trenord_disclaimer_accepted')) return;
+    const overlay = document.getElementById('disclaimer-mandatory-overlay');
+    if (!overlay) return;
+    overlay.classList.add('active');
+
+    const body = document.getElementById('disclaimer-mandatory-body');
+    const btn = document.getElementById('disclaimer-accept-btn');
+    const hint = document.getElementById('disclaimer-scroll-hint');
+    if (!body || !btn) return;
+
+    function checkScroll() {
+        const scrolledToBottom = body.scrollTop + body.clientHeight >= body.scrollHeight - 10;
+        if (scrolledToBottom) {
+            btn.disabled = false;
+            if (hint) hint.style.display = 'none';
+        }
+    }
+
+    // If content is short enough to not scroll, enable immediately
+    requestAnimationFrame(() => {
+        if (body.scrollHeight <= body.clientHeight + 10) {
+            btn.disabled = false;
+            if (hint) hint.style.display = 'none';
+        }
+    });
+
+    body.addEventListener('scroll', checkScroll);
+}
+
+function acceptDisclaimer() {
+    localStorage.setItem('trenord_disclaimer_accepted', '1');
+    const overlay = document.getElementById('disclaimer-mandatory-overlay');
+    if (overlay) {
+        overlay.classList.add('dismiss');
+        setTimeout(() => {
+            overlay.classList.remove('active', 'dismiss');
+            overlay.style.display = 'none';
+        }, 500);
+    }
+}
+
+// ============================================
 // SUB-SCREEN NAVIGATION (iOS-style slide)
 // ============================================
 
@@ -2529,7 +2671,7 @@ async function shareReceipt() {
         const imgWidth = canvas.width * scale;
         const imgHeight = canvas.height * scale;
         const offsetX = (pageWidth - imgWidth) / 2;
-        const offsetY = (pageHeight - imgHeight) / 2;
+        const offsetY = margin;
 
         pdf.addImage(imgData, 'PNG', offsetX, offsetY, imgWidth, imgHeight);
         pdf.save('ricevuta-trenord.pdf');
@@ -3242,6 +3384,50 @@ function devResetApp() {
 // STATISTICHE VIAGGIO
 // ============================================
 
+// STIBM zone midpoint radii from Milano Duomo (km), based on real geographic data
+// Source: STIBM tariff zone boundaries — concentric rings around Milan
+var STIBM_ZONE_RADIUS = {
+    'Mi1': 3.5,   // Urban Milan (ATM) — avg trip ~3.5km from center
+    'Mi3': 9.5,   // First suburban ring (7-12km)
+    'Mi4': 15,    // Second suburban ring (12-18km)
+    'Mi5': 22.5,  // Third suburban ring (18-27km)
+    'Mi6': 31,    // Fourth suburban ring (27-35km)
+    'Mi7': 40,    // Fifth suburban ring (35-45km)
+    'Mi8': 50,    // Sixth suburban ring (45-55km)
+    'Mi9': 62.5   // Outer ring (55-70km) — e.g. Varese, Como, Lecco
+};
+
+// Average CO2 emissions per km: train ~41g, car ~120g (source: ISPRA / EEA)
+var CO2_TRAIN_G_KM = 41;
+var CO2_CAR_G_KM = 120;
+
+function getStatsSettings() {
+    try {
+        var s = JSON.parse(localStorage.getItem('trenord_stats_settings') || '{}');
+        return {
+            carCostKm: Number(s.carCostKm) || 0.35,          // €/km ACI 2024 avg
+            fuelConsumption: Number(s.fuelConsumption) || 6.5, // L/100km
+            fuelPrice: Number(s.fuelPrice) || 1.75,            // €/L
+            parkingCostTrip: Number(s.parkingCostTrip) || 0     // €/trip avg parking
+        };
+    } catch(e) {
+        return { carCostKm: 0.35, fuelConsumption: 6.5, fuelPrice: 1.75, parkingCostTrip: 0 };
+    }
+}
+
+function saveStatsSettings(settings) {
+    localStorage.setItem('trenord_stats_settings', JSON.stringify(settings));
+}
+
+function getZoneDistance(fromZone, toZone) {
+    var r1 = STIBM_ZONE_RADIUS[fromZone];
+    var r2 = STIBM_ZONE_RADIUS[toZone];
+    if (r1 === undefined || r2 === undefined) return 0;
+    // Distance ≈ difference in radii (concentric zones, approximate linear travel)
+    // Apply 1.3x route factor for non-straight rail paths
+    return Math.round(Math.abs(r2 - r1) * 1.3);
+}
+
 function renderStats() {
     var container = document.getElementById('stats-container');
     if (!container) return;
@@ -3258,14 +3444,16 @@ function renderStats() {
         return;
     }
 
+    var settings = getStatsSettings();
     var totalTickets = 0;
     var totalSpent = 0;
     var zoneCounts = {};
+    var routeCounts = {};
     var allZones = ['Mi1', 'Mi3', 'Mi4', 'Mi5', 'Mi6', 'Mi7', 'Mi8', 'Mi9'];
 
     orders.forEach(function(order) {
-        var items = order.items || [];
-        items.forEach(function(item) {
+        var tickets = order.tickets || order.items || [];
+        tickets.forEach(function(item) {
             totalTickets++;
             totalSpent += (item.prezzo || 0);
             var viaggio = item.viaggio || '';
@@ -3274,26 +3462,37 @@ function renderStats() {
                 var zone = z.trim();
                 if (zone) zoneCounts[zone] = (zoneCounts[zone] || 0) + 1;
             });
-        });
-    });
-
-    // Estimated km (rough: ~5km per zone boundary crossed)
-    var estimatedKm = 0;
-    orders.forEach(function(order) {
-        (order.items || []).forEach(function(item) {
-            var v = item.viaggio || '';
-            var p = v.split(' | ');
-            if (p.length === 2) {
-                var fromIdx = allZones.indexOf(p[0].trim());
-                var toIdx = allZones.indexOf(p[1].trim());
-                if (fromIdx >= 0 && toIdx >= 0) estimatedKm += Math.abs(toIdx - fromIdx) * 5;
+            // Route counting
+            if (parts.length === 2) {
+                var routeKey = parts[0].trim() + ' → ' + parts[1].trim();
+                routeCounts[routeKey] = (routeCounts[routeKey] || 0) + 1;
             }
         });
     });
 
-    // Savings vs car (~0.40€/km avg cost of driving)
-    var carCost = estimatedKm * 0.40;
-    var savings = Math.max(0, carCost - totalSpent);
+    // Realistic km calculation using STIBM zone radii
+    var totalKm = 0;
+    orders.forEach(function(order) {
+        var tickets = order.tickets || order.items || [];
+        tickets.forEach(function(item) {
+            var v = item.viaggio || '';
+            var from = (item.fromZone || v.split(' | ')[0] || '').trim();
+            var to = (item.toZone || v.split(' | ')[1] || '').trim();
+            if (from && to) {
+                totalKm += getZoneDistance(from, to);
+            }
+        });
+    });
+
+    // CO2 calculations
+    var co2Train = totalKm * CO2_TRAIN_G_KM;        // grams
+    var co2Car = totalKm * CO2_CAR_G_KM;             // grams
+    var co2Saved = Math.max(0, co2Car - co2Train);    // grams
+
+    // Cost comparisons
+    var fuelCost = totalKm * (settings.fuelConsumption / 100) * settings.fuelPrice;
+    var totalCarCost = totalKm * settings.carCostKm + (totalTickets * settings.parkingCostTrip);
+    var savings = Math.max(0, totalCarCost - totalSpent);
 
     var maxZoneCount = Math.max.apply(null, Object.values(zoneCounts).concat([1]));
 
@@ -3301,14 +3500,32 @@ function renderStats() {
     html += '<div class="stats-header">';
     html += '<div class="stats-header-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#2C7F44" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg></div>';
     html += '<h2>Le tue statistiche</h2>';
-    html += '<p>Riepilogo dei tuoi viaggi</p>';
+    html += '<p>Riepilogo dei tuoi viaggi STIBM</p>';
     html += '</div>';
 
+    // Primary stats cards
     html += '<div class="stats-cards">';
     html += '<div class="stats-card"><div class="stats-card-value">' + totalTickets + '</div><div class="stats-card-label">Biglietti acquistati</div></div>';
     html += '<div class="stats-card"><div class="stats-card-value">' + totalSpent.toFixed(2) + ' €</div><div class="stats-card-label">Spesa totale</div></div>';
-    html += '<div class="stats-card"><div class="stats-card-value">~' + estimatedKm + ' km</div><div class="stats-card-label">Km stimati</div></div>';
+    html += '<div class="stats-card"><div class="stats-card-value">~' + totalKm + ' km</div><div class="stats-card-label">Km percorsi</div></div>';
     html += '<div class="stats-card"><div class="stats-card-value">' + savings.toFixed(2) + ' €</div><div class="stats-card-label">Risparmio vs auto</div></div>';
+    html += '</div>';
+
+    // Environmental impact
+    html += '<div class="stats-section-title">Impatto ambientale</div>';
+    html += '<div class="stats-eco-card">';
+    html += '<div class="stats-eco-row"><span class="stats-eco-icon">🌱</span><span class="stats-eco-label">CO₂ risparmiata</span><span class="stats-eco-value">' + (co2Saved / 1000).toFixed(1) + ' kg</span></div>';
+    html += '<div class="stats-eco-row"><span class="stats-eco-icon">🚆</span><span class="stats-eco-label">Emissioni treno</span><span class="stats-eco-value">' + (co2Train / 1000).toFixed(1) + ' kg</span></div>';
+    html += '<div class="stats-eco-row"><span class="stats-eco-icon">🚗</span><span class="stats-eco-label">Equivalente auto</span><span class="stats-eco-value">' + (co2Car / 1000).toFixed(1) + ' kg</span></div>';
+    html += '</div>';
+
+    // Cost comparison breakdown
+    html += '<div class="stats-section-title">Confronto costi con auto</div>';
+    html += '<div class="stats-eco-card">';
+    html += '<div class="stats-eco-row"><span class="stats-eco-icon">⛽</span><span class="stats-eco-label">Costo carburante equiv.</span><span class="stats-eco-value">' + fuelCost.toFixed(2) + ' €</span></div>';
+    html += '<div class="stats-eco-row"><span class="stats-eco-icon">🚘</span><span class="stats-eco-label">Costo totale auto</span><span class="stats-eco-value">' + totalCarCost.toFixed(2) + ' €</span></div>';
+    html += '<div class="stats-eco-row"><span class="stats-eco-icon">💰</span><span class="stats-eco-label">La tua spesa treno</span><span class="stats-eco-value">' + totalSpent.toFixed(2) + ' €</span></div>';
+    html += '<div class="stats-eco-row stats-eco-highlight"><span class="stats-eco-icon">✅</span><span class="stats-eco-label">Risparmio netto</span><span class="stats-eco-value stats-eco-green">' + savings.toFixed(2) + ' €</span></div>';
     html += '</div>';
 
     // Zone breakdown
@@ -3326,7 +3543,86 @@ function renderStats() {
         });
     }
 
+    // Route breakdown
+    var routeKeys = Object.keys(routeCounts).sort(function(a, b) {
+        return routeCounts[b] - routeCounts[a];
+    });
+    if (routeKeys.length > 0) {
+        html += '<div class="stats-section-title">Tratte più frequenti</div>';
+        var maxRoute = routeCounts[routeKeys[0]];
+        routeKeys.slice(0, 5).forEach(function(route) {
+            var count = routeCounts[route];
+            var pct = (count / maxRoute * 100).toFixed(0);
+            html += '<div class="stats-zone-bar"><div class="stats-zone-row">' +
+                '<span class="stats-zone-label" style="width:auto;min-width:80px;font-size:12px;">' + route + '</span>' +
+                '<div class="stats-zone-track"><div class="stats-zone-fill" style="width:' + pct + '%"></div></div>' +
+                '<span class="stats-zone-count">' + count + '</span>' +
+                '</div></div>';
+        });
+    }
+
+    // Info on km calculation method
+    html += '<div class="stats-info-note">';
+    html += '<svg viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>';
+    html += '<span>I km sono calcolati in base alle distanze reali tra zone STIBM (raggi concentrici da Milano Duomo) con fattore di percorso 1.3×. ' +
+        'Costi auto basati su tariffa ACI ' + settings.carCostKm.toFixed(2) + ' €/km, consumo ' + settings.fuelConsumption.toFixed(1) + ' L/100km, carburante ' + settings.fuelPrice.toFixed(2) + ' €/L.' +
+        '</span>';
+    html += '</div>';
+
+    // Settings button
+    html += '<button class="stats-settings-btn" onclick="openStatsSettings()">⚙️ Personalizza parametri auto</button>';
+
     container.innerHTML = html;
+}
+
+function openStatsSettings() {
+    var settings = getStatsSettings();
+    var html = '';
+    html += '<div class="stats-settings-form">';
+    html += '<p class="stats-settings-desc">Personalizza i valori per un confronto più accurato con la tua auto.</p>';
+
+    html += '<div class="stats-settings-field">';
+    html += '<label>Costo complessivo auto (€/km)</label>';
+    html += '<div class="stats-settings-hint">Carburante + assicurazione + manutenzione + ammortamento (ACI 2024: ~0.35 €/km)</div>';
+    html += '<input type="number" id="stats-car-cost" value="' + settings.carCostKm.toFixed(2) + '" step="0.01" min="0.05" max="2.00">';
+    html += '</div>';
+
+    html += '<div class="stats-settings-field">';
+    html += '<label>Consumo carburante (L/100km)</label>';
+    html += '<input type="number" id="stats-fuel-consumption" value="' + settings.fuelConsumption.toFixed(1) + '" step="0.1" min="2" max="30">';
+    html += '</div>';
+
+    html += '<div class="stats-settings-field">';
+    html += '<label>Prezzo carburante (€/L)</label>';
+    html += '<input type="number" id="stats-fuel-price" value="' + settings.fuelPrice.toFixed(2) + '" step="0.01" min="0.50" max="5.00">';
+    html += '</div>';
+
+    html += '<div class="stats-settings-field">';
+    html += '<label>Costo medio parcheggio per viaggio (€)</label>';
+    html += '<div class="stats-settings-hint">Stima del costo medio di parcheggio per ogni viaggio in auto</div>';
+    html += '<input type="number" id="stats-parking-cost" value="' + settings.parkingCostTrip.toFixed(2) + '" step="0.50" min="0" max="50">';
+    html += '</div>';
+
+    html += '<div style="display:flex;gap:8px;margin-top:16px;">';
+    html += '<button class="modal-btn" style="flex:1;color:#8E8E93;border:1px solid #E5E5EA;border-radius:10px;padding:12px;" onclick="closeModal(\'stats-settings-modal\')">Annulla</button>';
+    html += '<button class="modal-btn" style="flex:1;background:#2C7F44;color:#fff;border:none;border-radius:10px;padding:12px;font-weight:700;" onclick="saveStatsSettingsFromForm()">Salva</button>';
+    html += '</div>';
+    html += '</div>';
+
+    document.getElementById('stats-settings-body').innerHTML = html;
+    openModal('stats-settings-modal');
+}
+
+function saveStatsSettingsFromForm() {
+    var settings = {
+        carCostKm: parseFloat(document.getElementById('stats-car-cost').value) || 0.35,
+        fuelConsumption: parseFloat(document.getElementById('stats-fuel-consumption').value) || 6.5,
+        fuelPrice: parseFloat(document.getElementById('stats-fuel-price').value) || 1.75,
+        parkingCostTrip: parseFloat(document.getElementById('stats-parking-cost').value) || 0
+    };
+    saveStatsSettings(settings);
+    closeModal('stats-settings-modal');
+    renderStats();
 }
 
 // ============================================
@@ -3400,19 +3696,11 @@ function initGuideDemos() {
     var demos = document.querySelectorAll('.home-step-demo');
     if (!demos.length) return;
 
-    // Populate typing text in demo-type elements
+    // Clear typing text — will be typed letter-by-letter on visibility
     demos.forEach(function(demo) {
         demo.querySelectorAll('.demo-type').forEach(function(el) {
-            el.textContent = el.getAttribute('data-text') || '';
+            el.textContent = '';
         });
-    });
-
-    // QR grid: fill with mini pattern
-    demos.forEach(function(demo) {
-        var grid = demo.querySelector('.demo-qr-grid');
-        if (grid && !grid.children.length) {
-            // CSS handles the pattern via repeating-conic-gradient
-        }
     });
 
     // IntersectionObserver to trigger animations on scroll
@@ -3421,6 +3709,7 @@ function initGuideDemos() {
             entries.forEach(function(entry) {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
+                    runTypewriterDemo(entry.target);
                 }
             });
         }, { threshold: 0.3 });
@@ -3429,20 +3718,58 @@ function initGuideDemos() {
             observer.observe(demo);
         });
     } else {
-        // Fallback: show all demos immediately
         demos.forEach(function(demo) {
             demo.classList.add('visible');
+            runTypewriterDemo(demo);
         });
     }
+}
+
+function runTypewriterDemo(demo) {
+    var fields = demo.querySelectorAll('.demo-type');
+    if (!fields.length) return;
+    // Prevent double-run
+    if (demo._typewriterRan) return;
+    demo._typewriterRan = true;
+
+    var fieldIndex = 0;
+    function typeNextField() {
+        if (fieldIndex >= fields.length) return;
+        var el = fields[fieldIndex];
+        var fullText = el.getAttribute('data-text') || '';
+        var charIdx = 0;
+        el.textContent = '';
+        el.classList.add('typing-active');
+        var interval = setInterval(function() {
+            if (charIdx < fullText.length) {
+                el.textContent += fullText[charIdx];
+                charIdx++;
+            } else {
+                clearInterval(interval);
+                el.classList.remove('typing-active');
+                el.classList.add('typing-done');
+                fieldIndex++;
+                setTimeout(typeNextField, 200);
+            }
+        }, 55);
+    }
+    typeNextField();
 }
 
 function replayDemo(btn) {
     var demo = btn.closest('.home-step-demo');
     if (!demo) return;
     demo.classList.remove('visible');
+    // Reset typewriter state
+    demo._typewriterRan = false;
+    demo.querySelectorAll('.demo-type').forEach(function(el) {
+        el.textContent = '';
+        el.classList.remove('typing-active', 'typing-done');
+    });
     // Force reflow to restart animations
     void demo.offsetWidth;
     demo.classList.add('visible');
+    runTypewriterDemo(demo);
 }
 
 // ============================================
