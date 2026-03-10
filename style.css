@@ -1140,12 +1140,10 @@ html, body {
     background: #fff;
     border-top: 0.5px solid #D1D1D6;
     padding: 6px 0;
-    padding-bottom: 6px;
+    padding-bottom: env(safe-area-inset-bottom, 6px);
     z-index: 100;
-    /* Fix iOS standalone: garantisce che il bg copra tutta l'area sotto */
     -webkit-transform: translate3d(0,0,0);
     transform: translate3d(0,0,0);
-    padding-bottom: 25px;
 }
 .tabbar-item {
     display: flex;
