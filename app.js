@@ -543,19 +543,35 @@ function createTicketCard(ticket, isExpired) {
     const isPurchased = ticket.status === 'purchased';
     const duration = ticket.duration || 90;
 
+    // Format date as dd/mm/yy, HH:mm
+    function fmtDate(iso) {
+        if (!iso) return '';
+        var d = new Date(iso);
+        var dd = String(d.getDate()).padStart(2, '0');
+        var mm = String(d.getMonth() + 1).padStart(2, '0');
+        var yy = String(d.getFullYear()).slice(-2);
+        var hh = String(d.getHours()).padStart(2, '0');
+        var mi = String(d.getMinutes()).padStart(2, '0');
+        return dd + '/' + mm + '/' + yy + ', ' + hh + ':' + mi;
+    }
+
     // Validità section
     let validitaHTML = '';
     if (isPurchased) {
         validitaHTML = `
             <div class="ticket-field">
                 <span class="ticket-label">VALIDITÀ</span>
-                <span class="ticket-value">${duration} min</span>
+                <span class="ticket-value">${duration} min dalla convalida</span>
             </div>`;
     } else {
         validitaHTML = `
             <div class="ticket-field">
                 <span class="ticket-label">VALIDITÀ</span>
-                <span class="ticket-value">${duration} min</span>
+                <div class="ticket-validita">
+                    <span>${fmtDate(ticket.startDate)}</span>
+                    <span class="validita-sep">|</span>
+                    <span>${fmtDate(ticket.endDate)}</span>
+                </div>
             </div>`;
     }
 
@@ -592,9 +608,19 @@ function createTicketCard(ticket, isExpired) {
                 </button>
             </div>
             ${validitaHTML}
+            <div class="ticket-row-2col">
+                <div class="ticket-field">
+                    <span class="ticket-label">PNR</span>
+                    <span class="ticket-value">${ticket.pnr}</span>
+                </div>
+                <div class="ticket-field">
+                    <span class="ticket-label">CLASSE</span>
+                    <span class="ticket-value">${ticket.classe}</span>
+                </div>
+            </div>
             <div class="ticket-field">
                 <span class="ticket-label">VIAGGIO</span>
-                <span class="ticket-value ticket-value-bold">${ticket.viaggio}</span>
+                <span class="ticket-value-zones">${ticket.viaggio}</span>
             </div>
             <div class="stibm-badge">STIBM</div>
             ${buttonHTML}

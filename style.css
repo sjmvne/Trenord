@@ -5,9 +5,9 @@
 :root {
     --green-dark: #2C7F44;
     --green-header: #2C7F44;
-    --green-text: #4CAF50;
-    --green-badge: #2C7F44;
-    --green-btn: #2C7F44;
+    --green-text: #4B8954;
+    --green-badge: #418d4d;
+    --green-btn: #418d4d;
     --gray-bg: #F2F2F7;
     --gray-label: #8E8E93;
     --gray-sep: #C6C6C8;
@@ -15,7 +15,7 @@
     --text-primary: #000000;
     --text-secondary: #3C3C43;
     --card-shadow: 0 1px 4px rgba(0,0,0,0.08);
-    --card-radius: 12px;
+    --card-radius: 7px;
     --font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-bottom: 0px;
@@ -716,11 +716,11 @@ body::after {
     justify-content: center;
     gap: 8px;
     width: 100%;
-    padding: 13px 20px;
+    padding: 10px 20px;
     background: #2C7F44;
     color: #fff;
     font-family: var(--font);
-    font-size: 17px;
+    font-size: 15px;
     font-weight: 600;
     border: none;
     border-radius: 5px;
@@ -910,7 +910,7 @@ body::after {
 .ticket-card {
     background: #fff;
     border-radius: var(--card-radius);
-    padding: 18px;
+    padding: 12px;
 }
 .ticket-card-header {
     display: flex;
@@ -921,6 +921,8 @@ body::after {
 .ticket-type-label {
     font-weight: 500;
     color: var(--green-text);
+    font-size: 15px;
+    /* font-style: italic;*/
 }
 
 .info-icon-gray {
@@ -958,7 +960,7 @@ body::after {
 
 /* Info su sfondo chiaro */
 .info-icon-img-green {
-    filter: brightness(0) saturate(100%) invert(35%) sepia(40%) saturate(782%) hue-rotate(89deg) brightness(92%) contrast(90%);
+    filter: brightness(50%) saturate(100%) invert(35%) sepia(40%) saturate(782%) hue-rotate(89deg) brightness(92%) contrast(90%);
 }
 
 .ticket-field {
@@ -966,31 +968,40 @@ body::after {
 }
 .ticket-label {
     display: block;
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 500;
     color: var(--gray-label);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 3px;
+    letter-spacing: 0.7px;
+    margin-bottom: 4px;
 }
 .ticket-value {
-    font-size: 15px;
-    color: var(--gray-label);
+    font-size: 14px;
+    color: var(--text-secondary);
+    letter-spacing: 0.7px;
+    font-weight: 300;
 }
-.ticket-value-bold {
+
+.ticket-value-zones {
+    font-size: 14px;
+    color: var(--text-secondary);
+    letter-spacing: 0.7px;
     font-weight: 500;
 }
 
 .ticket-validita {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 15px;
-    color: var(--text-primary);
+    gap: 10px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+    font-weight: 300;
 }
 .validita-sep {
     color: var(--gray-sep);
-    font-weight: 300;
+    font-weight: 100;
+    font-size: 18px;
 }
 
 .ticket-row-2col {
@@ -1015,11 +1026,11 @@ body::after {
 }
 
 .btn-qr {
-    margin-top: 8px;
+    margin-top: 3px;
 }
 .btn-icon {
-    width: 20px;
-    height: 20px;
+    width: 17px;
+    height: 17px;
     flex-shrink: 0;
 }
 
@@ -1089,16 +1100,16 @@ body::after {
     background: #fff;
     border-radius: var(--card-radius);
     box-shadow: var(--card-shadow);
-    padding: 18px;
+    padding: 12px;
 }
 .ricaricami-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
 }
 .ricaricami-title {
-    font-size: 17px;
+    font-size: 14px;
     font-weight: 600;
     color: var(--green-text);
 }
@@ -1107,6 +1118,7 @@ body::after {
     color: var(--text-secondary);
     line-height: 1.45;
     margin-bottom: 16px;
+    font-weight: 300;
 }
 
 .btn-outline-green {
@@ -1115,12 +1127,13 @@ body::after {
     background: transparent;
     color: var(--green-dark);
     font-family: var(--font);
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 500;
     border: 1.5px solid var(--green-dark);
     border-radius: 5px;
     cursor: pointer;
     transition: all 0.15s;
+    letter-spacing: 0.5px;
 }
 .btn-outline-green:active {
     background: rgba(0, 107, 50, 0.08);
