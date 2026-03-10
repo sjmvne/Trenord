@@ -1562,6 +1562,57 @@
         </div>
     </div>
 
+    <!-- ====== MODAL: Consiglio Home Screen iOS — Step 1: Benefici ====== -->
+    <div id="home-screen-hint-modal" class="modal-overlay">
+        <div class="modal-card modal-card-wide">
+            <div class="modal-title">Installa Trenord+ in 5 secondi</div>
+            <div class="modal-body modal-body-home-hint">
+                <p class="home-hint-subtitle">Aggiungila alla Home per un'esperienza completa:</p>
+                <ul class="home-hint-benefits">
+                    <li><span class="home-hint-icon">⚡</span>Apertura istantanea a schermo intero</li>
+                    <li><span class="home-hint-icon">📴</span>Funziona anche offline</li>
+                    <li><span class="home-hint-icon">🎫</span>I tuoi biglietti sempre a portata di tap</li>
+                    <li><span class="home-hint-icon">🔒</span>Nessun dato condiviso con terzi</li>
+                </ul>
+            </div>
+            <div class="modal-actions home-hint-actions">
+                <button class="modal-btn home-hint-btn-later" onclick="snoozeHomeScreenHint()">Dopo</button>
+                <button class="modal-btn home-hint-btn-install" onclick="showHomeScreenGuide()">Installa ora</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== MODAL: Consiglio Home Screen iOS — Step 2: Guida Visiva ====== -->
+    <div id="home-screen-guide-modal" class="modal-overlay">
+        <div class="modal-card modal-card-wide">
+            <div class="modal-title">Come aggiungere alla Home</div>
+            <div class="modal-body modal-body-home-hint">
+                <div class="home-guide-steps">
+                    <div class="home-guide-step">
+                        <div class="home-guide-step-num">1</div>
+                        <div class="home-guide-step-text">
+                            Tocca l'icona <strong>Condividi</strong>
+                            <svg class="home-guide-share-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 002 2h12a2 2 0 002-2v-7"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                            in basso nella barra di Safari
+                        </div>
+                    </div>
+                    <div class="home-guide-step">
+                        <div class="home-guide-step-num">2</div>
+                        <div class="home-guide-step-text">Scorri e tocca <strong>"Aggiungi a Home"</strong></div>
+                    </div>
+                    <div class="home-guide-step">
+                        <div class="home-guide-step-num">3</div>
+                        <div class="home-guide-step-text">Conferma toccando <strong>"Aggiungi"</strong> in alto a destra</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions home-hint-actions">
+                <button class="modal-btn home-hint-btn-later" onclick="snoozeHomeScreenHint()">Faccio dopo</button>
+                <button class="modal-btn home-hint-btn-install" onclick="dismissHomeScreenHint()">Fatto!</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ====== MODAL: Attivazione Titoli di Viaggio ====== -->
     <div id="activation-modal" class="modal-overlay">
         <div class="modal-card">

@@ -1157,8 +1157,8 @@ body {
     padding: 2px 0;
 }
 .tabbar-item svg {
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
     transform-origin: center;
 }
 
@@ -1167,7 +1167,7 @@ body {
     transform: scale(1.14);
 }
 .tabbar-item span {
-    font-size: 9px;
+    font-size: 8px;
     font-weight: 500;
 }
 .tabbar-item.active {
@@ -1819,6 +1819,100 @@ body.qr-brightness-mode .screen.active {
 }
 .modal-body p:last-child {
     margin-bottom: 0;
+}
+
+.modal-body-home-hint {
+    text-align: left;
+}
+
+.home-hint-subtitle {
+    font-size: 14px;
+    color: #6D6D72;
+    margin-bottom: 12px;
+}
+
+.home-hint-benefits {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.home-hint-benefits li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 0;
+    font-size: 14px;
+    color: #1C1C1E;
+    border-bottom: 0.5px solid rgba(0,0,0,0.06);
+}
+
+.home-hint-benefits li:last-child {
+    border-bottom: none;
+}
+
+.home-hint-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    width: 24px;
+    text-align: center;
+}
+
+.home-hint-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.home-hint-btn-later {
+    color: #8E8E93 !important;
+    font-weight: 400 !important;
+}
+
+.home-hint-btn-install {
+    color: #007AFF !important;
+    font-weight: 700 !important;
+}
+
+/* Step 2: Visual Guide */
+.home-guide-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.home-guide-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.home-guide-step-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #007AFF;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.home-guide-step-text {
+    font-size: 14px;
+    color: #1C1C1E;
+    line-height: 1.45;
+    padding-top: 3px;
+}
+
+.home-guide-share-icon {
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+    color: #007AFF;
+    margin: 0 3px;
 }
 
 .modal-body-info {

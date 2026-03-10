@@ -195,6 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initDevConsole();
     requestNotificationPermission();
     initGuideDemos();
+    initHomeScreenHint();
     // Check ticket expiry every 30 seconds
     setInterval(checkTicketExpiryNotifications, 30000);
 });
@@ -456,6 +457,9 @@ function generateTickets() {
         }
 
         saveTickets();
+
+        // Trigger home screen hint after first ticket generation
+        triggerHomeHintAfterAction();
 
         // Generate order for storico acquisti
         createOrder(generatedTickets, purchaseDate);
@@ -1164,6 +1168,90 @@ function closeModal(id) {
 
 function showAlert(title, message) {
     alert(title + '\n' + message);
+}
+
+function isStandaloneMode() {
+    return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+        (window.navigator.standalone === true);
+}
+
+function isIOSSafariBrowser() {
+    const ua = navigator.userAgent || '';
+    const isiOS = /iPhone|iPad|iPod/i.test(ua);
+    const isWebKit = /WebKit/i.test(ua);
+    const isCriOS = /CriOS/i.test(ua);
+    const isFxiOS = /FxiOS/i.test(ua);
+    const isEdgiOS = /EdgiOS/i.test(ua);
+    const isOPiOS = /OPiOS/i.test(ua);
+    return isiOS && isWebKit && !isCriOS && !isFxiOS && !isEdgiOS && !isOPiOS;
+}
+
+function _shouldShowHomeHint() {
+    if (!isIOSSafariBrowser()) return false;
+    if (isStandaloneMode()) return false;
+    if (localStorage.getItem('trenord_home_hint_dismissed') === '1') return false;
+    // Snooze: skip for N sessions after user tapped "Dopo"
+    const snoozeUntil = parseInt(localStorage.getItem('trenord_home_hint_snooze_until') || '0', 10);
+    const sessionCount = parseInt(localStorage.getItem('trenord_session_count') || '0', 10);
+    if (snoozeUntil > 0 && sessionCount < snoozeUntil) return false;
+    return true;
+}
+
+function _trackSession() {
+    const count = parseInt(localStorage.getItem('trenord_session_count') || '0', 10) + 1;
+    localStorage.setItem('trenord_session_count', String(count));
+}
+
+let _homeHintShownThisSession = false;
+
+function initHomeScreenHint() {
+    try {
+        _trackSession();
+        if (!_shouldShowHomeHint()) return;
+
+        // Show after splash finishes
+        setTimeout(() => {
+            if (!_homeHintShownThisSession) {
+                _homeHintShownThisSession = true;
+                openModal('home-screen-hint-modal');
+            }
+        }, 2100);
+    } catch (err) {
+        // Silently ignore storage or UA parsing issues.
+    }
+}
+
+function triggerHomeHintAfterAction() {
+    // Called after meaningful user action (first ticket generated)
+    try {
+        if (_homeHintShownThisSession) return;
+        if (!_shouldShowHomeHint()) return;
+        _homeHintShownThisSession = true;
+        setTimeout(() => {
+            openModal('home-screen-hint-modal');
+        }, 800);
+    } catch (err) { /* ignore */ }
+}
+
+function showHomeScreenGuide() {
+    closeModal('home-screen-hint-modal');
+    setTimeout(() => {
+        openModal('home-screen-guide-modal');
+    }, 300);
+}
+
+function snoozeHomeScreenHint() {
+    // Snooze for 3 sessions
+    const currentSession = parseInt(localStorage.getItem('trenord_session_count') || '0', 10);
+    localStorage.setItem('trenord_home_hint_snooze_until', String(currentSession + 3));
+    closeModal('home-screen-hint-modal');
+    closeModal('home-screen-guide-modal');
+}
+
+function dismissHomeScreenHint() {
+    localStorage.setItem('trenord_home_hint_dismissed', '1');
+    closeModal('home-screen-hint-modal');
+    closeModal('home-screen-guide-modal');
 }
 
 // ── Generators ──
