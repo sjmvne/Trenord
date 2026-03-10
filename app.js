@@ -212,22 +212,7 @@ function syncBuildLabels() {
 }
 
 function initIOSViewportFix() {
-    function updateIOSBottomGap() {
-        const vv = window.visualViewport;
-        if (!vv) return;
-        const rawGap = window.innerHeight - vv.height - vv.offsetTop;
-        const gap = Math.max(0, Math.round(rawGap));
-        document.documentElement.style.setProperty('--ios-bottom-gap', gap + 'px');
-    }
-
-    updateIOSBottomGap();
-
-    if (window.visualViewport) {
-        window.visualViewport.addEventListener('resize', updateIOSBottomGap);
-        window.visualViewport.addEventListener('scroll', updateIOSBottomGap);
-    }
-    window.addEventListener('resize', updateIOSBottomGap);
-    window.addEventListener('orientationchange', updateIOSBottomGap);
+    // Disabled: fullscreen layout, no bottom gap needed
 }
 
 function initDefaults() {
