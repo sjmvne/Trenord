@@ -17,10 +17,10 @@
     --card-shadow: 0 1px 4px rgba(0,0,0,0.08);
     --card-radius: 7px;
     --font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    --safe-top: 0px;
+    --safe-top: env(safe-area-inset-top, 0px);
     --safe-bottom: 0px;
     --ios-bottom-gap: 0px;
-    --header-top-extra: 0px;
+    --header-top-extra: 10px;
 }
 
 * {
@@ -52,7 +52,17 @@ html, body {
     }
 }
 
-
+body::after {
+    content: '';
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: var(--ios-bottom-gap);
+    background: #fff;
+    pointer-events: none;
+    z-index: 99;
+}
 
 /* ============================================
    SCREEN SYSTEM
@@ -2668,7 +2678,7 @@ body.qr-brightness-mode .screen.active {
     flex-direction: column;
     height: 100%;
     padding: 16px;
-    padding-top: 16px;
+    padding-top: calc(env(safe-area-inset-top, 20px) + 16px);
     gap: 16px;
 }
 
