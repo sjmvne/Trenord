@@ -18,7 +18,7 @@
     --card-radius: 7px;
     --font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     --safe-top: env(safe-area-inset-top, 0px);
-    --safe-bottom: 0px;
+    --safe-bottom: -10px;
 }
 
 * {
@@ -96,7 +96,7 @@ body {
 .config-header {
     background: linear-gradient(180deg, var(--green-dark) 0%, var(--green-header) 100%);
     padding: var(--safe-top) 16px 0;
-    padding-top: calc(var(--safe-top) + var(--header-top-extra));
+    padding-top: var(--safe-top);
     text-align: center;
     flex-shrink: 0;
 }
@@ -1142,7 +1142,7 @@ body {
     align-items: flex-start;
     background: #fff;
     border-top: 0.5px solid #D1D1D6;
-    padding: 6px 0 25px;
+    padding: 6px 0;
     z-index: 100;
 }
 .tabbar-item {
