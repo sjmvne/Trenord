@@ -124,8 +124,8 @@ function getTicketInfo(fromIdx, toIdx) {
 
     return {
         label: from.label + ' | ' + to.label,
-        fromZone: from.label.toUpperCase(),
-        toZone: to.label.toUpperCase(),
+        fromZone: from.label,
+        toZone: to.label,
         price: price,
         duration: getTicketDuration(zoneCount),
         zoneCount: zoneCount,
@@ -254,7 +254,7 @@ function bindEvents() {
     btnCountPlus.addEventListener('click', () => updateTicketCount(1));
 
     // Generate ticket(s)
-    document.getElementById('btn-genera').addEventListener('click', generateTickets);
+    document.getElementById('btn-genera').addEventListener('click', function() { generateTickets(); });
 
     // Tabbar navigation
     document.querySelectorAll('#global-tabbar .tabbar-item').forEach(item => {
@@ -2132,29 +2132,14 @@ function checkDisclaimerAccepted() {
     const overlay = document.getElementById('disclaimer-mandatory-overlay');
     if (!overlay) return;
     overlay.classList.add('active');
+}
 
-    const body = document.getElementById('disclaimer-mandatory-body');
-    const btn = document.getElementById('disclaimer-accept-btn');
-    const hint = document.getElementById('disclaimer-scroll-hint');
-    if (!body || !btn) return;
-
-    function checkScroll() {
-        const scrolledToBottom = body.scrollTop + body.clientHeight >= body.scrollHeight - 10;
-        if (scrolledToBottom) {
-            btn.disabled = false;
-            if (hint) hint.style.display = 'none';
-        }
-    }
-
-    // If content is short enough to not scroll, enable immediately
-    requestAnimationFrame(() => {
-        if (body.scrollHeight <= body.clientHeight + 10) {
-            btn.disabled = false;
-            if (hint) hint.style.display = 'none';
-        }
-    });
-
-    body.addEventListener('scroll', checkScroll);
+function updateDisclaimerBtn() {
+    var read = document.getElementById('disclaimer-check-read');
+    var accept = document.getElementById('disclaimer-check-accept');
+    var btn = document.getElementById('disclaimer-accept-btn');
+    if (!btn) return;
+    btn.disabled = !(read && read.checked && accept && accept.checked);
 }
 
 function acceptDisclaimer() {
@@ -2165,6 +2150,7 @@ function acceptDisclaimer() {
         setTimeout(() => {
             overlay.classList.remove('active', 'dismiss');
             overlay.style.display = 'none';
+            checkTutorialNeeded();
         }, 500);
     }
 }
@@ -2238,7 +2224,7 @@ function hasBillingData() {
         const data = localStorage.getItem('trenord_billing');
         if (!data) return false;
         const billing = JSON.parse(data);
-        return billing && billing.nome && billing.cognome && billing.codiceFiscale && billing.via && billing.numero && billing.cap && billing.paese && billing.comune;
+        return billing && billing.nome && billing.cognome && billing.via && billing.numero && billing.cap && billing.paese && billing.comune;
     } catch (e) {
         return false;
     }
@@ -2265,7 +2251,7 @@ function saveBillingData() {
     const pec = document.getElementById('billing-pec').value.trim();
 
     // Validate required fields
-    if (!nome || !cognome || !cf || !via || !numero || !cap || !paese || !comune) {
+    if (!nome || !cognome || !via || !numero || !cap || !paese || !comune) {
         alert('Compila tutti i campi obbligatori (*)');
         return;
     }
@@ -2306,6 +2292,45 @@ function loadBillingDataIntoForm() {
     document.getElementById('billing-paese').value = billing ? billing.paese : '';
     document.getElementById('billing-comune').value = billing ? billing.comune : '';
     document.getElementById('billing-pec').value = billing ? (billing.pec || '') : '';
+}
+
+function generateRandomBillingData() {
+    var nomi = ['Marco', 'Luca', 'Alessandro', 'Andrea', 'Matteo', 'Lorenzo', 'Giulia', 'Sara', 'Anna', 'Chiara', 'Francesca', 'Elena', 'Giovanni', 'Paolo', 'Davide', 'Simone', 'Stefano', 'Roberto', 'Laura', 'Valentina'];
+    var cognomi = ['Rossi', 'Russo', 'Ferrari', 'Esposito', 'Bianchi', 'Romano', 'Colombo', 'Ricci', 'Marino', 'Greco', 'Bruno', 'Gallo', 'Conti', 'De Luca', 'Mancini', 'Costa', 'Giordano', 'Rizzo', 'Lombardi', 'Moretti'];
+    var vie = ['Via Roma', 'Via Milano', 'Via Garibaldi', 'Via Dante', 'Via Manzoni', 'Corso Italia', 'Via Verdi', 'Via Leopardi', 'Via Pascoli', 'Piazza Duomo', 'Via Torino', 'Via Venezia', 'Via Firenze', 'Corso Magenta', 'Via Montenapoleone', 'Via della Spiga', 'Viale Papiniano', 'Via Brera'];
+    var comuni = ['Milano', 'Monza', 'Bergamo', 'Brescia', 'Como', 'Varese', 'Lecco', 'Pavia', 'Cremona', 'Mantova', 'Lodi', 'Sondrio', 'Sesto San Giovanni', 'Cinisello Balsamo', 'Rho', 'Legnano', 'Busto Arsizio', 'Gallarate', 'Saronno', 'Desio'];
+    var caps = ['20100', '20900', '20121', '20124', '20127', '20131', '20133', '20135', '20137', '20139', '20141', '20143', '20145', '20147', '20149', '20151', '20153', '20155', '20157', '20159'];
+
+    var nome = nomi[Math.floor(Math.random() * nomi.length)];
+    var cognome = cognomi[Math.floor(Math.random() * cognomi.length)];
+    var via = vie[Math.floor(Math.random() * vie.length)];
+    var numero = String(Math.floor(Math.random() * 120) + 1);
+    var cap = caps[Math.floor(Math.random() * caps.length)];
+    var comune = comuni[Math.floor(Math.random() * comuni.length)];
+
+    // Generate a plausible CF (16 chars)
+    var cfConsonants = 'BCDFGHJKLMNPQRSTVWXYZ';
+    var cfVowels = 'AEIOU';
+    function cfChars(s, n) { var r = ''; for (var i = 0; i < n; i++) r += s[Math.floor(Math.random() * s.length)]; return r; }
+    var cfSurname = cfChars(cfConsonants, 3);
+    var cfName = cfChars(cfConsonants, 3);
+    var year = String(70 + Math.floor(Math.random() * 35)).padStart(2, '0');
+    var monthLetters = 'ABCDEHLMPRST';
+    var month = monthLetters[Math.floor(Math.random() * 12)];
+    var day = String(1 + Math.floor(Math.random() * 28)).padStart(2, '0');
+    var belfiore = 'F205'; // Milano
+    var checkChar = cfConsonants[Math.floor(Math.random() * cfConsonants.length)];
+    var cf = cfSurname + cfName + year + month + day + belfiore + checkChar;
+
+    document.getElementById('billing-nome').value = nome;
+    document.getElementById('billing-cognome').value = cognome;
+    document.getElementById('billing-cf').value = cf;
+    document.getElementById('billing-via').value = via;
+    document.getElementById('billing-numero').value = numero;
+    document.getElementById('billing-cap').value = cap;
+    document.getElementById('billing-paese').value = 'Italia';
+    document.getElementById('billing-comune').value = comune;
+    document.getElementById('billing-pec').value = '';
 }
 
 function renderBillingView() {
@@ -3154,7 +3179,7 @@ function renderDevStorage() {
     }
     keys.sort();
 
-    if (countEl) countEl.textContent = keys.length + ' chav' + (keys.length === 1 ? 'e' : 'i');
+    if (countEl) countEl.textContent = keys.length + ' chiav' + (keys.length === 1 ? 'e' : 'i');
 
     if (keys.length === 0) {
         list.innerHTML = '<div style="text-align:center;padding:40px 16px;color:#8E8E93;font-size:14px;">Nessun dato nel Local Storage</div>';
@@ -3375,9 +3400,52 @@ function devImportData(event) {
 // ============================================
 
 function devResetApp() {
-    if (!confirm('Sei sicuro? Tutti i dati verranno eliminati permanentemente.')) return;
-    localStorage.clear();
-    location.reload();
+    showDevPopup('🗑️ Reset completo', 'Tutti i dati verranno eliminati permanentemente.', function() {
+        localStorage.clear();
+        location.reload();
+    });
+}
+
+function devResetTutorial() {
+    showDevPopup('🔄 Tutorial resettato', 'Il tutorial verrà mostrato al prossimo avvio dopo il disclaimer.', function() {
+        localStorage.removeItem('trenord_tutorial_completed');
+    });
+}
+
+function showDevPopup(title, message, onConfirm) {
+    var overlay = document.createElement('div');
+    overlay.className = 'tutorial-modal-overlay';
+    overlay.id = 'dev-popup-overlay';
+    overlay.innerHTML =
+        '<div class="tutorial-modal-card">' +
+            '<div class="tutorial-modal-icon">⚙️</div>' +
+            '<div class="tutorial-modal-title">' + title + '</div>' +
+            '<div class="tutorial-modal-text">' + message + '</div>' +
+            '<button class="tutorial-modal-btn" onclick="confirmDevPopup()">Conferma</button>' +
+            '<button class="tutorial-modal-skip" onclick="closeDevPopup()">Annulla</button>' +
+        '</div>';
+    overlay._onConfirm = onConfirm;
+    document.body.appendChild(overlay);
+}
+
+function confirmDevPopup() {
+    var overlay = document.getElementById('dev-popup-overlay');
+    if (!overlay) return;
+    var cb = overlay._onConfirm;
+    overlay.classList.add('tutorial-modal-out');
+    setTimeout(function() {
+        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+        if (cb) cb();
+    }, 300);
+}
+
+function closeDevPopup() {
+    var overlay = document.getElementById('dev-popup-overlay');
+    if (!overlay) return;
+    overlay.classList.add('tutorial-modal-out');
+    setTimeout(function() {
+        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    }, 300);
 }
 
 // ============================================
@@ -3408,10 +3476,11 @@ function getStatsSettings() {
             carCostKm: Number(s.carCostKm) || 0.35,          // €/km ACI 2024 avg
             fuelConsumption: Number(s.fuelConsumption) || 6.5, // L/100km
             fuelPrice: Number(s.fuelPrice) || 1.75,            // €/L
-            parkingCostTrip: Number(s.parkingCostTrip) || 0     // €/trip avg parking
+            parkingCostTrip: Number(s.parkingCostTrip) || 0,    // €/trip avg parking
+            noCar: Boolean(s.noCar)                             // non possiede un'auto
         };
     } catch(e) {
-        return { carCostKm: 0.35, fuelConsumption: 6.5, fuelPrice: 1.75, parkingCostTrip: 0 };
+        return { carCostKm: 0.35, fuelConsumption: 6.5, fuelPrice: 1.75, parkingCostTrip: 0, noCar: false };
     }
 }
 
@@ -3420,8 +3489,12 @@ function saveStatsSettings(settings) {
 }
 
 function getZoneDistance(fromZone, toZone) {
-    var r1 = STIBM_ZONE_RADIUS[fromZone];
-    var r2 = STIBM_ZONE_RADIUS[toZone];
+    // Normalize zone keys: "MI1" / "mi1" → "Mi1"
+    var normalizeZone = function(z) {
+        return z.charAt(0).toUpperCase() + z.charAt(1).toLowerCase() + z.slice(2);
+    };
+    var r1 = STIBM_ZONE_RADIUS[normalizeZone(fromZone)];
+    var r2 = STIBM_ZONE_RADIUS[normalizeZone(toZone)];
     if (r1 === undefined || r2 === undefined) return 0;
     // Distance ≈ difference in radii (concentric zones, approximate linear travel)
     // Apply 1.3x route factor for non-straight rail paths
@@ -3501,11 +3574,12 @@ function renderStats() {
     html += '<div class="stats-header-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#2C7F44" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg></div>';
     html += '<h2>Le tue statistiche</h2>';
     html += '<p>Riepilogo dei tuoi viaggi STIBM</p>';
+    html += '<button class="stats-help-btn" onclick="openStatsHelp()" title="Come vengono calcolati i dati?">?</button>';
     html += '</div>';
 
     // Primary stats cards
     html += '<div class="stats-cards">';
-    html += '<div class="stats-card"><div class="stats-card-value">' + totalTickets + '</div><div class="stats-card-label">Biglietti acquistati</div></div>';
+    html += '<div class="stats-card"><div class="stats-card-value">' + totalTickets + '</div><div class="stats-card-label">Biglietti "acquistati"</div></div>';
     html += '<div class="stats-card"><div class="stats-card-value">' + totalSpent.toFixed(2) + ' €</div><div class="stats-card-label">Spesa totale</div></div>';
     html += '<div class="stats-card"><div class="stats-card-value">~' + totalKm + ' km</div><div class="stats-card-label">Km percorsi</div></div>';
     html += '<div class="stats-card"><div class="stats-card-value">' + savings.toFixed(2) + ' €</div><div class="stats-card-label">Risparmio vs auto</div></div>';
@@ -3524,7 +3598,7 @@ function renderStats() {
     html += '<div class="stats-eco-card">';
     html += '<div class="stats-eco-row"><span class="stats-eco-icon">⛽</span><span class="stats-eco-label">Costo carburante equiv.</span><span class="stats-eco-value">' + fuelCost.toFixed(2) + ' €</span></div>';
     html += '<div class="stats-eco-row"><span class="stats-eco-icon">🚘</span><span class="stats-eco-label">Costo totale auto</span><span class="stats-eco-value">' + totalCarCost.toFixed(2) + ' €</span></div>';
-    html += '<div class="stats-eco-row"><span class="stats-eco-icon">💰</span><span class="stats-eco-label">La tua spesa treno</span><span class="stats-eco-value">' + totalSpent.toFixed(2) + ' €</span></div>';
+    html += '<div class="stats-eco-row"><span class="stats-eco-icon">💰</span><span class="stats-eco-label">La tua "spesa" treno</span><span class="stats-eco-value">' + totalSpent.toFixed(2) + ' €</span></div>';
     html += '<div class="stats-eco-row stats-eco-highlight"><span class="stats-eco-icon">✅</span><span class="stats-eco-label">Risparmio netto</span><span class="stats-eco-value stats-eco-green">' + savings.toFixed(2) + ' €</span></div>';
     html += '</div>';
 
@@ -3564,9 +3638,15 @@ function renderStats() {
     // Info on km calculation method
     html += '<div class="stats-info-note">';
     html += '<svg viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>';
-    html += '<span>I km sono calcolati in base alle distanze reali tra zone STIBM (raggi concentrici da Milano Duomo) con fattore di percorso 1.3×. ' +
-        'Costi auto basati su tariffa ACI ' + settings.carCostKm.toFixed(2) + ' €/km, consumo ' + settings.fuelConsumption.toFixed(1) + ' L/100km, carburante ' + settings.fuelPrice.toFixed(2) + ' €/L.' +
-        '</span>';
+    if (settings.noCar) {
+        html += '<span>I km sono calcolati in base alle distanze reali tra zone STIBM (raggi concentrici da Milano Duomo) con fattore di percorso 1.3×. ' +
+            'Confronto auto basato su medie nazionali ISPRA/ACI (non possiedi un\'auto): ' + settings.carCostKm.toFixed(2) + ' €/km, ' + settings.fuelConsumption.toFixed(1) + ' L/100km, ' + settings.fuelPrice.toFixed(2) + ' €/L.' +
+            '</span>';
+    } else {
+        html += '<span>I km sono calcolati in base alle distanze reali tra zone STIBM (raggi concentrici da Milano Duomo) con fattore di percorso 1.3×. ' +
+            'Costi auto basati su tariffa ACI ' + settings.carCostKm.toFixed(2) + ' €/km, consumo ' + settings.fuelConsumption.toFixed(1) + ' L/100km, carburante ' + settings.fuelPrice.toFixed(2) + ' €/L.' +
+            '</span>';
+    }
     html += '</div>';
 
     // Settings button
@@ -3575,10 +3655,54 @@ function renderStats() {
     container.innerHTML = html;
 }
 
+function openStatsHelp() {
+    var helpHtml = '';
+    helpHtml += '<div style="text-align:left;font-size:13.5px;line-height:1.6;color:#3C3C43;">';
+
+    helpHtml += '<div style="font-weight:700;font-size:15px;margin-bottom:8px;">📏 Stima dei Km percorsi</div>';
+    helpHtml += '<p style="margin:0 0 12px;">Ogni zona STIBM è un anello concentrico a distanza nota dal <strong>Duomo di Milano</strong> (fonte: confini tariffari STIBM). La distanza tra due zone è calcolata come differenza dei raggi medi, moltiplicata per un <strong>fattore di percorso 1.3×</strong> che approssima i tragitti ferroviari non rettilinei.</p>';
+    helpHtml += '<p style="margin:0 0 14px;font-size:12px;color:#8E8E93;">Formula: <code style="background:#F2F2F7;padding:2px 6px;border-radius:4px;">km = |raggio_zona_arrivo − raggio_zona_partenza| × 1.3</code></p>';
+
+    helpHtml += '<div style="font-weight:700;font-size:15px;margin-bottom:8px;">💰 Risparmio vs auto</div>';
+    helpHtml += '<p style="margin:0 0 6px;">Il costo equivalente in auto è calcolato come:</p>';
+    helpHtml += '<p style="margin:0 0 12px;font-size:12px;color:#8E8E93;"><code style="background:#F2F2F7;padding:2px 6px;border-radius:4px;">costo_auto = km_totali × costo_€/km + n_viaggi × parcheggio_€</code><br>Il <strong>risparmio netto</strong> è la differenza tra costo auto e spesa treno. I parametri sono personalizzabili (default ACI 2024: 0.35 €/km).</p>';
+
+    helpHtml += '<div style="font-weight:700;font-size:15px;margin-bottom:8px;">⛽ Costo carburante equivalente</div>';
+    helpHtml += '<p style="margin:0 0 14px;font-size:12px;color:#8E8E93;"><code style="background:#F2F2F7;padding:2px 6px;border-radius:4px;">carburante_€ = km_totali × (consumo_L/100km ÷ 100) × prezzo_€/L</code></p>';
+
+    helpHtml += '<div style="font-weight:700;font-size:15px;margin-bottom:8px;">🌱 CO₂ risparmiata</div>';
+    helpHtml += '<p style="margin:0 0 6px;">Emissioni medie per km (fonte: ISPRA / EEA):</p>';
+    helpHtml += '<ul style="margin:0 0 12px;padding-left:20px;font-size:12.5px;">';
+    helpHtml += '<li><strong>Treno:</strong> ~41 g CO₂/km</li>';
+    helpHtml += '<li><strong>Auto:</strong> ~120 g CO₂/km</li>';
+    helpHtml += '</ul>';
+    helpHtml += '<p style="margin:0 0 14px;font-size:12px;color:#8E8E93;"><code style="background:#F2F2F7;padding:2px 6px;border-radius:4px;">CO₂_risparmiata = km × (120 − 41) g</code></p>';
+
+    helpHtml += '<div style="font-weight:700;font-size:15px;margin-bottom:8px;">📊 Zone e Tratte</div>';
+    helpHtml += '<p style="margin:0;">Conteggio di quante volte ogni zona e ogni tratta compare nei biglietti acquistati, ordinate per frequenza.</p>';
+
+    helpHtml += '</div>';
+
+    helpHtml += '<div style="margin-top:16px;">';
+    helpHtml += '<button class="modal-btn" style="width:100%;background:#2C7F44;color:#fff;border:none;border-radius:10px;padding:12px;font-weight:700;" onclick="closeModal(\'stats-help-modal\')">Ho capito</button>';
+    helpHtml += '</div>';
+
+    document.getElementById('stats-help-body').innerHTML = helpHtml;
+    openModal('stats-help-modal');
+}
+
 function openStatsSettings() {
     var settings = getStatsSettings();
     var html = '';
     html += '<div class="stats-settings-form">';
+    html += '<div class="stats-settings-field" style="background:#F2F2F7;border-radius:10px;padding:12px;margin-bottom:12px;">';
+    html += '<label style="display:flex;align-items:center;gap:10px;cursor:pointer;">';
+    html += '<input type="checkbox" id="stats-no-car" ' + (settings.noCar ? 'checked' : '') + ' onchange="toggleStatsCarFields()" style="width:20px;height:20px;accent-color:#2C7F44;">';
+    html += '<span style="font-size:15px;font-weight:600;">Non ho un\'auto</span>';
+    html += '</label>';
+    html += '<div style="font-size:12px;color:#8E8E93;margin-top:6px;margin-left:30px;">Useremo le medie italiane ISPRA/ACI per il confronto ambientale</div>';
+    html += '</div>';
+    html += '<div id="stats-car-fields" style="' + (settings.noCar ? 'display:none;' : '') + '">';
     html += '<p class="stats-settings-desc">Personalizza i valori per un confronto più accurato con la tua auto.</p>';
 
     html += '<div class="stats-settings-field">';
@@ -3602,6 +3726,7 @@ function openStatsSettings() {
     html += '<div class="stats-settings-hint">Stima del costo medio di parcheggio per ogni viaggio in auto</div>';
     html += '<input type="number" id="stats-parking-cost" value="' + settings.parkingCostTrip.toFixed(2) + '" step="0.50" min="0" max="50">';
     html += '</div>';
+    html += '</div>'; // close stats-car-fields
 
     html += '<div style="display:flex;gap:8px;margin-top:16px;">';
     html += '<button class="modal-btn" style="flex:1;color:#8E8E93;border:1px solid #E5E5EA;border-radius:10px;padding:12px;" onclick="closeModal(\'stats-settings-modal\')">Annulla</button>';
@@ -3613,12 +3738,20 @@ function openStatsSettings() {
     openModal('stats-settings-modal');
 }
 
+function toggleStatsCarFields() {
+    var cb = document.getElementById('stats-no-car');
+    var fields = document.getElementById('stats-car-fields');
+    if (fields) fields.style.display = cb && cb.checked ? 'none' : '';
+}
+
 function saveStatsSettingsFromForm() {
+    var noCar = document.getElementById('stats-no-car') && document.getElementById('stats-no-car').checked;
     var settings = {
         carCostKm: parseFloat(document.getElementById('stats-car-cost').value) || 0.35,
         fuelConsumption: parseFloat(document.getElementById('stats-fuel-consumption').value) || 6.5,
         fuelPrice: parseFloat(document.getElementById('stats-fuel-price').value) || 1.75,
-        parkingCostTrip: parseFloat(document.getElementById('stats-parking-cost').value) || 0
+        parkingCostTrip: parseFloat(document.getElementById('stats-parking-cost').value) || 0,
+        noCar: noCar
     };
     saveStatsSettings(settings);
     closeModal('stats-settings-modal');
@@ -3703,13 +3836,18 @@ function initGuideDemos() {
         });
     });
 
-    // IntersectionObserver to trigger animations on scroll
+    // IntersectionObserver to trigger animations on scroll + auto-loop
     if ('IntersectionObserver' in window) {
         var observer = new IntersectionObserver(function(entries) {
             entries.forEach(function(entry) {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
                     runTypewriterDemo(entry.target);
+                    scheduleDemoLoop(entry.target);
+                } else {
+                    entry.target.classList.remove('visible');
+                    cancelDemoLoop(entry.target);
+                    resetDemoState(entry.target);
                 }
             });
         }, { threshold: 0.3 });
@@ -3721,6 +3859,7 @@ function initGuideDemos() {
         demos.forEach(function(demo) {
             demo.classList.add('visible');
             runTypewriterDemo(demo);
+            scheduleDemoLoop(demo);
         });
     }
 }
@@ -3728,7 +3867,6 @@ function initGuideDemos() {
 function runTypewriterDemo(demo) {
     var fields = demo.querySelectorAll('.demo-type');
     if (!fields.length) return;
-    // Prevent double-run
     if (demo._typewriterRan) return;
     demo._typewriterRan = true;
 
@@ -3756,20 +3894,35 @@ function runTypewriterDemo(demo) {
     typeNextField();
 }
 
-function replayDemo(btn) {
-    var demo = btn.closest('.home-step-demo');
-    if (!demo) return;
-    demo.classList.remove('visible');
-    // Reset typewriter state
+function resetDemoState(demo) {
     demo._typewriterRan = false;
     demo.querySelectorAll('.demo-type').forEach(function(el) {
         el.textContent = '';
         el.classList.remove('typing-active', 'typing-done');
     });
-    // Force reflow to restart animations
-    void demo.offsetWidth;
-    demo.classList.add('visible');
-    runTypewriterDemo(demo);
+}
+
+function scheduleDemoLoop(demo) {
+    if (demo._loopTimer) return;
+    demo._loopTimer = setTimeout(function loopCycle() {
+        if (!demo.classList.contains('visible')) { demo._loopTimer = null; return; }
+        demo.classList.remove('visible');
+        resetDemoState(demo);
+        void demo.offsetWidth; // force reflow to restart CSS animations
+        setTimeout(function() {
+            if (!demo._loopTimer) return; // canceled
+            demo.classList.add('visible');
+            runTypewriterDemo(demo);
+            demo._loopTimer = setTimeout(loopCycle, 7000);
+        }, 600);
+    }, 7000);
+}
+
+function cancelDemoLoop(demo) {
+    if (demo._loopTimer) {
+        clearTimeout(demo._loopTimer);
+        demo._loopTimer = null;
+    }
 }
 
 // ============================================
@@ -3781,4 +3934,297 @@ function updateProfiloEmail() {
     if (el) {
         el.textContent = localStorage.getItem('trenord_email') || '';
     }
+}
+
+// ============================================
+// TUTORIAL INTERATTIVO (Modal Popup)
+// ============================================
+
+var _tutorialStep = 0;
+var _tutorialActive = false;
+var _tutorialHooks = {};
+
+var TUTORIAL_STEPS = [
+    {
+        icon: '👋🏻',
+        title: 'Benvenuto su Trenord+!',
+        text: 'Questa guida ti accompagnerà passo dopo passo nella tua prima esperienza con l\'app.<br><br>Imparerai a <strong>compilare i dati</strong>, <strong>acquistare un biglietto</strong>, <strong>attivarlo</strong> e <strong>mostrare il QR Code</strong>.',
+        prepare: function() {},
+        autoAdvanceHook: null,
+        isWelcome: true
+    },
+    {
+        icon: '📝',
+        title: 'Dati di fatturazione',
+        text: 'Per prima cosa, inserisci i tuoi dati di fatturazione. Sono salvati <strong>solo sul tuo dispositivo</strong>!<br>Usa il pulsante 🎲 per generare dati di prova.',
+        prepare: function() {
+            switchTab('profilo');
+            setTimeout(function() {
+                openSubScreen('screen-billing-edit');
+            }, 300);
+        },
+        autoAdvanceHook: 'billingCompleted'
+    },
+    {
+        icon: '🎫',
+        title: 'Acquista un biglietto',
+        text: 'Seleziona la <strong>zona di partenza e arrivo</strong> con il cursore, scegli quanti biglietti vuoi e tocca <strong>Genera Biglietto</strong>.',
+        prepare: function() {
+            closeAllSubScreens();
+            setTimeout(function() {
+                switchTab('acquista');
+                setTimeout(function() {
+                    var zoneSection = document.getElementById('accordion-zone');
+                    if (zoneSection && !zoneSection.classList.contains('open')) {
+                        toggleAccordion('accordion-zone');
+                    }
+                }, 350);
+            }, 350);
+        },
+        autoAdvanceHook: 'ticketGenerated'
+    },
+    {
+        icon: '✋',
+        title: 'Attiva il biglietto',
+        text: 'Tocca <strong>Tap & Go</strong> per attivare il biglietto. Una volta attivato, inizia il countdown della validità!',
+        prepare: function() {
+            // By this point wallet tab is already shown by flyToWallet callback
+            switchTab('wallet');
+        },
+        autoAdvanceHook: 'ticketActivated'
+    },
+    {
+        icon: '🔍',
+        title: 'QR Code e Ricevuta',
+        text: 'Prima di mostrare il QR al controllore, <strong>tocca il QR code</strong> per attivare la <strong>protezione anti-screenshot</strong>: gli angoli diventeranno illeggibili allo scanner.<br><br>Il controllore potrà leggere la <strong>validità del biglietto</strong> nella parte inferiore, oppure richiedere la <strong>ricevuta d\'acquisto</strong>. Puoi accedervi dal pulsante sottostante al QR o da <strong>Profilo → Storico Acquisti</strong>.',
+        prepare: function() {
+            // openDetail is already called automatically after activation
+        },
+        autoAdvanceHook: null
+    },
+    {
+        icon: '🚄',
+        title: 'Tutto pronto!',
+        text: 'Nella sezione <strong>Guida</strong> del profilo trovi le norme di viaggio e le informazioni sulle zone STIBM.<br><br>Esplora l\'app e scopri tutte le funzionalità!',
+        prepare: function() {
+            closeDetail();
+            setTimeout(function() {
+                switchTab('profilo');
+            }, 400);
+        },
+        autoAdvanceHook: null
+    }
+];
+
+function checkTutorialNeeded() {
+    if (localStorage.getItem('trenord_tutorial_completed')) return;
+    setTimeout(function() {
+        startTutorial();
+    }, 600);
+}
+
+function startTutorial() {
+    if (_tutorialActive) return;
+    _tutorialActive = true;
+    _tutorialStep = 0;
+    installTutorialHooks();
+    showTutorialPopup(0);
+}
+
+function installTutorialHooks() {
+    // Hook into saveBillingData
+    var _origSaveBilling = window.saveBillingData;
+    window.saveBillingData = function() {
+        _origSaveBilling.apply(this, arguments);
+        if (_tutorialActive && TUTORIAL_STEPS[_tutorialStep] &&
+            TUTORIAL_STEPS[_tutorialStep].autoAdvanceHook === 'billingCompleted') {
+            if (hasBillingData()) {
+                setTimeout(function() { advanceTutorial(); }, 500);
+            }
+        }
+    };
+
+    // Hook into generateTickets — advance after the full animation chain completes
+    var _origGenerate = window.generateTickets;
+    window.generateTickets = function() {
+        _origGenerate.apply(this, arguments);
+        if (_tutorialActive && TUTORIAL_STEPS[_tutorialStep] &&
+            TUTORIAL_STEPS[_tutorialStep].autoAdvanceHook === 'ticketGenerated') {
+            // QR assembly animation (~15s) + flyToWallet (~0.75s) + switchTab
+            // Show next popup only after everything settles
+            setTimeout(function() { advanceTutorial(); }, 17000);
+        }
+    };
+
+    // Hook into activateTicket
+    var _origActivate = window.activateTicket;
+    window.activateTicket = function() {
+        _origActivate.apply(this, arguments);
+        if (_tutorialActive && TUTORIAL_STEPS[_tutorialStep] &&
+            TUTORIAL_STEPS[_tutorialStep].autoAdvanceHook === 'ticketActivated') {
+            setTimeout(function() { advanceTutorial(); }, 1000);
+        }
+    };
+
+    _tutorialHooks = {
+        saveBillingData: _origSaveBilling,
+        generateTickets: _origGenerate,
+        activateTicket: _origActivate
+    };
+}
+
+function uninstallTutorialHooks() {
+    if (_tutorialHooks.saveBillingData) window.saveBillingData = _tutorialHooks.saveBillingData;
+    if (_tutorialHooks.generateTickets) window.generateTickets = _tutorialHooks.generateTickets;
+    if (_tutorialHooks.activateTicket) window.activateTicket = _tutorialHooks.activateTicket;
+    _tutorialHooks = {};
+}
+
+function showTutorialPopup(stepIdx) {
+    if (stepIdx >= TUTORIAL_STEPS.length) {
+        endTutorial();
+        return;
+    }
+
+    _tutorialStep = stepIdx;
+    var step = TUTORIAL_STEPS[stepIdx];
+    var isLast = stepIdx === TUTORIAL_STEPS.length - 1;
+    var isWelcome = !!step.isWelcome;
+    var hasAutoAdvance = !!step.autoAdvanceHook;
+
+    // Build dots (skip welcome step in dot count)
+    var dotsHtml = '';
+    for (var i = 0; i < TUTORIAL_STEPS.length; i++) {
+        var cls = 'tutorial-modal-dot';
+        if (i < stepIdx) cls += ' done';
+        else if (i === stepIdx) cls += ' active';
+        dotsHtml += '<div class="' + cls + '"></div>';
+    }
+
+    // Button label
+    var btnLabel, btnAction;
+    if (isWelcome) {
+        btnLabel = 'Iniziamo! 🚀';
+        btnAction = 'advanceTutorial()';
+    } else if (isLast) {
+        btnLabel = 'Fine! 🎉';
+        btnAction = 'endTutorial()';
+    } else if (hasAutoAdvance) {
+        btnLabel = 'Ok!';
+        btnAction = 'dismissTutorialPopup()';
+    } else {
+        btnLabel = 'Avanti';
+        btnAction = 'advanceTutorial()';
+    }
+
+    var stepLabel = isWelcome ? '' :
+        '<div class="tutorial-modal-step">Step ' + stepIdx + ' di ' + (TUTORIAL_STEPS.length - 1) + '</div>';
+
+    var overlay = document.createElement('div');
+    overlay.className = 'tutorial-modal-overlay';
+    overlay.id = 'tutorial-modal-overlay';
+    overlay.innerHTML =
+        '<div class="tutorial-modal-card' + (isWelcome ? ' tutorial-welcome' : '') + '">' +
+            stepLabel +
+            '<div class="tutorial-modal-icon' + (isWelcome ? ' tutorial-welcome-icon' : '') + '">' + step.icon + '</div>' +
+            '<div class="tutorial-modal-title">' + step.title + '</div>' +
+            '<div class="tutorial-modal-text">' + step.text + '</div>' +
+            '<div class="tutorial-modal-dots">' + dotsHtml + '</div>' +
+            '<button class="tutorial-modal-btn" onclick="' + btnAction + '">' + btnLabel + '</button>' +
+            '<button class="tutorial-modal-skip" onclick="skipTutorial()">Salta tutorial</button>' +
+        '</div>';
+
+    document.body.appendChild(overlay);
+}
+
+function dismissTutorialPopup() {
+    var overlay = document.getElementById('tutorial-modal-overlay');
+    if (!overlay) return;
+
+    overlay.classList.add('tutorial-modal-out');
+    setTimeout(function() {
+        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    }, 300);
+
+    // Navigate to the correct screen for this step
+    var step = TUTORIAL_STEPS[_tutorialStep];
+    if (step && step.prepare) {
+        step.prepare();
+    }
+}
+
+function advanceTutorial() {
+    if (!_tutorialActive) return;
+    // Remove current popup if present
+    var overlay = document.getElementById('tutorial-modal-overlay');
+    if (overlay) {
+        overlay.classList.add('tutorial-modal-out');
+        setTimeout(function() {
+            if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+            showTutorialPopup(_tutorialStep + 1);
+        }, 300);
+    } else {
+        showTutorialPopup(_tutorialStep + 1);
+    }
+}
+
+function endTutorial() {
+    _tutorialActive = false;
+    localStorage.setItem('trenord_tutorial_completed', '1');
+    uninstallTutorialHooks();
+    var overlay = document.getElementById('tutorial-modal-overlay');
+    if (overlay) {
+        overlay.classList.add('tutorial-modal-out');
+        setTimeout(function() {
+            if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+            showTutorialCelebration();
+        }, 300);
+    } else {
+        showTutorialCelebration();
+    }
+}
+
+function skipTutorial() {
+    _tutorialActive = false;
+    localStorage.setItem('trenord_tutorial_completed', '1');
+    uninstallTutorialHooks();
+    var overlay = document.getElementById('tutorial-modal-overlay');
+    if (overlay) {
+        overlay.classList.add('tutorial-modal-out');
+        setTimeout(function() {
+            if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+            switchTab('acquista');
+        }, 300);
+    }
+}
+
+function showTutorialCelebration() {
+    var celebrationEl = document.createElement('div');
+    celebrationEl.className = 'tutorial-celebration';
+    celebrationEl.innerHTML =
+        '<div class="celebration-content">' +
+            '<div class="celebration-emoji">🎉</div>' +
+            '<div class="celebration-title">Complimenti!</div>' +
+            '<div class="celebration-text">Hai completato il tutorial.<br>Buon viaggio con Trenord+!</div>' +
+        '</div>';
+    document.body.appendChild(celebrationEl);
+
+    // Spawn confetti particles
+    for (var i = 0; i < 40; i++) {
+        var confetti = document.createElement('div');
+        confetti.className = 'confetti-particle';
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.animationDelay = (Math.random() * 1.5) + 's';
+        confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+        confetti.style.background = ['#2C7F44','#FFD700','#FF6B6B','#4ECDC4','#585DA4','#FF8C42'][Math.floor(Math.random()*6)];
+        celebrationEl.appendChild(confetti);
+    }
+
+    setTimeout(function() {
+        celebrationEl.classList.add('celebration-out');
+        setTimeout(function() {
+            if (celebrationEl.parentNode) celebrationEl.parentNode.removeChild(celebrationEl);
+            switchTab('acquista');
+        }, 500);
+    }, 3000);
 }

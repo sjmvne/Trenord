@@ -18,8 +18,9 @@
     --card-radius: 12px;
     --font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     --safe-top: env(safe-area-inset-top, 0px);
-    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-bottom: 0px;
     --ios-bottom-gap: 0px;
+    --header-top-extra: 10px;
 }
 
 * {
@@ -57,17 +58,10 @@ body::after {
     left: 0;
     right: 0;
     bottom: 0;
-    height: max(var(--safe-bottom), var(--ios-bottom-gap));
+    height: var(--ios-bottom-gap);
     background: #fff;
     pointer-events: none;
     z-index: 99;
-}
-
-/* Fix iOS standalone PWA — rimuove gap sotto la tabbar */
-@supports (padding: env(safe-area-inset-bottom)) {
-    html {
-        height: -webkit-fill-available;
-    }
 }
 
 /* ============================================
@@ -113,7 +107,7 @@ body::after {
 .config-header {
     background: linear-gradient(180deg, var(--green-dark) 0%, var(--green-header) 100%);
     padding: var(--safe-top) 16px 0;
-    padding-top: calc(var(--safe-top) + 26px);
+    padding-top: calc(var(--safe-top) + var(--header-top-extra));
     text-align: center;
     flex-shrink: 0;
 }
@@ -166,7 +160,7 @@ body::after {
     flex: 1;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding: 0 16px calc(80px + var(--safe-bottom) + 40px);
+    padding: 0 16px calc(80px + 40px);
 }
 
 .form-section-label {
@@ -851,7 +845,7 @@ body::after {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     padding: 16px;
-    padding-bottom: calc(80px + var(--safe-bottom) + 24px);
+    padding-bottom: calc(80px + 24px);
 }
 
 /* ============================================
@@ -1147,7 +1141,7 @@ body::after {
     background: #fff;
     border-top: 0.5px solid #D1D1D6;
     padding: 6px 0;
-    padding-bottom: calc(6px + max(var(--safe-bottom), var(--ios-bottom-gap)));
+    padding-bottom: calc(6px + var(--ios-bottom-gap));
     z-index: 100;
     /* Fix iOS standalone: garantisce che il bg copra tutta l'area sotto */
     -webkit-transform: translate3d(0,0,0);
@@ -1299,7 +1293,7 @@ body.qr-brightness-mode .screen.active {
     flex: 1;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: calc(40px + var(--safe-bottom));
+    padding-bottom: 40px;
     background: #ffffff;
 }
 
@@ -1711,6 +1705,35 @@ body.qr-brightness-mode .screen.active {
     cursor: not-allowed;
 }
 
+.disclaimer-checkboxes {
+    padding: 8px 24px 4px;
+}
+
+.disclaimer-check-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    font-size: 14px;
+    color: #1C1C1E;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.disclaimer-check-label input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    flex-shrink: 0;
+    accent-color: #2C7F44;
+    cursor: pointer;
+}
+
+.disclaimer-check-label span {
+    line-height: 1.4;
+    padding-top: 1px;
+}
+
 /* ============================================
    MODAL OVERLAYS (iOS Style Alerts)
    ============================================ */
@@ -1882,7 +1905,7 @@ body.qr-brightness-mode .screen.active {
 .home-body {
     flex: 1;
     overflow-y: auto;
-    padding: 8px 0 calc(80px + var(--safe-bottom) + 40px);
+    padding: 8px 0 calc(80px + 40px);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -2049,7 +2072,7 @@ body.qr-brightness-mode .screen.active {
     flex: 1;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding: 20px 0 calc(80px + env(safe-area-inset-bottom));
+    padding: 20px 0 80px;
 }
 
 .changelog-header {
@@ -2208,7 +2231,7 @@ body.qr-brightness-mode .screen.active {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 40px 24px calc(80px + var(--safe-bottom) + 40px);
+    padding: 40px 24px calc(80px + 40px);
     color: var(--gray-label);
 }
 
@@ -2751,7 +2774,7 @@ body.qr-brightness-mode .screen.active {
     display: flex;
     align-items: center;
     gap: 16px;
-    padding: 16px 0 calc(env(safe-area-inset-bottom, 8px) + 8px);
+    padding: 16px 0 8px;
     flex-shrink: 0;
 }
 
@@ -2984,7 +3007,7 @@ body.qr-brightness-mode .screen.active {
 
 .qr-data-section {
     margin-top: 16px;
-    padding: 0 4px;
+    padding: 0 18px;
 }
 
 .qr-data-block {
@@ -3712,7 +3735,7 @@ body.qr-brightness-mode .screen.active {
     bottom: 0;
     left: 0;
     right: 0;
-    padding-bottom: max(20px, env(safe-area-inset-bottom));
+    padding-bottom: 20px;
     text-align: center;
     z-index: 2;
     animation: splashFooterEntry 0.8s 1.6s ease both;
@@ -3854,7 +3877,7 @@ body.qr-brightness-mode .screen.active {
     flex: 1;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: calc(40px + var(--safe-bottom));
+    padding-bottom: 40px;
 }
 
 .sub-screen-body::-webkit-scrollbar {
@@ -3882,7 +3905,7 @@ body.qr-brightness-mode .screen.active {
     flex: 1;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding: 0 0 calc(80px + var(--safe-bottom) + 40px);
+    padding: 0 0 calc(80px + 40px);
     min-height: 0;
     overscroll-behavior: contain;
 }
@@ -3971,11 +3994,11 @@ body.qr-brightness-mode .screen.active {
 .profilo-item-flat {
     display: flex;
     align-items: center;
-    padding: 14px 20px;
+    padding: 10px 16px;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     transition: background 0.15s;
-    gap: 14px;
+    gap: 10px;
     background: transparent;
     border-bottom: 0.5px solid #E5E5EA;
 }
@@ -4009,7 +4032,7 @@ body.qr-brightness-mode .screen.active {
 
 .profilo-item-label-flat {
     flex: 1;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 400;
     color: #1C1C1E;
 }
@@ -4187,16 +4210,37 @@ body.qr-brightness-mode .screen.active {
     flex: 1;
 }
 
+.billing-random-btn {
+    width: 100%;
+    padding: 12px;
+    background: #F2F2F7;
+    color: #585DA4;
+    font-family: var(--font);
+    font-size: 15px;
+    font-weight: 600;
+    border: 1.5px dashed #585DA4;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-bottom: 12px;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: background 0.15s;
+}
+
+.billing-random-btn:active {
+    background: #E5E5EA;
+}
+
 .billing-submit {
     width: 100%;
-    padding: 16px;
+    padding: 8px;
     background: #6CAC6A;
     color: #fff;
     font-family: var(--font);
     font-size: 17px;
     font-weight: 600;
     border: none;
-    border-radius: 12px;
+    border-radius: 5px;
     cursor: pointer;
     margin-top: 8px;
     -webkit-appearance: none;
@@ -6087,18 +6131,6 @@ body.qr-brightness-mode .screen.active {
     overflow: hidden;
 }
 
-.demo-replay {
-    background: none;
-    border: none;
-    color: #62A76C;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    padding: 8px 16px;
-    margin-top: 8px;
-    -webkit-tap-highlight-color: transparent;
-}
-
 /* -- Demo: Billing form auto-fill -- */
 .demo-form {
     display: flex;
@@ -6514,4 +6546,266 @@ body.qr-brightness-mode .screen.active {
     font-size: 10px;
     opacity: 0.6;
     margin-top: 12px;
+}
+
+/* ============================================
+   TUTORIAL INTERATTIVO (Modal Popup)
+   ============================================ */
+
+.tutorial-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    animation: tutorialFadeIn 0.3s ease forwards;
+}
+
+@keyframes tutorialFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.tutorial-modal-card {
+    background: #fff;
+    border-radius: 20px;
+    max-width: 340px;
+    width: 100%;
+    padding: 28px 24px 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: tutorialCardIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    text-align: center;
+}
+
+@keyframes tutorialCardIn {
+    from { opacity: 0; transform: scale(0.9) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.tutorial-modal-step {
+    font-size: 12px;
+    font-weight: 600;
+    color: #8E8E93;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.tutorial-modal-icon {
+    font-size: 36px;
+    margin-bottom: 12px;
+}
+
+.tutorial-modal-title {
+    font-size: 19px;
+    font-weight: 700;
+    color: #1C1C1E;
+    margin-bottom: 8px;
+}
+
+.tutorial-modal-text {
+    font-size: 14px;
+    color: #3C3C43;
+    line-height: 1.55;
+    margin-bottom: 20px;
+}
+
+.tutorial-modal-dots {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-bottom: 18px;
+}
+
+.tutorial-modal-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #D1D1D6;
+    transition: all 0.3s;
+}
+
+.tutorial-modal-dot.active {
+    background: #2C7F44;
+    width: 18px;
+    border-radius: 4px;
+}
+
+.tutorial-modal-dot.done {
+    background: #A8D5A2;
+}
+
+.tutorial-modal-btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: var(--font);
+    -webkit-tap-highlight-color: transparent;
+    transition: opacity 0.15s;
+    background: #2C7F44;
+    color: #fff;
+}
+
+.tutorial-modal-btn:active {
+    opacity: 0.7;
+}
+
+.tutorial-modal-skip {
+    display: block;
+    margin: 10px auto 0;
+    background: none;
+    border: none;
+    color: #8E8E93;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: var(--font);
+    padding: 6px 12px;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.tutorial-modal-skip:active {
+    color: #636366;
+}
+
+.tutorial-modal-overlay.tutorial-modal-out {
+    animation: tutorialFadeOut 0.3s ease forwards;
+}
+
+@keyframes tutorialFadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+/* Welcome step animation */
+.tutorial-welcome-icon {
+    font-size: 52px;
+    animation: tutorialWave 1.2s ease-in-out 0.3s 2;
+    transform-origin: 70% 80%;
+}
+
+@keyframes tutorialWave {
+    0% { transform: rotate(0deg); }
+    15% { transform: rotate(14deg); }
+    30% { transform: rotate(-8deg); }
+    45% { transform: rotate(14deg); }
+    60% { transform: rotate(-4deg); }
+    75% { transform: rotate(10deg); }
+    100% { transform: rotate(0deg); }
+}
+
+/* ============================================
+   TUTORIAL CELEBRATION
+   ============================================ */
+
+.tutorial-celebration {
+    position: fixed;
+    inset: 0;
+    z-index: 100001;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    animation: tutorialFadeIn 0.4s ease forwards;
+    overflow: hidden;
+}
+
+.celebration-content {
+    text-align: center;
+    animation: celebrationPop 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes celebrationPop {
+    from { opacity: 0; transform: scale(0.5); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.celebration-emoji {
+    font-size: 72px;
+    animation: celebrationBounce 0.8s ease 0.4s 2;
+}
+
+@keyframes celebrationBounce {
+    0%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-20px); }
+}
+
+.celebration-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #fff;
+    margin: 12px 0 8px;
+}
+
+.celebration-text {
+    font-size: 15px;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.5;
+}
+
+.celebration-out {
+    animation: tutorialFadeOut 0.5s ease forwards;
+}
+
+/* Confetti particles */
+.confetti-particle {
+    position: absolute;
+    top: -10px;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    animation: confettiFall linear forwards;
+    opacity: 0.9;
+}
+
+@keyframes confettiFall {
+    0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+
+/* ============================================
+   STATS HELP BUTTON
+   ============================================ */
+
+.stats-help-btn {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid #2C7F44;
+    background: transparent;
+    color: #2C7F44;
+    font-size: 15px;
+    font-weight: 800;
+    font-family: var(--font);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+    transition: all 0.15s;
+    padding: 0;
+    line-height: 1;
+}
+
+.stats-help-btn:active {
+    background: #2C7F44;
+    color: #fff;
+}
+
+.stats-header {
+    position: relative;
 }

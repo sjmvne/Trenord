@@ -148,7 +148,6 @@
                         </div>
                         <div class="demo-btn demo-btn-confirm demo-pulse">Conferma ✓</div>
                     </div>
-                    <button class="demo-replay" onclick="replayDemo(this)">↻ Ripeti</button>
                 </div>
                 <div class="home-step-card">
                     <div class="home-step-number">2</div>
@@ -175,7 +174,6 @@
                             <div class="demo-zone-labels"><span>Mi1</span><span>Mi9</span></div>
                         </div>
                     </div>
-                    <button class="demo-replay" onclick="replayDemo(this)">↻ Ripeti</button>
                 </div>
                 <div class="home-step-card">
                     <div class="home-step-number">3</div>
@@ -203,7 +201,6 @@
                             <div class="demo-success-check">✓</div>
                         </div>
                     </div>
-                    <button class="demo-replay" onclick="replayDemo(this)">↻ Ripeti</button>
                 </div>
             </div>
 
@@ -239,7 +236,6 @@
                             </div>
                         </div>
                     </div>
-                    <button class="demo-replay" onclick="replayDemo(this)">↻ Ripeti</button>
                 </div>
                 <div class="home-step-card">
                     <div class="home-step-number">3</div>
@@ -282,7 +278,6 @@
                             </div>
                         </div>
                     </div>
-                    <button class="demo-replay" onclick="replayDemo(this)">↻ Ripeti</button>
                 </div>
                 <div class="home-step-card">
                     <div class="home-step-icon-wrap home-step-icon-orange">
@@ -299,7 +294,7 @@
                     </div>
                     <div class="home-step-content">
                         <h3 class="home-step-title">QR illeggibile (anti-scanner)</h3>
-                        <p class="home-step-text">Tocca direttamente il <strong>QR code</strong> nella schermata di dettaglio: i Pattern Finder (i 3 quadrati agli angoli) si modificheranno e il QR diventerà illeggibile. Questo rende il QR non scannerizzabile. Se richiesto mostra la ricevuta in <b>Profilo → Storico Acquisti</b>. Tocca di nuovo il QR per ripristinarlo allo stato originale.<br></p>
+                        <p class="home-step-text">Tocca direttamente il <strong>QR code</strong> nella schermata di dettaglio: i Pattern Finder (i 3 quadrati agli angoli del QR) si modificheranno e il QR diventerà illeggibile. Questo rende il QR non scannerizzabile dal controllore. Se richiesto, mostra la ricevuta in <b>Profilo → Storico Acquisti</b>. Tocca di nuovo il QR per ripristinarlo allo stato originale.<br></p>
                     </div>
                 </div>
             </div>
@@ -1031,6 +1026,7 @@
                     </div>
                     <div class="dev-section-body">
                         <p class="dev-reset-warning">Cancella tutto il localStorage e ricarica l'app. Questa azione è irreversibile.</p>
+                        <button class="dev-action-btn" onclick="devResetTutorial()">Reset tutorial interattivo</button>
                         <button class="dev-action-btn dev-action-red" onclick="devResetApp()">Reset completo</button>
                     </div>
                 </div>
@@ -1163,6 +1159,7 @@
         </div>
         <div class="sub-screen-body">
             <div class="billing-form" id="billing-form">
+                <button type="button" class="billing-random-btn" onclick="generateRandomBillingData()">🎲 Genera dati casuali</button>
                 <div class="billing-field">
                     <label class="billing-label">Nome *</label>
                     <input type="text" class="billing-input" id="billing-nome" placeholder="es. Mario" autocomplete="given-name">
@@ -1172,7 +1169,7 @@
                     <input type="text" class="billing-input" id="billing-cognome" placeholder="es. Rossi" autocomplete="family-name">
                 </div>
                 <div class="billing-field">
-                    <label class="billing-label">Codice Fiscale *</label>
+                    <label class="billing-label">Codice Fiscale</label>
                     <input type="text" class="billing-input" id="billing-cf" placeholder="es. RSSMRA75L01H501A" autocomplete="off" style="text-transform:uppercase;">
                 </div>
                 <div class="billing-field">
@@ -1286,8 +1283,15 @@
         </div>
     </div>
 
-    <!-- ====== MODAL: Elimina Dati ====== -->
-    <div id="delete-data-modal" class="modal-overlay">
+    <!-- ====== MODAL: Stats Help ====== -->
+    <div id="stats-help-modal" class="modal-overlay">
+        <div class="modal-card" style="max-width:380px;max-height:85vh;overflow-y:auto;-webkit-overflow-scrolling:touch;">
+            <div class="modal-title">📖 Come calcoliamo i dati</div>
+            <div class="modal-body" id="stats-help-body">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+    </div>
 
     <!-- ====== MODAL: Stats Settings ====== -->
     <div id="stats-settings-modal" class="modal-overlay">
@@ -1298,6 +1302,9 @@
             </div>
         </div>
     </div>
+
+    <!-- ====== MODAL: Elimina Dati ====== -->
+    <div id="delete-data-modal" class="modal-overlay">
         <div class="modal-card">
             <div class="modal-title">🗑️ Elimina dati</div>
             <div class="modal-body">
@@ -1360,8 +1367,8 @@
             <span>Wallet</span>
         </div>
         <div class="tabbar-item" data-tab="gite">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
-            <span>Statistiche</span>
+            <svg viewBox="0 0 33.1 30.2" fill="currentColor"><path d="M15.87,3.1c.67-.22,1.46-.14,1.93.44l15.25,24.78-.49,1.5c-3.73-.12-31.37,1.07-32.31-.24-.42-.58-.28-1.41.05-2.02C2.75,24.98,14.49,3.55,15.87,3.1ZM20.05,13.54c-.61-.96-2.68-5.75-3.74-5.49-.5.12-2.78,4.64-3.26,5.49,3.19,1.55,3.81,1.55,7,0ZM4.55,27.04h24l-6.55-10.97c-1-.69-4.76,3.58-5.63,3.43-.81-.14-3.7-3.59-5.04-3.49l-6.78,11.03Z"/><path d="M26.4.15c5.61-1.27,9.33,5.93,4.39,9.4C23.74,14.5,18.84,1.86,26.4.15ZM26.9,3.13c-2,.59-1.89,4.11.43,4.43,3.96.55,3.55-5.6-.43-4.43Z"/></svg>
+            <span>Gite in Treno</span>
         </div>
         <div class="tabbar-item" data-tab="profilo">
             <svg viewBox="0 0 45 44"><path fill="currentColor" d="M19.4,26.65c8.85-.84,23.05.4,19.89,12.89l-32.31.25c-2.61-9.96,4.07-12.34,12.43-13.14Z"/><path fill="currentColor" d="M21.37,4.12c12.77-2.07,14.55,17.92,2.83,19.34-12.24,1.49-13.95-17.54-2.83-19.34Z"/><path fill="#fff" d="M36.5,37H9.5c-1.12-8.67,14.12-7.91,19.68-6.93,4.24.74,7.86,1.73,7.32,6.93Z"/><path fill="#fff" d="M21.88,7.11c8.73-1.42,9.63,12.63,1.81,13.37s-9.05-12.19-1.81-13.37Z"/></svg>
@@ -1454,7 +1461,7 @@
                     </div>
                     <div class="qr-data-block">
                         <div class="qr-data-label">Finder Pattern</div>
-                        <div class="qr-data-info">Il QR generato da Trenord+ include <strong>Finder Pattern volutamente corrotti</strong>: i tre quadrati negli angoli del QR code vengono alterati per impedire la lettura da scanner generici. Solo l'app del controllore, che applica la correzione inversa, può decodificarlo correttamente.</div>
+                        <div class="qr-data-info">Il QR generato da Trenord+ include <strong>Pattern Finder volutamente corrotti</strong>: i tre quadrati negli angoli del QR code vengono alterati per impedire la lettura da scanner. Nemmeno l'app del controllore può decodificarlo correttamente, controllerà dunque i dati sottostanti o la ricevuta.</div>
                     </div>
                 </div>
             </div>
@@ -1469,14 +1476,28 @@
             </div>
             <h2 class="disclaimer-mandatory-title">Disclaimer</h2>
             <div class="disclaimer-mandatory-body" id="disclaimer-mandatory-body">
-                <p>Trenord+ è un progetto a <strong>scopo esclusivamente didattico e dimostrativo</strong>.</p>
-                <p>I biglietti generati <strong>non hanno alcuna validità legale</strong> e non possono essere utilizzati come titolo di viaggio.</p>
-                <p><strong>Nessun dato</strong> viene trasmesso a server esterni. Tutto resta nel tuo dispositivo.</p>
-                <p>L'app <strong>non è affiliata</strong> a Trenord S.r.l. o ad altri enti del trasporto pubblico.</p>
-                <p>L'utilizzo implica la <strong>piena accettazione</strong> di queste condizioni.</p>
+                <p><strong>1. Scopo del progetto</strong></p>
+                <p>Trenord+ è un progetto a <strong>scopo esclusivamente didattico e dimostrativo</strong>. Non si tratta di un'applicazione ufficiale per l'acquisto di titoli di viaggio.</p>
+                <p><strong>2. Validità dei biglietti</strong></p>
+                <p>I biglietti generati <strong>non hanno alcuna validità legale</strong> e non possono essere utilizzati come titolo di viaggio su alcun mezzo di trasporto pubblico o privato.</p>
+                <p><strong>3. Privacy e dati personali</strong></p>
+                <p><strong>Nessun dato</strong> viene trasmesso a server esterni. Tutte le informazioni inserite (dati di fatturazione, biglietti, preferenze) sono memorizzate esclusivamente nel <strong>localStorage</strong> del tuo browser/dispositivo. Non vengono utilizzati cookie di tracciamento, analytics o servizi di terze parti. Puoi cancellare tutti i dati in qualsiasi momento dalla sezione Sviluppatore nel Profilo.</p>
+                <p><strong>4. Non affiliazione</strong></p>
+                <p>L'app <strong>non è affiliata</strong> a Trenord S.r.l., ATM, STIBM o ad altri enti del trasporto pubblico lombardo o nazionale. Loghi, nomi e riferimenti sono utilizzati a solo scopo illustrativo.</p>
+                <p><strong>5. Limitazione di responsabilità</strong></p>
+                <p>L'autore non si assume alcuna responsabilità per l'uso improprio dell'applicazione. L'utente è l'unico responsabile dell'utilizzo dei contenuti generati. L'app <strong>non sostituisce</strong> in alcun modo l'acquisto di biglietti reali tramite i canali ufficiali.</p>
             </div>
-            <div class="disclaimer-mandatory-scroll-hint" id="disclaimer-scroll-hint">Scorri per continuare ↓</div>
-            <button class="disclaimer-mandatory-btn" id="disclaimer-accept-btn" disabled onclick="acceptDisclaimer()">Ho letto e accetto</button>
+            <div class="disclaimer-checkboxes">
+                <label class="disclaimer-check-label">
+                    <input type="checkbox" id="disclaimer-check-read" onchange="updateDisclaimerBtn()">
+                    <span>Dichiaro di aver letto il disclaimer</span>
+                </label>
+                <label class="disclaimer-check-label">
+                    <input type="checkbox" id="disclaimer-check-accept" onchange="updateDisclaimerBtn()">
+                    <span>Accetto le condizioni d'uso</span>
+                </label>
+            </div>
+            <button class="disclaimer-mandatory-btn" id="disclaimer-accept-btn" disabled onclick="acceptDisclaimer()">Conferma e continua</button>
         </div>
     </div>
 
