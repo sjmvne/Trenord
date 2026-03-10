@@ -30,7 +30,7 @@
 }
 
 html {
-    background: var(--green-dark);
+    background: var(--gray-bg);
 }
 
 body {
@@ -1142,7 +1142,7 @@ body {
     align-items: flex-start;
     background: #fff;
     border-top: 0.5px solid #D1D1D6;
-    padding: 6px 0 calc(6px + env(safe-area-inset-bottom, 0px));
+    padding: 6px 0;
     z-index: 100;
 }
 .tabbar-item {
