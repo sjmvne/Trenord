@@ -1,4 +1,4 @@
-const CACHE_NAME = 'trenord-plus-v46';
+const CACHE_NAME = 'trenord-plus-v47';
 
 const CORE_ASSETS = [
     './',
