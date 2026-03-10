@@ -3895,10 +3895,7 @@ body.qr-brightness-mode .screen.active {
 
 /* Green header background that extends behind user card */
 .profilo-header-bg {
-    height: calc(110px + var(--safe-top));
-    background: linear-gradient(180deg, var(--green-dark) 0%, var(--green-header) 100%);
-    flex-shrink: 0;
-    pointer-events: none;
+    display: none;
 }
 
 .profilo-body {
@@ -3921,7 +3918,7 @@ body.qr-brightness-mode .screen.active {
 
 .profilo-user-card {
     background: #fff;
-    margin: -30px 16px 0;
+    margin: 16px 16px 0;
     position: relative;
     border-radius: 14px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.1);
