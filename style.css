@@ -19,6 +19,7 @@
     --font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-bottom: 0px;
+    --ios-bottom-gap: 0px;
     --header-top-extra: 10px;
 }
 
@@ -57,7 +58,7 @@ body::after {
     left: 0;
     right: 0;
     bottom: 0;
-    height: 0;
+    height: var(--ios-bottom-gap);
     background: #fff;
     pointer-events: none;
     z-index: 99;
@@ -1153,7 +1154,7 @@ body::after {
     background: #fff;
     border-top: 0.5px solid #D1D1D6;
     padding: 6px 0;
-    padding-bottom: 6px;
+    padding-bottom: calc(6px + var(--ios-bottom-gap));
     z-index: 100;
     /* Fix iOS standalone: garantisce che il bg copra tutta l'area sotto */
     -webkit-transform: translate3d(0,0,0);

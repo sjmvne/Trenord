@@ -191,6 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
     checkForUpdates();
     updateProfiloDisplayName();
     syncBuildLabels();
+    initIOSViewportFix();
     initDevConsole();
     requestNotificationPermission();
     initGuideDemos();
@@ -208,6 +209,25 @@ function syncBuildLabels() {
     if (aggiornaVersionEl) {
         aggiornaVersionEl.textContent = 'Versione corrente: ' + APP_BUILD_LABEL;
     }
+}
+
+function initIOSViewportFix() {
+    function updateIOSBottomGap() {
+        const vv = window.visualViewport;
+        if (!vv) return;
+        const rawGap = window.innerHeight - vv.height - vv.offsetTop;
+        const gap = Math.max(0, Math.round(rawGap));
+        document.documentElement.style.setProperty('--ios-bottom-gap', gap + 'px');
+    }
+
+    updateIOSBottomGap();
+
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', updateIOSBottomGap);
+        window.visualViewport.addEventListener('scroll', updateIOSBottomGap);
+    }
+    window.addEventListener('resize', updateIOSBottomGap);
+    window.addEventListener('orientationchange', updateIOSBottomGap);
 }
 
 function initDefaults() {
